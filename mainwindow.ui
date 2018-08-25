@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>849</width>
-    <height>562</height>
+    <height>569</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,19 +29,6 @@
    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simulation Program&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="outputGraph">
-    <property name="geometry">
-     <rect>
-      <x>13</x>
-      <y>20</y>
-      <width>531</width>
-      <height>371</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TextLabel</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
@@ -486,25 +473,12 @@
      </item>
     </layout>
    </widget>
-   <widget class="Line" name="line_7">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>3</x>
-      <y>0</y>
+      <x>10</x>
+      <y>400</y>
       <width>551</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QWidget" name="">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>390</y>
-      <width>487</width>
       <height>123</height>
      </rect>
     </property>
@@ -773,14 +747,14 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_14">
-       <item>
+       <item alignment="Qt::AlignLeft">
         <widget class="QLabel" name="label_8">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Шаг дискретизации: dt = &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item alignment="Qt::AlignLeft|Qt::AlignVCenter">
         <widget class="QLineEdit" name="selectStep">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -803,12 +777,19 @@
      </item>
     </layout>
    </widget>
-   <zorder>splitter_3</zorder>
-   <zorder>outputGraph</zorder>
+   <widget class="QCustomPlot" name="customPlot" native="true">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>551</width>
+      <height>381</height>
+     </rect>
+    </property>
+   </widget>
+   <zorder>layoutWidget</zorder>
    <zorder>verticalLayoutWidget_2</zorder>
-   <zorder>line_7</zorder>
-   <zorder>label_8</zorder>
-   <zorder>selectStep</zorder>
+   <zorder>customPlot</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -842,6 +823,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

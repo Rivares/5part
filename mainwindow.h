@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-//#include "qcustomplot.h"
+#include "qcustomplot.h"
 #include <QMainWindow>
 #include <QtGui>
 #include <vector>
@@ -61,7 +61,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    //QCustomPlot *customPlot;
 
     void toFileMM(vector <vector <double> > MMM, string nameModel);
 
