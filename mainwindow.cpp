@@ -153,51 +153,6 @@ void MainWindow::drawGraph(bool notEmpty)
 {
     clock_t timeMW_1 = clock();
     int msec = 0;
-/*
-    QPixmap graph(Sizes["windowSizeX"], Sizes["windowSizeY"]);
-    QPainter paint;
-    paint.begin(&graph);
-    paint.eraseRect(0, 0, Sizes["windowSizeX"], Sizes["windowSizeX"]);
-
-    // Draw axises on the map
-    paint.setPen(QPen(Qt::black,3));
-    paint.drawLine(Sizes["axisX_x1"], Sizes["axisX_y1"], Sizes["axisX_x2"], Sizes["axisX_y2"]);   // Axis X
-    paint.drawLine(Sizes["axisY_x1"], Sizes["axisY_y1"], Sizes["axisY_x2"], Sizes["axisY_y2"]);   // Axis Y
-
-    getData();
-    recountPixels();
-
-    int scaleX = Sizes["axisX_y1"], scaleY = Sizes["axisY_x1"];
-    double stepY = onePixelY;
-
-    //--------------------------------------------------------------------------
-
-    // Draw control of points on the map
-    paint.setPen(QPen(Qt::black, 1));
-
-    for(double i = scaleY; i <= Sizes["axisX_x2"]; i += ( (Sizes["windowSizeX"]-Sizes["axisY_x1"]) / 10.0 ))
-        paint.drawLine(static_cast <int> (i), (scaleX-6), static_cast <int> (i), (scaleX+6));
-
-
-    for(double i = scaleX; i >= Sizes["axisY_y1"]; i -= (stepY*4.0))
-        paint.drawLine((scaleY-6), static_cast <int> (i), (scaleY+6), static_cast <int> (i));
-
-    //--------------------------------------------------------------------------
-
-    // Draw a grid on the map
-    paint.setPen(QPen(Qt::gray, 0.2, Qt::DashLine));
-
-    for(double i = scaleY; i <= Sizes["axisX_x2"]; i += ( (Sizes["windowSizeX"]-Sizes["axisY_x1"]) / 10.0 ))
-        paint.drawLine(static_cast <int> (i), Sizes["axisX_y1"], static_cast <int> (i), Sizes["axisY_y1"]);
-
-
-    for(double i = scaleX; i >= Sizes["axisY_y1"]; i -= (stepY*4.0))
-        paint.drawLine(Sizes["axisX_x2"], static_cast <int> (i), Sizes["axisY_x2"], static_cast <int> (i));
-
-    //--------------------------------------------------------------------------
-
-    paint.end();
-*/
 
     /**********************************************************************/
 
@@ -205,17 +160,6 @@ void MainWindow::drawGraph(bool notEmpty)
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setPen(QPen(Qt::blue)); // line color blue for first graph
     ui->customPlot->graph(0)->setBrush(QBrush(QColor(0, 0, 255, 20))); // first graph will be filled with translucent blue
-    ui->customPlot->addGraph();
-    ui->customPlot->graph(1)->setPen(QPen(Qt::red)); // line color red for second graph
-
-    // generate some points of data (y0 for first, y1 for second graph):
-    QVector<double> x(251), y0(251), y1(251);
-    for (int i=0; i<251; ++i)
-    {
-      x[i] = i;
-      y0[i] = qExp(-i/150.0)*qCos(i/10.0); // exponentially decaying cosine
-      y1[i] = qExp(-i/150.0);              // exponential envelope
-    }
 
     // configure right and top axis to show ticks but no labels:
     // (see QCPAxisRect::setupFullAxesBox for a quicker method to do this)
@@ -224,23 +168,13 @@ void MainWindow::drawGraph(bool notEmpty)
     ui->customPlot->yAxis2->setVisible(true);
     ui->customPlot->yAxis2->setTickLabels(false);
 
+    // give the axes some labels:
+    ui->customPlot->xAxis->setLabel("t, sec");
+    ui->customPlot->yAxis->setLabel("T, C");
+
     // make left and bottom axes always transfer their ranges to right and top axes:
     connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->xAxis2, SLOT(setRange(QCPRange)));
     connect(ui->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-
-    // pass data points to graphs:
-    ui->customPlot->graph(0)->setData(x, y0);
-    ui->customPlot->graph(1)->setData(x, y1);
-
-    // let the ranges scale themselves so graph 0 fits perfectly in the visible area:
-    ui->customPlot->graph(0)->rescaleAxes();
-
-    // same thing for graph 1, but only enlarge ranges (in case graph 1 is smaller than graph 0):
-    ui->customPlot->graph(1)->rescaleAxes(true);
-
-    // Note: we could have also just called customPlot->rescaleAxes(); instead
-    // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
-    ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 
     /**********************************************************************/
 
@@ -257,24 +191,24 @@ void MainWindow::drawGraph(bool notEmpty)
     {
         calculateMM(TV, TF);
         ui->progressBar_calculating->setValue(1);   // Fake
-        //draw_Model(&graph, 0);
+        draw_Model(0);
     }
 
     if (ui->NHM->isChecked())
     {
         calculateMM(TV, TF, 1);                     // OVERLOADING CALCULATE OF FUNCTION
         ui->progressBar_calculating->setValue(1);   // Fake
-        //draw_Model(&graph, 0);
+        draw_Model(0);
     }
 
     if((ui->Hexch->isChecked()) || (ui->Mexch->isChecked()))
     {
         calculateMM(TV, TF, CV, CF);
         ui->progressBar_calculating->setValue(1);   // Fake
-//        if((ui->Hexch->isChecked()))
-//            draw_Model(&graph, 0);
-//        else
-//            draw_Model(&graph, 2);
+        if((ui->Hexch->isChecked()))
+            draw_Model(0);
+        else
+            draw_Model(2);
     }
 
     //----------------------------------------------------------------------
@@ -321,8 +255,6 @@ void MainWindow::drawGraph(bool notEmpty)
         ui->valF3->setText(str);
     }
 
-    //ui->outputGraph->setPixmap(graph);
-
     clock_t timeDiff = clock() - timeMW_1;
     msec = timeDiff * 1000 / CLOCKS_PER_SEC;
     cout << endl <<"Drawing time of program taken " << msec/1000 << " seconds, and " << msec%1000 <<" milliseconds!" << endl;
@@ -347,173 +279,45 @@ void MainWindow::on_draw_clicked()
     drawGraph(1);
 }
 
-void MainWindow::draw_Model(QPixmap *graph, int choiceModel)
-{
-/*    stepN = rightX/37.0;                                        //----CRUTCHES ----stepN = size of window graph(370) / 37;
-    double shift = 17.0;                                        // Offset relative to the edge of the graph
-    bool mode = true;
+void MainWindow::draw_Model(int choiceModel)
+{    
+    QVector <double> TV_vector(TV.size());
+    QVector <double> TF_vector(TF.size());
+    QVector <double> CV_vector(CV.size());
+    QVector <double> CF_vector(CF.size());
 
-    QPainterPath path, path1;
-    QPainter paint;
-    paint.begin(graph);
+    QVector < QVector <double> > *TV_mat = new QVector < QVector<double> >;
 
-    getData();
-    recountPixels();
+    QVector <double> time(selectN);
 
-    // Draw functions
-    paint.setRenderHint(QPainter::Antialiasing, true);
+    for(uint i = 0; i < selectN; ++i)
+    {
+        TV_vector[i] = TV[i][1];
+        time[i] = i;
+    }
 
-    ui->progressBar_drawing->setRange(0, (static_cast <int> (rightX) - 1));
+    // pass data points to graphs:
+    ui->customPlot->graph(0)->setData(time, TV_vector);
+
+    ui->customPlot->xAxis->setRange(0, selectN);
+    ui->customPlot->yAxis->setRange(ui->inputLeftY->text().toDouble(), ui->inputRightY->text().toDouble());
+    ui->customPlot->replot();
+
+    // Note: we could have also just called customPlot->rescaleAxes(); instead
+    // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
+    //ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+
+    //ui->progressBar_drawing->setRange(0, (static_cast <int> (rightX) - 1));
+
+
 
     // Draw Heat's part of model
-    for(uint j = 1; j < (selectZ-1); ++j)              // parallel
+    for(uint j = 1; j < (selectZ-1); ++j)
     {
-        switch(j-1)                                     // Move to begin of point
-        {
-            case 0: paint.setPen(QPen(Qt::red,1.05,Qt::SolidLine));
-                    path.moveTo((stepN*onePixelX)+shift, (Oy-((this->*MM[choiceModel])(0, j)))*onePixelY); break;
 
-            case 1: paint.setPen(QPen(Qt::green,1.05,Qt::SolidLine));
-                    path.moveTo((stepN*onePixelX)+shift, (Oy-((this->*MM[choiceModel])(0, j)))*onePixelY); break;
 
-            case 2: paint.setPen(QPen(Qt::blue,1.05,Qt::SolidLine));
-                    path.moveTo((stepN*onePixelX)+shift, (Oy-((this->*MM[choiceModel])(0, j)))*onePixelY); break;
-
-            default:{
-                    paint.setPen(QPen(Qt::darkCyan,1.05,Qt::SolidLine));
-                    path.moveTo((stepN*onePixelX)+shift, (Oy-((this->*MM[choiceModel])(0, j)))*onePixelY); break;
-                    }
-        }
-
-        for(double i = stepN; i <= rightX; i += dt)
-        {
-            if(!isnan(((this->*MM[choiceModel])(static_cast <unsigned long long> (i), j))))
-            {
-                if(mode)                                // Set begin of point
-                {
-                    path.moveTo((i*onePixelX)+shift, (Oy-((this->*MM[choiceModel])(static_cast <unsigned long long> (i), j)))*onePixelY);
-                    mode = false;
-                }
-                else
-                    path.lineTo((i*onePixelX)+shift,(Oy-((this->*MM[choiceModel])(static_cast <unsigned long long> (i), j)))*onePixelY);
-            }
-
-            // For endless modeling. As path has maximum size elements type data is INTeger(around 2 147 483 647 * 2)
-            // then we  increase this number to endless.
-            if(path.elementCount() > ((pow((pow(2, 8)), sizeof(int))/1000) - pow(10, 6)) )
-            {
-                double buf_x = path.currentPosition().rx(), buf_y = path.currentPosition().ry();    // to buffer
-
-                paint.drawPath(path);                   // Drew
-                path = QPainterPath();                  // Clear path
-
-                path.moveTo(buf_x, buf_y);              // We start drawing from this place
-            }
-            ui->progressBar_drawing->setValue(static_cast <int> (i));
-        }
-
-        paint.drawPath(path);
-        path = QPainterPath();                          // Clear path for new curve
     }
 
-
-    // Draw Fluid's part of model
-    mode = true;                                        // serial
-
-    for(uint j = 1; j < (selectZ-1); ++j)              // parallel
-    {
-        switch(j-1)
-        {
-            case 0: paint.setPen(QPen(Qt::red,1.05,Qt::DotLine));
-                    path1.moveTo((stepN*onePixelX)+shift, (Oy-((this->*MM[choiceModel+1])(0, j)))*onePixelY); break;
-
-            case 1: paint.setPen(QPen(Qt::green,1.05,Qt::DotLine));
-                    path1.moveTo((stepN*onePixelX)+shift, (Oy-((this->*MM[choiceModel+1])(0, j)))*onePixelY); break;
-
-            case 2: paint.setPen(QPen(Qt::blue,1.05,Qt::DotLine));
-                    path1.moveTo((stepN*onePixelX)+shift, (Oy-((this->*MM[choiceModel+1])(0, j)))*onePixelY); break;
-
-            default:{
-                    paint.setPen(QPen(Qt::darkCyan,1.05,Qt::DotLine));
-                    path1.moveTo((stepN*onePixelX)+shift, (Oy-((this->*MM[choiceModel+1])(0, j)))*onePixelY); break;
-                    }
-        }
-
-        for(double i = stepN; i <= rightX; i+= dt)
-        {
-            if(!isnan((this->*MM[choiceModel+1])(static_cast <unsigned long long> (i), j)))
-            {
-                if(mode)
-                {
-                    path1.moveTo((i*onePixelX)+shift,(Oy-((this->*MM[choiceModel+1])(static_cast <unsigned long long> (i), j)))*onePixelY);
-                    mode = false;
-                }
-                else
-                    path1.lineTo((i*onePixelX)+shift,(Oy-((this->*MM[choiceModel+1])(static_cast <unsigned long long> (i), j)))*onePixelY);
-             }
-
-            if(path1.elementCount() > ((pow((pow(2, 8)), sizeof(int))/1000) - pow(10, 6)) )
-            {
-                double buf_x = path1.currentPosition().rx(), buf_y = path1.currentPosition().ry();
-
-                paint.drawPath(path1);
-                path1 = QPainterPath();
-
-                path1.moveTo(buf_x, buf_y);
-            }
-            ui->progressBar_drawing->setValue(static_cast <int> (i));
-        }
-
-        paint.drawPath(path1);
-        path1 = QPainterPath();
-
-        path1.moveTo(stepN*onePixelX,(Oy-((this->*MM[choiceModel+1])(0, j+1)))*onePixelY);
-    }
-
-    paint.end();
-
-    //----------------------------------------------------------------------
-
-    vector<double> ProcessPoints;
-
-    size_t tmp_var = 0;
-    for(tmp_var = 0; tmp_var < (selectZ-2); ++tmp_var)
-    {
-        ProcessPoints.push_back((this->*MM[choiceModel])(0, tmp_var+1));
-    }
-
-    for(tmp_var = 0; tmp_var < (selectZ-2); ++tmp_var)
-    {
-        ProcessPoints.push_back((this->*MM[choiceModel+1])(0, tmp_var+1));
-    }
-
-    vector<double> TimePoints;                                          // 5 - it's number time points display on graph in digital form
-    for (uint i = 0; i < 5; ++i)
-        TimePoints.push_back( ((2*(i+1)-1)*rightX)/10.0 );              // (2*(i+1)-1) - formula odd numbers; 10.0 - it's number time points on graph
-
-    //----------------------------------------------------------------------
-
-    QPainter painter(graph);
-    painter.setPen(QPen(Qt::black, 4, Qt::SolidLine));
-
-    painter.drawText(QPoint(3, 13), "T,'C" );
-    painter.drawText(QPoint(35, 360), "0" );
-    painter.drawText(QPoint(505, 360), "t,sec" );
-
-    tmp_var = 72;                                                       // tmp_var = 72 it's reference point
-    for (size_t i = 0; i < 5; ++i, tmp_var += 102.05)
-        painter.drawText(QPoint(static_cast <int> (tmp_var), 360), QString::number(TimePoints[i], 'g', 5));
-
-    // Draw processes points
-    QFont serifFont("Times", 7, QFont::Normal);
-    painter.setFont(serifFont);
-    for (tmp_var = 0; tmp_var < (selectZ-2); ++tmp_var)
-        painter.drawText(QPoint(0, static_cast <int> ((Oy-((this->*MM[choiceModel])(0, tmp_var+1)))*onePixelY-2)), QString::number(ProcessPoints[tmp_var], 'g', 5));
-
-    for (size_t i = tmp_var, tmp_var = 0; tmp_var < (selectZ-2); ++tmp_var, ++i)
-        painter.drawText(QPoint(0, static_cast <int> ((Oy-((this->*MM[choiceModel+1])(0, tmp_var+1)))*onePixelY-2)), QString::number(ProcessPoints[i], 'g', 5));
-
-*/
 }
 
 void MainWindow::on_save_clicked()

@@ -21,7 +21,7 @@ public:
     ~MainWindow();
 
     void drawGraph(bool notEmpty = false);
-    void draw_Model(QPixmap *graph, int choiceModel);
+    void draw_Model(int choiceModel);
     void recountPixels();
     void getData();
 
