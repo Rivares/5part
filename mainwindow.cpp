@@ -15,7 +15,6 @@
 #include <iostream>
 #include <functional>   //ref()
 
-
 using namespace std;
 
 static bool okey = 0;
@@ -156,11 +155,6 @@ void MainWindow::drawGraph(bool notEmpty)
 
     /**********************************************************************/
 
-    // add two new graphs and set their look:
-    ui->customPlot->addGraph();
-    ui->customPlot->graph(0)->setPen(QPen(Qt::blue)); // line color blue for first graph
-    ui->customPlot->graph(0)->setBrush(QBrush(QColor(0, 0, 255, 20))); // first graph will be filled with translucent blue
-
     // configure right and top axis to show ticks but no labels:
     // (see QCPAxisRect::setupFullAxesBox for a quicker method to do this)
     ui->customPlot->xAxis2->setVisible(true);
@@ -281,43 +275,52 @@ void MainWindow::on_draw_clicked()
 
 void MainWindow::draw_Model(int choiceModel)
 {    
-    QVector <double> TV_vector(TV.size());
-    QVector <double> TF_vector(TF.size());
-    QVector <double> CV_vector(CV.size());
-    QVector <double> CF_vector(CF.size());
+    QVector <QVector <double>> vectorModel;
 
-    QVector < QVector <double> > *TV_mat = new QVector < QVector<double> >;
+    QVector <double> t((selectN / dt));
 
-    QVector <double> time(selectN);
-
-    for(uint i = 0; i < selectN; ++i)
+    for(uint i = 0; i < selectZ; ++i)
     {
-        TV_vector[i] = TV[i][1];
-        time[i] = i;
+        QVector <double> tempVector;
+
+        for(uint j = 0; j < (selectN / dt); ++j)
+        {
+            tempVector.push_back(TV[j][i]);
+            t[j] = j;
+        }
+        vectorModel.push_back(tempVector);
     }
 
-    // pass data points to graphs:
-    ui->customPlot->graph(0)->setData(time, TV_vector);
-
-    ui->customPlot->xAxis->setRange(0, selectN);
-    ui->customPlot->yAxis->setRange(ui->inputLeftY->text().toDouble(), ui->inputRightY->text().toDouble());
-    ui->customPlot->replot();
-
-    // Note: we could have also just called customPlot->rescaleAxes(); instead
-    // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
-    //ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 
     //ui->progressBar_drawing->setRange(0, (static_cast <int> (rightX) - 1));
 
-
+    ui->customPlot->xAxis->setRange(0, selectN);
+    ui->customPlot->yAxis->setRange(ui->inputLeftY->text().toDouble(), ui->inputRightY->text().toDouble());
 
     // Draw Heat's part of model
-    for(uint j = 1; j < (selectZ-1); ++j)
+
+    srand(time(NULL));
+    qreal widthPen = 2.2;
+    int translucent = 35;
+    for(uint j = 1; j < selectZ-1; ++j)
     {
+        ui->customPlot->addGraph();
+        int randColorR = rand() % 255,
+            randColorG = rand() % 255,
+            randColorB = rand() % 255;
 
+        ui->customPlot->graph(j-1)->setPen(QPen(QColor  (randColorR,
+                                                        randColorG,
+                                                        randColorB), widthPen));
+        ui->customPlot->graph(j-1)->setBrush(QBrush(QColor (randColorR,
+                                                           randColorG,
+                                                           randColorB, translucent) ));
 
+        ui->customPlot->graph(j-1)->setData(t, vectorModel[j]);
     }
 
+    ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->customPlot->replot();
 }
 
 void MainWindow::on_save_clicked()
