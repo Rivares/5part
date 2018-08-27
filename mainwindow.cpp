@@ -18,7 +18,6 @@
 using namespace std;
 
 static bool okey = 0;
-static bool notEmpty = false;
 static double defaultH = 0.0;
 static unsigned int selectZ = 0;
 static unsigned long long selectN = 0;
@@ -66,7 +65,6 @@ void toFileMM(vector <vector <double> > MMM, string nameModel);
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
         clock_t timeMW_0 = clock();
-        Q_UNUSED(notEmpty);
         int msec = 0;
 
         // To initial array of functions
@@ -147,7 +145,7 @@ void MainWindow::getData()
     dt = (ui->selectStep->text().toDouble() <= 0.0)? 0.01 : abs(ui->selectStep->text().toDouble());
 }
 
-void MainWindow::drawGraph(bool notEmpty)
+void MainWindow::drawGraph()
 {
     clock_t timeMW_1 = clock();
     int msec = 0;
@@ -163,7 +161,14 @@ void MainWindow::drawGraph(bool notEmpty)
 
     // give the axes some labels:
     ui->customPlot->xAxis->setLabel("t, sec");
-    ui->customPlot->yAxis->setLabel("T, C");
+
+    ui->customPlot->yAxis->setLabel("Магия, dB");
+
+    if(ui->LHM->isChecked() || ui->NHM->isChecked() || ui->Hexch->isChecked())
+        ui->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+    if(ui->Mexch->isChecked())
+        ui->customPlot->yAxis->setLabel("Концентрация, %");
 
     ui->customPlot->xAxis->setRange(0, selectN);
     ui->customPlot->yAxis->setRange(ui->inputLeftY->text().toDouble(), ui->inputRightY->text().toDouble());
@@ -173,13 +178,6 @@ void MainWindow::drawGraph(bool notEmpty)
     connect(ui->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
     /**********************************************************************/
-
-    if(!notEmpty)
-    {
-        notEmpty = true;
-        //ui->outputGraph->setPixmap(graph);
-        return;
-    }
 
     ui->progressBar_calculating->setRange(0, 1);
 
@@ -265,19 +263,21 @@ void MainWindow::on_exit_clicked()
 void MainWindow::on_clear_clicked()
 {
     recountPixels();
-    drawGraph();
+    ui->customPlot->clearGraphs();
+    ui->customPlot->replot();
 }
 
 void MainWindow::on_draw_clicked()
 {
     getData();
     recountPixels();
-    drawGraph(1);
+    drawGraph();
 }
 
 void MainWindow::draw_Model(int choiceModel)
 {
-    //ui->progressBar_drawing->setRange(0, (selectN / dt));
+    /*-------------Prepare data to output to screen------------------*/
+
     QVector <double> t((selectN / dt));
     QVector <QVector <double>> TV_mat, TF_mat, CV_mat, CF_mat;
 
@@ -288,7 +288,6 @@ void MainWindow::draw_Model(int choiceModel)
 
         for(uint j = 0; j < (selectN / dt); ++j)
         {
-            //ui->progressBar_drawing->setValue(j+1);
             ui->statusBar->showMessage(QString("(!) Calculate procceses... (!)"));
 
             tmpVectorTV.push_back(TV[j][i]);
@@ -313,47 +312,94 @@ void MainWindow::draw_Model(int choiceModel)
         }
     }
 
-    /******************************/
+    /*-------------Choice drawing processes------------------*/
+
+    QVector <QVector <double>> drawingProcces_0, drawingProcces_1;
+
+    drawingProcces_0 = TV_mat;
+    drawingProcces_1 = TF_mat;
+
+    if(choiceModel == 2)
+    {
+        drawingProcces_0 = CV_mat;
+        drawingProcces_1 = CF_mat;
+    }
+
+    /*-------------Rendering graphics------------------*/
+
+    ui->customPlot->clearGraphs();
+    ui->customPlot->legend->setVisible(true);
 
     srand(time(NULL));
+    int randColorR, randColorG, randColorB;
+
+    QPen pen;
     qreal widthPen = 2.2;
     int translucent = 35;
 
-    for(uint j = 1; j < selectZ-1; ++j)
+    uint counter = 1;
+    for(uint j = 0; j < (selectZ-2) * 2; ++j)
     {
         ui->customPlot->addGraph();
-        int randColorR = rand() % 255,
-            randColorG = rand() % 255,
-            randColorB = rand() % 255;
 
-        ui->customPlot->graph(j-1)->setPen(QPen(QColor  (randColorR,
-                                                        randColorG,
-                                                        randColorB), widthPen));
-        ui->customPlot->graph(j-1)->setBrush(QBrush(QColor (randColorR,
-                                                           randColorG,
-                                                           randColorB, translucent) ));
-
-        ui->customPlot->graph(j-1)->setData(t, TV_mat[j]);
-
-        ui->customPlot->removeGraph(j-1);
-
-        ui->customPlot->addGraph();
-        randColorR = rand() % 255;
-        randColorG = rand() % 255;
+        randColorR = rand() % 255,
+        randColorG = rand() % 255,
         randColorB = rand() % 255;
 
-        ui->customPlot->graph(j-1)->setPen(QPen(QColor  (randColorR,
-                                                        randColorG,
-                                                        randColorB), widthPen));
-        ui->customPlot->graph(j-1)->setBrush(QBrush(QColor (randColorR,
+        pen.setColor(QColor(randColorR, randColorG, randColorB));
+
+        if(counter <= (selectZ-2))
+        {
+            /*-------------Customize of pen to drawing first model------------------*/
+
+            pen.setStyle(Qt::SolidLine);
+            ui->customPlot->graph(j)->setName(QString(tr("Vapor phase_%1")).arg(j));
+        }
+        else
+        {
+            /*-------------Customize of pen to drawing second model------------------*/
+
+            pen.setStyle(Qt::DotLine);
+            ui->customPlot->graph(j)->setName(QString(tr("Liquid phase_%1")).arg(j - (selectZ-2)));
+        }
+
+        pen.setWidthF(widthPen);
+        ui->customPlot->graph(j)->setPen(pen);
+        ui->customPlot->graph(j)->setBrush(QBrush(QColor (randColorR,
                                                            randColorG,
                                                            randColorB, translucent) ));
-
-        ui->customPlot->graph(j-1)->setData(t, TF_mat[j]);
+        ++counter;
     }
 
+    /*-------------Drawing graphs------------------*/
+/*
+    // Test outputing data
+    for(uint j = 1; j < selectZ-3; ++j)
+    {
+        for(uint i = 0; i < selectN; ++i)
+        {
+            cout << drawingProcces_0[j][i] << " , ";
+        }
+        cout << endl;
+    }
+*/
 
-    /******************************/
+    counter = 1;
+    uint j = 1;
+    for(uint i = 0; i < (selectZ-2) * 2; ++i)
+    {
+        if(counter <= (selectZ-2))
+        {
+            ui->customPlot->graph(i)->setData(t, drawingProcces_0[i+1]);
+        }
+
+        else
+        {
+            ui->customPlot->graph(i)->setData(t, drawingProcces_1[j]);
+            ++j;
+        }
+        ++counter;
+    }
 
     ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot->replot();
@@ -408,10 +454,10 @@ void MainWindow::on_save_clicked()
 
    QMessageBox msgBox;
    msgBox.setStandardButtons(QMessageBox::Ok);
-/*
-   if(ui->outputGraph->pixmap()->save(&file,"PNG"))
+
+   if(ui->customPlot->savePng(name + ".png", 0, 0, 1.0, -1))
    {
-        msgBox.setText("Saved to program folder with name: "+name+".png");
+        msgBox.setText("Saved to program folder with name: " + name + ".png");
         msgBox.setWindowTitle("Saved!");
     }
     else
@@ -419,7 +465,7 @@ void MainWindow::on_save_clicked()
         msgBox.setText("Error saving.");
         msgBox.setWindowTitle("Error!");
     }
-    */
+
     msgBox.exec();
 
 }
@@ -439,7 +485,6 @@ void MainWindow::on_LHM_clicked()
     rightY = ui->inputRightY->text().toDouble();
 
     ui->progressBar_calculating->setValue(0);   // Fake
-    ui->progressBar_drawing->setValue(0);
 }
 
 void MainWindow::on_NHM_clicked()
@@ -457,7 +502,6 @@ void MainWindow::on_NHM_clicked()
     rightY = ui->inputRightY->text().toDouble();
 
     ui->progressBar_calculating->setValue(0);   // Fake
-    ui->progressBar_drawing->setValue(0);
 }
 
 void MainWindow::on_Hexch_clicked()
@@ -475,7 +519,6 @@ void MainWindow::on_Hexch_clicked()
     rightY = ui->inputRightY->text().toDouble();
 
     ui->progressBar_calculating->setValue(0);   // Fake
-    ui->progressBar_drawing->setValue(0);
 }
 
 void MainWindow::on_Mexch_clicked()
@@ -493,7 +536,6 @@ void MainWindow::on_Mexch_clicked()
     rightY = ui->inputRightY->text().toDouble();
 
     ui->progressBar_calculating->setValue(0);   // Fake
-    ui->progressBar_drawing->setValue(0);
 }
 
 //--------------------------LINER MODEL!!!-----------------------------------
@@ -590,8 +632,8 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
             PTV_L = (a0 * 273.15 * dt) / defaultH, PTV_N = 0, PTF = (0.0002291314 * dt) / defaultH;
 
     // -----Model's mass exchenger parameters------
-    double E = 0.000000001, //RvM = 0.004302, RfM = 0.00001222;
-                            RfM = 0.000010734, RvM = 0.0216487318;
+    double E = 1.0E-9, RvM = 0.004302, RfM = 1.222E-5;
+                       //RfM = 0.000010734, RvM = 0.0216487318;
 
     vector <double> bmp;
     bmp.assign(selectZ, 0);

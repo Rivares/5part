@@ -20,7 +20,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void drawGraph(bool notEmpty = false);
+    void drawGraph();
     void draw_Model(int choiceModel);
     void recountPixels();
     void getData();
