@@ -166,6 +166,9 @@ void MainWindow::drawGraph(bool notEmpty)
     ui->customPlot->xAxis->setLabel("t, sec");
     ui->customPlot->yAxis->setLabel("T, C");
 
+    ui->customPlot->xAxis->setRange(0, selectN);
+    ui->customPlot->yAxis->setRange(ui->inputLeftY->text().toDouble(), ui->inputRightY->text().toDouble());
+
     // make left and bottom axes always transfer their ranges to right and top axes:
     connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->xAxis2, SLOT(setRange(QCPRange)));
     connect(ui->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->yAxis2, SLOT(setRange(QCPRange)));
@@ -274,34 +277,49 @@ void MainWindow::on_draw_clicked()
 }
 
 void MainWindow::draw_Model(int choiceModel)
-{    
-    QVector <QVector <double>> vectorModel;
-
+{
+    //ui->progressBar_drawing->setRange(0, (selectN / dt));
     QVector <double> t((selectN / dt));
+    QVector <QVector <double>> TV_mat, TF_mat, CV_mat, CF_mat;
 
+    // Convert from std::vector <std::vector <double>> to QVector <QVector <double>>
     for(uint i = 0; i < selectZ; ++i)
     {
-        QVector <double> tempVector;
+        QVector <double> tmpVectorTV, tmpVectorTF, tmpVectorCV, tmpVectorCF;
 
         for(uint j = 0; j < (selectN / dt); ++j)
         {
-            tempVector.push_back(TV[j][i]);
+            //ui->progressBar_drawing->setValue(j+1);
+            ui->statusBar->showMessage(QString("Calculate procceses..."));
+
+            tmpVectorTV.push_back(TV[j][i]);
+            tmpVectorTF.push_back(TF[j][i]);
+
+            if(choiceModel == 2)
+            {
+                tmpVectorCV.push_back(CV[j][i]);
+                tmpVectorCF.push_back(CF[j][i]);
+            }
+
             t[j] = j;
         }
-        vectorModel.push_back(tempVector);
+
+        TV_mat.push_back(tmpVectorTV);
+        TF_mat.push_back(tmpVectorTF);
+
+        if(choiceModel == 2)
+        {
+            CV_mat.push_back(tmpVectorCV);
+            CF_mat.push_back(tmpVectorCF);
+        }
     }
 
-
-    //ui->progressBar_drawing->setRange(0, (static_cast <int> (rightX) - 1));
-
-    ui->customPlot->xAxis->setRange(0, selectN);
-    ui->customPlot->yAxis->setRange(ui->inputLeftY->text().toDouble(), ui->inputRightY->text().toDouble());
-
-    // Draw Heat's part of model
+    /******************************/
 
     srand(time(NULL));
     qreal widthPen = 2.2;
     int translucent = 35;
+
     for(uint j = 1; j < selectZ-1; ++j)
     {
         ui->customPlot->addGraph();
@@ -316,11 +334,34 @@ void MainWindow::draw_Model(int choiceModel)
                                                            randColorG,
                                                            randColorB, translucent) ));
 
-        ui->customPlot->graph(j-1)->setData(t, vectorModel[j]);
+        ui->customPlot->graph(j-1)->setData(t, TV_mat[j]);
     }
+
+    /******************************/
+
+    for(uint j = 1; j < selectZ-1; ++j)
+    {
+        ui->customPlot->addGraph();
+        int randColorR = rand() % 255,
+            randColorG = rand() % 255,
+            randColorB = rand() % 255;
+
+        ui->customPlot->graph(j-1)->setPen(QPen(QColor  (randColorR,
+                                                        randColorG,
+                                                        randColorB), widthPen));
+        ui->customPlot->graph(j-1)->setBrush(QBrush(QColor (randColorR,
+                                                           randColorG,
+                                                           randColorB, translucent) ));
+
+        ui->customPlot->graph(j-1)->setData(t, TF_mat[j]);
+    }
+
+    /******************************/
 
     ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot->replot();
+
+    ui->statusBar->showMessage(QString("Ready"));
 }
 
 void MainWindow::on_save_clicked()
