@@ -22,7 +22,6 @@ static bool notEmpty = false;
 static double defaultH = 0.0;
 static unsigned int selectZ = 0;
 static unsigned long long selectN = 0;
-static double stepN = 0.0;
 double dt = 0.0;
 static map <string, int> Sizes = {{ "windowSizeX", 540 },
                                      { "windowSizeY", 370 },
@@ -290,7 +289,7 @@ void MainWindow::draw_Model(int choiceModel)
         for(uint j = 0; j < (selectN / dt); ++j)
         {
             //ui->progressBar_drawing->setValue(j+1);
-            ui->statusBar->showMessage(QString("Calculate procceses..."));
+            ui->statusBar->showMessage(QString("(!) Calculate procceses... (!)"));
 
             tmpVectorTV.push_back(TV[j][i]);
             tmpVectorTF.push_back(TF[j][i]);
@@ -335,16 +334,13 @@ void MainWindow::draw_Model(int choiceModel)
                                                            randColorB, translucent) ));
 
         ui->customPlot->graph(j-1)->setData(t, TV_mat[j]);
-    }
 
-    /******************************/
+        ui->customPlot->removeGraph(j-1);
 
-    for(uint j = 1; j < selectZ-1; ++j)
-    {
         ui->customPlot->addGraph();
-        int randColorR = rand() % 255,
-            randColorG = rand() % 255,
-            randColorB = rand() % 255;
+        randColorR = rand() % 255;
+        randColorG = rand() % 255;
+        randColorB = rand() % 255;
 
         ui->customPlot->graph(j-1)->setPen(QPen(QColor  (randColorR,
                                                         randColorG,
@@ -355,6 +351,7 @@ void MainWindow::draw_Model(int choiceModel)
 
         ui->customPlot->graph(j-1)->setData(t, TF_mat[j]);
     }
+
 
     /******************************/
 
