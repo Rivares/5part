@@ -2,9 +2,10 @@
 #define MAINWINDOW_H
 
 #include "qcustomplot.h"
+
 #include <QMainWindow>
-#include <QtGui>
 #include <vector>
+#include <QtGui>
 
 using namespace std;
 
@@ -21,8 +22,7 @@ public:
     ~MainWindow();
 
     void drawGraph();
-    void draw_Model(int choiceModel);
-    void recountPixels();
+    void drawModel(int choiceModel);
     void getData();
 
     typedef double (MainWindow::*bMM)(unsigned long long i, uint j);   // Function Pointer
@@ -34,30 +34,21 @@ public:
 
 private slots:
     void on_exit_clicked();
-
     void on_clear_clicked();
-
     void on_draw_clicked();
-
     void on_save_clicked();
 
-    void on_LHM_clicked();
+    void on_LVM_clicked();
+    void on_NLVM_clicked();
+    void on_EVM_clicked();
+    void on_EFM_clicked();
 
-    void on_NHM_clicked();
+    void on_spaceParametr_valueChanged(int arg1);
 
-    void on_Mexch_clicked();
-
-    void on_Hexch_clicked();
-
-    void on_CouiceZspinBox_valueChanged(int arg1);
-
-    void on_lineEdit_editingFinished();
-
-    void on_lineEdit_2_editingFinished();
-
-    void on_lineEdit_3_editingFinished();
-
-    void on_lineEdit_4_editingFinished();
+    void on_valuePetrubationTVM_editingFinished();
+    void on_valuePetrubationTFM_editingFinished();
+    void on_valuePetrubationCVM_editingFinished();
+    void on_valuePetrubationCFM_editingFinished();
 
 private:
     Ui::MainWindow *ui;
@@ -77,9 +68,6 @@ private:
 
     double leftX,rightX;
     double leftY,rightY;
-    int pictWidth,pictHeight;
-    double onePixelX,onePixelY;
-    double Ox,Oy;
 };
 
 #endif // MAINWINDOW_H

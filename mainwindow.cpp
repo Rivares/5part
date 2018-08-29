@@ -1,12 +1,12 @@
+#include "ui_mainwindow.h"
 #include "qcustomplot.h"
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+
 #include <QMessageBox>
 #include <QString>
 #include <QDebug>
 #include <vector>
 #include <cmath>
-#include <map>
 #include <array>
 #include <vector>
 #include <thread>
@@ -15,31 +15,20 @@
 #include <iostream>
 #include <functional>   //ref()
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 static bool okey = 0;
 static double defaultH = 0.0;
 static unsigned int selectZ = 0;
 static unsigned long long selectN = 0;
 double dt = 0.0;
-static map <string, int> Sizes = {{ "windowSizeX", 540 },
-                                     { "windowSizeY", 370 },
-                                     { "axisX_x1", 0 },
-                                     { "axisX_y1", 343 },
-                                     { "axisX_x2", 540 },
-                                     { "axisX_y2", 343 },
-                                     { "axisY_x1", 28 },
-                                     { "axisY_y1", 0 },
-                                     { "axisY_x2", 28 },
-                                     { "axisY_y2", 370 },
-                                    };
 
 static double dRC = 1.4;
 const double initLayerTV_0 = 160, initLayerTV_1 = 147.99;
 const double initLayerTF_0 = 120.37, initLayerTF_1 = 132.39;
 const double initLayerCV_0 = 67.94, initLayerCV_1 = 72.04;
 const double initLayerCF_0 = 6.5, initLayerCF_1 = 2.78;
-static bool state = false;
 
 //----------Petrtubation----------//    Temperature(min:???; maxHeat:???), gas flow or pressure differential?
 static double P_TV = 0;
@@ -58,8 +47,6 @@ void initialLayerTF(vector <vector <double> > &TF);
 void initialLayerCV(vector <vector <double> > &CV);
 void initialLayerCF(vector <vector <double> > &CF);
 
-void draw_Model(QPixmap *graph, int choiceModel);
-
 void toFileMM(vector <vector <double> > MMM, string nameModel);
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -77,11 +64,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
         ui->inputLeftX->setReadOnly(true);
 
-        selectZ = static_cast <unsigned int> (ui->CouiceZspinBox->value() + 2);
+        selectZ = static_cast <unsigned int> (ui->spaceParametr->value() + 2);
         selectN = ui->inputRightX->text().toULongLong(&okey, 10);
         defaultH = dRC/(selectZ-2);                                     // dRC(Height RC) = 1.4m
-
-        state = false;
 
         ui->inputLeftY->clear();
         ui->inputRightY->clear();
@@ -125,15 +110,6 @@ double MainWindow::bCF(unsigned long long i, uint j)
     return CF[static_cast <size_t> (i)][j];
 }
 
-
-void MainWindow::recountPixels()
-{
-    onePixelX = (Sizes["windowSizeX"] - Sizes["axisY_x1"]) / (rightX-leftX);
-    onePixelY = Sizes["axisX_y1"]  /(rightY - leftY);
-    Ox = fabs(leftX + Sizes["axisY_x1"]); Oy = fabs(rightY);                // Nothing!!!
-    ui->selectStep->setText(QString::fromStdString(std::to_string(dt)));
-}
-
 void MainWindow::getData()
 {
     leftX = ui->inputLeftX->text().toDouble();
@@ -150,10 +126,10 @@ void MainWindow::drawGraph()
     clock_t timeMW_1 = clock();
     int msec = 0;
 
-    /**********************************************************************/
+    ui->vaporState->clear();
+    ui->fluidState->clear();
 
     // configure right and top axis to show ticks but no labels:
-    // (see QCPAxisRect::setupFullAxesBox for a quicker method to do this)
     ui->customPlot->xAxis2->setVisible(true);
     ui->customPlot->xAxis2->setTickLabels(false);
     ui->customPlot->yAxis2->setVisible(true);
@@ -164,10 +140,10 @@ void MainWindow::drawGraph()
 
     ui->customPlot->yAxis->setLabel("Магия, dB");
 
-    if(ui->LHM->isChecked() || ui->NHM->isChecked() || ui->Hexch->isChecked())
+    if(ui->LVM->isChecked() || ui->NLVM->isChecked() || ui->EVM->isChecked())
         ui->customPlot->yAxis->setLabel("Tемпература, 'C");
 
-    if(ui->Mexch->isChecked())
+    if(ui->EFM->isChecked())
         ui->customPlot->yAxis->setLabel("Концентрация, %");
 
     ui->customPlot->xAxis->setRange(0, selectN);
@@ -177,77 +153,64 @@ void MainWindow::drawGraph()
     connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->xAxis2, SLOT(setRange(QCPRange)));
     connect(ui->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-    /**********************************************************************/
+    /*----------------------------------------------------------------------*/
 
-    ui->progressBar_calculating->setRange(0, 1);
+    ui->statusBar->showMessage(QString("(!) Calculating the mathematical model... (!)"));
 
-    if (ui->LHM->isChecked())
-    {
+    if (ui->LVM->isChecked())
+    {      
         calculateMM(TV, TF);
-        ui->progressBar_calculating->setValue(1);   // Fake
-        draw_Model(0);
+        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+        drawModel(0);
     }
 
-    if (ui->NHM->isChecked())
+    if (ui->NLVM->isChecked())
     {
         calculateMM(TV, TF, 1);                     // OVERLOADING CALCULATE OF FUNCTION
-        ui->progressBar_calculating->setValue(1);   // Fake
-        draw_Model(0);
+        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph...... (!)"));
+        drawModel(0);
     }
 
-    if((ui->Hexch->isChecked()) || (ui->Mexch->isChecked()))
+    if((ui->EVM->isChecked()) || (ui->EFM->isChecked()))
     {
         calculateMM(TV, TF, CV, CF);
-        ui->progressBar_calculating->setValue(1);   // Fake
-        if((ui->Hexch->isChecked()))
-            draw_Model(0);
+        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+
+        if((ui->EVM->isChecked()))
+            drawModel(0);
         else
-            draw_Model(2);
+            drawModel(2);
     }
 
-    //----------------------------------------------------------------------
+    ui->statusBar->showMessage(QString("Ready!"));
+
+    /*----------------------------------------------------------------------*/
 
     // Out to display steady-state value temperature
-    if((ui->Hexch->isChecked()) || (ui->LHM->isChecked())) {
-        QString str = QString::number(TV[static_cast <size_t> (selectN-1)][1]);
-        ui->valV1->setText(str);
-
-        str = QString::number(TV[static_cast <size_t> (selectN-1)][(selectZ-1) / 2]);
-        ui->valV2->setText(str);
-
-        str = QString::number(TV[static_cast <size_t> (selectN-1)][selectZ-2]);
-        ui->valV3->setText(str);
-    //----------------------------------------------------------------------
-        str = QString::number(TF[static_cast <size_t> (selectN-1)][1]);
-        ui->valF1->setText(str);
-
-        str = QString::number(TF[static_cast <size_t> (selectN-1)][(selectZ-1) / 2]);
-        ui->valF2->setText(str);
-
-        str = QString::number(TF[static_cast <size_t> (selectN-1)][selectZ-2]);
-        ui->valF3->setText(str);
+    QList <QString> listStatesVapor, listStatesFluid;
+    if((ui->EVM->isChecked()) || (ui->LVM->isChecked()))
+    {
+        for(uint j = 1; j < selectZ-1; ++j)
+        {
+            listStatesVapor.append(QString::number(TV[static_cast <size_t> (selectN-1)][j]));
+            listStatesFluid.append(QString::number(TF[static_cast <size_t> (selectN-1)][j]));
+        }
     }
 
     // Out to display steady-state concentration of absorbent
-    if(ui->Mexch->isChecked()) {
-        QString str = QString::number(CV[static_cast <size_t> (selectN-1)][1]);
-        ui->valV1->setText(str);
-
-        str = QString::number(CV[static_cast <size_t> (selectN-1)][(selectZ-1) / 2]);
-        ui->valV2->setText(str);
-
-        str = QString::number(CV[static_cast <size_t> (selectN-1)][selectZ-2]);
-        ui->valV3->setText(str);
-    //----------------------------------------------------------------------
-        str = QString::number(CF[static_cast <size_t> (selectN-1)][1]);
-        ui->valF1->setText(str);
-
-        str = QString::number(CF[static_cast <size_t> (selectN-1)][(selectZ-1) / 2]);
-        ui->valF2->setText(str);
-
-        str = QString::number(CF[static_cast <size_t> (selectN-1)][selectZ-2]);
-        ui->valF3->setText(str);
+    if(ui->EFM->isChecked())
+    {
+        for(uint j = 1; j < selectZ-1; ++j)
+        {
+            listStatesVapor.append(QString::number(CV[static_cast <size_t> (selectN-1)][j]));
+            listStatesFluid.append(QString::number(CF[static_cast <size_t> (selectN-1)][j]));
+        }
     }
+    QStringList vaporStates(listStatesVapor);
+    QStringList fluidStates(listStatesFluid);
+
+    ui->vaporState->addItems(vaporStates);
+    ui->fluidState->addItems(fluidStates);
 
     clock_t timeDiff = clock() - timeMW_1;
     msec = timeDiff * 1000 / CLOCKS_PER_SEC;
@@ -262,19 +225,18 @@ void MainWindow::on_exit_clicked()
 
 void MainWindow::on_clear_clicked()
 {
-    recountPixels();
     ui->customPlot->clearGraphs();
     ui->customPlot->replot();
 }
 
 void MainWindow::on_draw_clicked()
 {
+    ui->selectStep->setText(QString::fromStdString(std::to_string(dt)));
     getData();
-    recountPixels();
     drawGraph();
 }
 
-void MainWindow::draw_Model(int choiceModel)
+void MainWindow::drawModel(int choiceModel)
 {
     /*-------------Prepare data to output to screen------------------*/
 
@@ -288,8 +250,6 @@ void MainWindow::draw_Model(int choiceModel)
 
         for(uint j = 0; j < (selectN / dt); ++j)
         {
-            ui->statusBar->showMessage(QString("(!) Calculate procceses... (!)"));
-
             tmpVectorTV.push_back(TV[j][i]);
             tmpVectorTF.push_back(TF[j][i]);
 
@@ -403,13 +363,11 @@ void MainWindow::draw_Model(int choiceModel)
 
     ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot->replot();
-
-    ui->statusBar->showMessage(QString("Ready"));
 }
 
 void MainWindow::on_save_clicked()
 {
-    if(ui->Hexch->isChecked() || ui->Mexch->isChecked())
+    if(ui->EVM->isChecked() || ui->EFM->isChecked())
     {
         toFileMM(TV, "TV");
         toFileMM(TF, "TF");
@@ -417,13 +375,13 @@ void MainWindow::on_save_clicked()
         toFileMM(CF, "CF");
     }
 
-    if(ui->LHM->isChecked())
+    if(ui->LVM->isChecked())
     {
         toFileMM(TV, "TV");
         toFileMM(TF, "TF");
     }
 
-    if(ui->NHM->isChecked())
+    if(ui->NLVM->isChecked())
     {
         toFileMM(TV, "NTV");
         toFileMM(TF, "NTF");
@@ -432,23 +390,34 @@ void MainWindow::on_save_clicked()
    QTime time = QTime::currentTime();
    QDate date = QDate::currentDate();
    QString name;
-   if(date.day()<10)
+
+    if(date.day() < 10)
         name += "0";
-    name += QString::number(date.day())+".";
+
+    name += QString::number(date.day()) + ".";
+
     if(date.month()<10)
         name += "0";
-    name += QString::number(date.month())+".";
-    name += QString::number(date.year())+"_";
-    if(time.hour()<10)
+
+    name += QString::number(date.month()) + ".";
+    name += QString::number(date.year()) + "_";
+
+    if(time.hour() < 10)
         name += "0";
-    name += QString::number(time.hour())+"-";
-    if(time.minute()<10)
+
+    name += QString::number(time.hour()) + "-";
+
+    if(time.minute() < 10)
         name += "0";
-    name += QString::number(time.minute())+"-";
-    if(time.second()<10)
+
+    name += QString::number(time.minute()) + "-";
+
+    if(time.second() < 10)
         name += "0";
+
     name += QString::number(time.second());
-    QFile file(name+".png");
+
+    QFile file(name + ".png");
     qDebug() << name;
     file.open(QIODevice::WriteOnly);
 
@@ -470,10 +439,10 @@ void MainWindow::on_save_clicked()
 
 }
 
-void MainWindow::on_LHM_clicked()
+void MainWindow::on_LVM_clicked()
 {
-    ui->lineEdit_3->hide();
-    ui->lineEdit_4->hide();
+    ui->valuePetrubationCVM->hide();
+    ui->valuePetrubationCFM->hide();
 
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
@@ -483,14 +452,12 @@ void MainWindow::on_LHM_clicked()
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
-
-    ui->progressBar_calculating->setValue(0);   // Fake
 }
 
-void MainWindow::on_NHM_clicked()
+void MainWindow::on_NLVM_clicked()
 {
-    ui->lineEdit_3->hide();
-    ui->lineEdit_4->hide();
+    ui->valuePetrubationCVM->hide();
+    ui->valuePetrubationCFM->hide();
 
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
@@ -500,42 +467,36 @@ void MainWindow::on_NHM_clicked()
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
-
-    ui->progressBar_calculating->setValue(0);   // Fake
 }
 
-void MainWindow::on_Hexch_clicked()
+void MainWindow::on_EVM_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
 
-    ui->lineEdit_3->show();
-    ui->lineEdit_4->show();
+    ui->valuePetrubationCVM->show();
+    ui->valuePetrubationCFM->show();
 
     ui->inputLeftY->insert("100");
     ui->inputRightY->insert("170");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
-
-    ui->progressBar_calculating->setValue(0);   // Fake
 }
 
-void MainWindow::on_Mexch_clicked()
+void MainWindow::on_EFM_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
 
-    ui->lineEdit_3->show();
-    ui->lineEdit_4->show();
+    ui->valuePetrubationCVM->show();
+    ui->valuePetrubationCFM->show();
 
     ui->inputLeftY->insert("0");
     ui->inputRightY->insert("90");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
-
-    ui->progressBar_calculating->setValue(0);   // Fake
 }
 
 //--------------------------LINER MODEL!!!-----------------------------------
@@ -564,7 +525,6 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
-
 
     // Calculate model
     for(size_t i = 1; i < size_t(selectN / dt); ++i)   // n: t
@@ -702,36 +662,6 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
            CF[i][j] = -CF[i-1][j] * (PTF - 1 - (dt*RfM*E)) + (PTF * CF[i-1][j-1]) - (dt * RfM * CV[i-1][(selectZ-1)-j]) + P_CF;
         }
     }
-
-    /******************************************************************/
-
-    cout << "Set values:" << endl;
-    for(uint j = 0; j < selectZ; j++)
-    {
-        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
-    }
-    cout << endl;
-
-    for(uint j = 0; j < selectZ; j++)
-    {
-        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
-    }
-    cout << endl;
-
-    for(uint j = 0; j < selectZ; j++)
-    {
-        cout << CV[size_t((selectN-1) / dt)][j] << " | ";
-    }
-    cout << endl;
-
-    for(uint j = 0; j < selectZ; j++)
-    {
-        cout << CF[size_t((selectN-1) / dt)][j] << " | ";
-    }
-    cout << endl;
-
-    /******************************************************************/
-
 }
 
 void initialLayerTV(vector <vector <double> > &TV)
@@ -847,27 +777,27 @@ void MainWindow::toFileMM(vector <vector <double> > MMM, string nameModel)
     foutMM.close();
 }
 
-void MainWindow::on_CouiceZspinBox_valueChanged(int valueChanged)
+void MainWindow::on_spaceParametr_valueChanged(int countSpacePoints)
 {
-    selectZ = static_cast <unsigned int> (valueChanged + 2);
+    selectZ = static_cast <unsigned int> (countSpacePoints + 2);
 }
 
-void MainWindow::on_lineEdit_editingFinished()
+void MainWindow::on_valuePetrubationTVM_editingFinished()
 {
-    P_TV = ui->lineEdit->text().toDouble();
+    P_TV = ui->valuePetrubationTVM->text().toDouble();
 }
 
-void MainWindow::on_lineEdit_2_editingFinished()
+void MainWindow::on_valuePetrubationTFM_editingFinished()
 {
-    P_TF = ui->lineEdit_2->text().toDouble();
+    P_TF = ui->valuePetrubationTFM->text().toDouble();
 }
 
-void MainWindow::on_lineEdit_3_editingFinished()
+void MainWindow::on_valuePetrubationCVM_editingFinished()
 {
-   P_CV = ui->lineEdit_3->text().toDouble();
+   P_CV = ui->valuePetrubationCVM->text().toDouble();
 }
 
-void MainWindow::on_lineEdit_4_editingFinished()
+void MainWindow::on_valuePetrubationCFM_editingFinished()
 {
-    P_CF = ui->lineEdit_4->text().toDouble();
+    P_CF = ui->valuePetrubationCFM->text().toDouble();
 }
