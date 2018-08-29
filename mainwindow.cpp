@@ -3,6 +3,7 @@
 #include "mainwindow.h"
 
 #include <QMessageBox>
+#include <QtCharts>
 #include <QString>
 #include <QDebug>
 #include <vector>
@@ -15,6 +16,7 @@
 #include <iostream>
 #include <functional>   //ref()
 
+using namespace QtCharts;
 using std::cout;
 using std::endl;
 
