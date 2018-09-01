@@ -233,7 +233,6 @@ void MainWindow::on_clear_clicked()
 
 void MainWindow::on_draw_clicked()
 {
-    ui->selectStep->setText(QString::fromStdString(std::to_string(dt)));
     getData();
     drawGraph();
 }
@@ -346,6 +345,9 @@ void MainWindow::drawModel(int choiceModel)
     }
 */
 
+    clock_t timeMW_Cust = clock();
+    int msec = 0;
+
     counter = 1;
     uint j = 1;
     for(uint i = 0; i < (selectZ-2) * 2; ++i)
@@ -365,6 +367,10 @@ void MainWindow::drawModel(int choiceModel)
 
     ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot->replot();
+
+    clock_t timeDiff = clock() - timeMW_Cust;
+    msec = timeDiff * 1000 / CLOCKS_PER_SEC;
+    cout << endl <<"(QCustomPlot) Drawing time of program taken " << msec/1000 << " seconds, and " << msec%1000 <<" milliseconds!" << endl;
 }
 
 void MainWindow::on_save_clicked()
@@ -768,7 +774,7 @@ void MainWindow::toFileMM(vector <vector <double> > MMM, string nameModel)
 
     ofstream foutMM(nameModel, ios_base::out | ios_base::trunc);
 
-    for(size_t i = 0; i < (selectN / dt); i++)
+    for(size_t i = 0; i < (selectN / dt); ++i)
     {
         for(uint j = 0; j < selectZ; j++)
         {
