@@ -3,7 +3,6 @@
 #include "mainwindow.h"
 
 #include <QMessageBox>
-#include <QtCharts>
 #include <QString>
 #include <QDebug>
 #include <vector>
@@ -16,7 +15,6 @@
 #include <iostream>
 #include <functional>   //ref()
 
-using namespace QtCharts;
 using std::cout;
 using std::endl;
 
@@ -377,27 +375,38 @@ void MainWindow::on_save_clicked()
 {
     if(ui->EVM->isChecked() || ui->EFM->isChecked())
     {
-        toFileMM(TV, "TV");
-        toFileMM(TF, "TF");
-        toFileMM(CV, "CV");
-        toFileMM(CF, "CF");
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF");
+        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV");
+        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF");
+
+        threadToFileTVMM.join();
+        threadToFileTFMM.join();
+        threadToFileCVMM.join();
+        threadToFileCFMM.join();
     }
 
     if(ui->LVM->isChecked())
     {
-        toFileMM(TV, "TV");
-        toFileMM(TF, "TF");
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF");
+
+        threadToFileTVMM.join();
+        threadToFileTFMM.join();
     }
 
     if(ui->NLVM->isChecked())
     {
-        toFileMM(TV, "NTV");
-        toFileMM(TF, "NTF");
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "NTV");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "NTF");
+
+        threadToFileTVMM.join();
+        threadToFileTFMM.join();
     }
 
-   QTime time = QTime::currentTime();
-   QDate date = QDate::currentDate();
-   QString name;
+    QTime time = QTime::currentTime();
+    QDate date = QDate::currentDate();
+    QString name;
 
     if(date.day() < 10)
         name += "0";
@@ -429,22 +438,21 @@ void MainWindow::on_save_clicked()
     qDebug() << name;
     file.open(QIODevice::WriteOnly);
 
-   QMessageBox msgBox;
-   msgBox.setStandardButtons(QMessageBox::Ok);
+    QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Ok);
 
-   if(ui->customPlot->savePng(name + ".png", 0, 0, 1.0, -1))
-   {
+    if(ui->customPlot->savePng(name + ".png", 0, 0, 1.0, -1))
+    {
         msgBox.setText("Saved to program folder with name: " + name + ".png");
         msgBox.setWindowTitle("Saved!");
     }
     else
-   {
+    {
         msgBox.setText("Error saving.");
         msgBox.setWindowTitle("Error!");
     }
 
     msgBox.exec();
-
 }
 
 void MainWindow::on_LVM_clicked()
@@ -768,7 +776,7 @@ void initialLayerCF(vector <vector <double> > &CF)
     }
 }
 
-void MainWindow::toFileMM(vector <vector <double> > MMM, string nameModel)
+void toFileMM(vector <vector <double> > MMM, string nameModel)
 {
     nameModel = "MM_" + nameModel + ".txt";
 

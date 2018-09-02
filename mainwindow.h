@@ -53,8 +53,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    void toFileMM(vector <vector <double> > MMM, string nameModel);
-
     // -----Model's heat exchenger parameters------
     double RvT, RfT, a0, PTV_L, PTV_N, PTF;
 
