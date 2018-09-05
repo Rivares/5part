@@ -708,9 +708,11 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         }
     }
 
+    std::cout.precision(17);
+
     for(uint j = 1; j < (selectZ-1); ++j)  // i: z
     {
-        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TV[size_t((selectN-1) / dt)][j] << std::fixed << " | ";
      }
 
     for(uint j = 1; j < (selectZ-1); ++j)  // i: z
