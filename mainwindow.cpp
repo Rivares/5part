@@ -544,6 +544,19 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
 
+    cout << endl << "Initial values:" << endl;
+    std::cout.precision(8);
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << TV[0][j] << std::fixed << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << TF[0][j] << std::fixed << " | ";
+    }   cout << endl;
+
     // Calculate model
     for(size_t i = 1; i < size_t(selectN / dt); ++i)// time
     {
@@ -562,11 +575,11 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
                     + P_TF;
        }
     }
-    std::cout.precision(17);
 
+    cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-1) / dt)][j] << std::fixed << " | ";
+        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
     }
 
     for(uint j = 1; j < (selectZ-1); ++j)
@@ -608,6 +621,19 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, b
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
 
+    cout << endl << "Initial values:" << endl;
+    std::cout.precision(8);
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << TV[0][j] << std::fixed << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << TF[0][j] << std::fixed << " | ";
+    }   cout << endl;
+
     // Calculate model
     for(size_t i = 1; i < size_t(selectN / dt); ++i)
     {
@@ -630,17 +656,16 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, b
         }
     }
 
+    cout << endl << "Steady-state values:" << endl;
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+    }
 
-   for(uint j = 1; j < (selectZ-1); ++j)
-   {
-       cout << TV[size_t((selectN-1) / dt)][j] << " | ";
-   }
-
-   for(uint j = 1; j < (selectZ-1); ++j)
-   {
-       cout << TF[size_t((selectN-1) / dt)][j] << " | ";
-   }
-
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
+    }
 }
 
 //---------------------------INTERCONNECTED MODEL!!!------------------------------
@@ -687,9 +712,11 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     threadInitialLayerCF.join();
 
     cout << endl << "Initial values:" << endl;
+    std::cout.precision(8);
+
     for(size_t j = 0; j < selectZ; ++j)
     {
-        cout << TV[0][j] << " | ";
+        cout << TV[0][j] << std::fixed << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < selectZ; ++j)
@@ -750,11 +777,10 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         }
     }
 
-    std::cout.precision(17);
-
+    cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-1) / dt)][j] << std::fixed << " | ";
+        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
     }
 
     for(uint j = 1; j < (selectZ-1); ++j)
