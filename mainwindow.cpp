@@ -18,7 +18,7 @@
 using std::cout;
 using std::endl;
 
-static bool okey = 0;
+static bool okey = false;
 static double defaultH = 0.0000;
 static unsigned int selectZ = 0;
 static unsigned long long selectN = 0;
@@ -31,10 +31,10 @@ const double initLayerCV_0 = 67.9444, initLayerCV_1 = 72.0444;
 const double initLayerCF_0 = 6.5555, initLayerCF_1 = 2.7888;
 
 //----------Petrtubation----------//    Temperature(min:???; maxHeat:???), gas flow or pressure differential?
-static double P_TV = 0;
-static double P_TF = 0;
-static double P_CV = 0;
-static double P_CF = 0;
+static double P_TV = 0.0;
+static double P_TF = 0.0;
+static double P_CV = 0.0;
+static double P_CF = 0.0;
 
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
@@ -384,7 +384,7 @@ void MainWindow::on_save_clicked()
         threadToFileTVMM.join();
         threadToFileTFMM.join();
         threadToFileCVMM.join();
-        threadToFileCFMM.join();
+        threadToFileCFMM.join();       
     }
 
     if(ui->LVM->isChecked())
@@ -519,7 +519,8 @@ void MainWindow::on_EFM_clicked()
 //--------------------------LINER MODEL!!!-----------------------------------
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 {
-    double  RvT = 0.0191806, RfT = 0.0000777, PTV = (0.05654433 * dt) / defaultH,
+    double  RvT = 0.0191806, RfT = 0.0000777,
+            PTV = (0.05654433 * dt) / defaultH,
             PTF = (0.0002291314 * dt) / defaultH;
 
     vector <double> bmp;
@@ -544,23 +545,34 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     threadInitialLayerTF.join();
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)   // n: t
+    for(size_t i = 1; i < size_t(selectN / dt); ++i)// time
     {
-       for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+       for(uint j = 1; j < (selectZ-1); ++j)        // place
        {
-           TV[i][j] = TV[i-1][j] * (-PTV + 1.0 - (dt * RvT)) + (PTV * TV[i-1][j-1]) + (dt * RvT * TF[i-1][(selectZ-1)-j]) + P_TV;
-           TF[i][j] = TF[i-1][j] * (-PTF + 1.0 - (dt * RfT)) + (PTF * TF[i-1][j-1]) + (dt * RfT * TV[i-1][(selectZ-1)-j]) + P_TF;
+           TV[i][j] = (dt * RvT * TF[i-1][(selectZ-1)-j])
+                    + (PTV * TV[i-1][j-1])
+                    + TV[i-1][j] * (-(dt * RvT) - PTV)
+                    + TV[i-1][j]
+                    + P_TV;
+
+           TF[i][j] = (dt * RfT * TV[i-1][(selectZ-1)-j])
+                    + (PTF * TF[i-1][j-1])
+                    + TF[i-1][j] * (-PTF - (dt * RfT))
+                    + TF[i-1][j]
+                    + P_TF;
        }
     }
-    for(uint j = 1; j < (selectZ-1); ++j)  // i: z
-    {
-        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
-     }
+    std::cout.precision(17);
 
-    for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << TV[size_t((selectN-1) / dt)][j] << std::fixed << " | ";
+    }
+
+    for(uint j = 1; j < (selectZ-1); ++j)
     {
         cout << TF[size_t((selectN-1) / dt)][j] << " | ";
-     }
+    }
 }
 
 //--------------------------NON-LINER MODEL!!!-----------------------------------
@@ -570,10 +582,10 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, b
     //double a0 = 0.0001152735759 or 0.00016966, What is TRUE?????????
 
     // -----Model's heat exchenger parameters------
-    double RvT = 0.0191806, RfT = 0.0000777, a0 = 1.305007E-4,
+    double  RvT = 0.0191806, RfT = 0.0000777, a0 = 1.305007E-4,
             PTV_L = (a0 * 273.15 * dt) / defaultH,
-            PTF = (0.0002291314 * dt) / defaultH,
-            PTV_N = 0.0;
+            PTV_N = 0.0,
+            PTF = (0.0002291314 * dt) / defaultH;
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -597,27 +609,37 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, b
     threadInitialLayerTF.join();
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)   // n: t
+    for(size_t i = 1; i < size_t(selectN / dt); ++i)
     {
-       for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+       for(uint j = 1; j < (selectZ-1); ++j)
        {
-           PTV_N = (a0*TV[i-1][j] * dt) / defaultH;
-           TV[i][j] = -TV[i-1][j] * (PTV_L - 1.0 - PTV_N + dt*RvT) + (PTV_L * TV[i-1][j-1]) - (PTV_N * TV[i-1][j+1])
-                                                                 + (dt * RvT * TF[i-1][(selectZ-1)-j]) + P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
-           TF[i][j] = -TF[i-1][j] * (PTF - 1.0 + dt*RfT) + (PTF * TF[i-1][j-1]) + (dt * RfT * TV[i-1][(selectZ-1)-j]) + P_TF;
+           PTV_N = (a0 * TV[i-1][j] * dt) / defaultH;
+
+           TV[i][j] = (dt * RvT * TF[i-1][(selectZ-1)-j])
+                    - (PTV_N * TV[i-1][j+1])
+                    - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
+                    + (PTV_L * TV[i-1][j-1])
+                    + TV[i-1][j]
+                    + P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
+
+           TF[i][j] = (dt * RfT * TV[i-1][(selectZ-1)-j])
+                    + (PTF * TF[i-1][j-1])
+                    - TF[i-1][j] * (dt*RfT + PTF)
+                    + TF[i-1][j]
+                    + P_TF;
         }
     }
 
 
-   for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+   for(uint j = 1; j < (selectZ-1); ++j)
    {
        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
-    }
+   }
 
-   for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+   for(uint j = 1; j < (selectZ-1); ++j)
    {
        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
-    }
+   }
 
 }
 
@@ -626,8 +648,10 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                  vector <vector <double> > &CV, vector <vector <double> > &CF)
 {
     // -----Model's heat exchenger parameters------
-    double RvT = 0.0191806, RfT = 0.0000777, a0 = 1.305007E-4,
-            PTV_L = (a0 * 273.15 * dt) / defaultH, PTV_N = 0.0, PTF = (0.0002291314 * dt) / defaultH;
+    double  RvT = 0.0191806, RfT = 0.0000777, a0 = 1.305007E-4,
+            PTV_L = (a0 * 273.15 * dt) / defaultH,
+            PTV_N = 0.0,
+            PTF = (0.0002291314 * dt) / defaultH;
 
     // -----Model's mass exchenger parameters------
     double E = 1.0E-9, RvM = 0.004302, RfM = 1.222E-5;
@@ -689,14 +713,28 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
        for(size_t j = 1; j < (selectZ-1); ++j)      // place
        {
            // -----Calculate layer heat exchenger model------
-           PTV_N = (a0*TV[i-1][j] * dt) / defaultH;
-           TV[i][j] = -TV[i-1][j] * (PTV_L - 1.0 - PTV_N + dt*RvT) + (PTV_L * TV[i-1][j-1]) - (PTV_N * TV[i-1][j+1])
-                                                                 + (dt * RvT * TF[i-1][(selectZ-1)-j]) + P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
-           TF[i][j] = -TF[i-1][j] * (PTF - 1.0 + dt*RfT) + (PTF * TF[i-1][j-1]) + (dt * RfT * TV[i-1][(selectZ-1)-j]) + P_TF;
+           PTV_N = (a0 * TV[i-1][j] * dt) / defaultH;
+
+           TV[i][j] = (dt * RvT * TF[i-1][(selectZ-1)-j])
+                    - (PTV_N * TV[i-1][j+1])
+                    - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
+                    + (PTV_L * TV[i-1][j-1])
+                    + TV[i-1][j]
+                    + P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
+
+           TF[i][j] = (dt * RfT * TV[i-1][(selectZ-1)-j])
+                    + (PTF * TF[i-1][j-1])
+                    - TF[i-1][j] * (dt*RfT + PTF)
+                    + TF[i-1][j]
+                    + P_TF;
 
            // -----Calculate layer mass exchenger model------
            // New schema: CV(i,i-1); CV(i,i-1). Error was increase..., but dynamic of process good
-           CV[i][j] = -CV[i-1][j] * (PTV_L - 1.0 + PTV_N - dt*RvM) + (PTV_L + PTV_N) * CV[i-1][j-1] - (dt * RvM * E * CF[i-1][(selectZ-1)-j]) + P_CV;
+           CV[i][j] = - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                    + (PTV_L + PTV_N) * CV[i-1][j-1]
+                    - CV[i-1][j] * (- dt*RvM + PTV_L + PTV_N)
+                    + CV[i-1][j]
+                    + P_CV;
 
            /*
             * Old schema: CV(i,i-1); CV(i+1,i)
@@ -704,31 +742,35 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                                                                             - (dt * RvM * E * CF[i-1][(selectZ-1)-j]) + P_CV;
            */
 
-           CF[i][j] = -CF[i-1][j] * (PTF - 1.0 - (dt*RfM*E)) + (PTF * CF[i-1][j-1]) - (dt * RfM * CV[i-1][(selectZ-1)-j]) + P_CF;
+           CF[i][j] = - (dt * RfM * CV[i-1][(selectZ-1)-j])
+                    + (PTF * CF[i-1][j-1])
+                    - CF[i-1][j] * (-(dt*RfM*E) + PTF)
+                    + CF[i-1][j]
+                    + P_CF;
         }
     }
 
     std::cout.precision(17);
 
-    for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+    for(uint j = 1; j < (selectZ-1); ++j)
     {
         cout << TV[size_t((selectN-1) / dt)][j] << std::fixed << " | ";
-     }
+    }
 
-    for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+    for(uint j = 1; j < (selectZ-1); ++j)
     {
         cout << TF[size_t((selectN-1) / dt)][j] << " | ";
-     }
+    }
 
-    for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+    for(uint j = 1; j < (selectZ-1); ++j)
     {
         cout << CV[size_t((selectN-1) / dt)][j] << " | ";
-     }
+    }
 
-    for(uint j = 1; j < (selectZ-1); ++j)  // i: z
+    for(uint j = 1; j < (selectZ-1); ++j)
     {
         cout << CF[size_t((selectN-1) / dt)][j] << " | ";
-     }
+    }
 }
 
 void initialLayerTV(vector <vector <double> > &TV)
