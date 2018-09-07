@@ -49,6 +49,10 @@ void initialLayerCF(vector <vector <double> > &CF);
 
 void toFileMM(vector <vector <double> > MMM, string nameModel);
 
+void Split(double a, int s, double& a_hi, double& a_lo);
+double TwoSum(double a, double b, double& error);
+double TwoProduct(double a, double b, double& err);
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
         clock_t timeMW_0 = clock();
@@ -906,6 +910,48 @@ void toFileMM(vector <vector <double> > MMM, string nameModel)
         foutMM << endl;
     }
     foutMM.close();
+}
+
+void Split(double a, int s, double& a_hi, double& a_lo)
+{
+    double c = (pow(2, s) + 1)*a;
+    double a_big = c - a;
+
+    a_hi = c - a_big;
+    a_lo = a - a_hi;
+}
+
+double TwoSum(double a, double b, double& error)
+{
+    double x = a + b;
+    double b_virt = x - a;
+    double a_virt = x - b_virt;
+    double b_roundoff = b - b_virt;
+    double a_roudnoff = a - a_virt;
+    double y = a_roudnoff + b_roundoff;
+
+    error += y;
+
+    return x;
+}
+
+double TwoProduct(double a, double b, double& err)
+{
+    double x = a*b;
+    double a_hi, a_low, b_hi, b_low;
+
+    Split(a, 12, a_hi, a_low);
+    Split(b, 12, b_hi, b_low);
+
+    double err1, err2, err3;
+
+    err1 = x - (a_hi*b_hi);
+    err2 = err1 - (a_low*b_hi);
+    err3 = err2 - (a_hi*b_low);
+
+    err += ((a_low * b_low) - err3);
+
+    return x;
 }
 
 void MainWindow::on_spaceParametr_valueChanged(int countSpacePoints)
