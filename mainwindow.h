@@ -25,13 +25,6 @@ public:
     void drawModel(int choiceModel);
     void getData();
 
-    typedef double (MainWindow::*bMM)(unsigned long long i, uint j);   // Function Pointer
-    bMM MM[4];     // Functions Pointer
-    double bTV(unsigned long long i, uint j);
-    double bTF(unsigned long long i, uint j);
-    double bCV(unsigned long long i, uint j);
-    double bCF(unsigned long long i, uint j);
-
 private slots:
     void on_exit_clicked();
     void on_clear_clicked();

@@ -58,12 +58,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         clock_t timeMW_0 = clock();
         int msec = 0;
 
-        // To initial array of functions
-        MM[0] = &bTV;
-        MM[1] = &bTF;
-        MM[2] = &bCV;
-        MM[3] = &bCF;
-
         ui->setupUi(this);
 
         ui->inputLeftX->setReadOnly(true);
@@ -93,26 +87,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-double MainWindow::bTV(unsigned long long i, uint j)
-{
-    return TV[static_cast <size_t> (i)][j];
-}
-
-double MainWindow::bTF(unsigned long long i, uint j)
-{
-    return TF[static_cast <size_t> (i)][j];
-}
-
-double MainWindow::bCV(unsigned long long i, uint j)
-{
-    return CV[static_cast <size_t> (i)][j];
-}
-
-double MainWindow::bCF(unsigned long long i, uint j)
-{
-    return CF[static_cast <size_t> (i)][j];
 }
 
 void MainWindow::getData()
