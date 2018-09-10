@@ -25,16 +25,17 @@ static unsigned long long selectN = 0;
 double dt = 0.0000;
 
 static double dRC = 1.4;
-const double initLayerTV_0 = 160.0000, initLayerTV_1 = 147.9999;
-const double initLayerTF_0 = 120.3777, initLayerTF_1 = 132.3999;
-const double initLayerCV_0 = 67.9444, initLayerCV_1 = 72.0444;
-const double initLayerCF_0 = 6.5555, initLayerCF_1 = 2.7888;
+static double initLayerTV_0 = 0.0, initLayerTV_1 = 0.0;
+static double initLayerTF_0 = 0.0, initLayerTF_1 = 0.0;
+static double initLayerCV_0 = 0.0, initLayerCV_1 = 0.0;
+static double initLayerCF_0 = 0.0, initLayerCF_1 = 0.0;
 
 //----------Petrtubation----------//    Temperature(min:???; maxHeat:???), gas flow or pressure differential?
 static double P_TV = 0.0;
 static double P_TF = 0.0;
 static double P_CV = 0.0;
 static double P_CF = 0.0;
+
 
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
@@ -53,6 +54,8 @@ void Split(double a, int s, double& a_hi, double& a_lo);
 double TwoSum(double a, double b, double& error);
 double TwoProduct(double a, double b, double& err);
 
+
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
         clock_t timeMW_0 = clock();
@@ -65,6 +68,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         selectZ = static_cast <unsigned int> (ui->spaceParametr->value() + 2);
         selectN = ui->inputRightX->text().toULongLong(&okey, 10);
         defaultH = dRC/(selectZ-2);                                     // dRC(Height RC) = 1.4m
+
+        initLayerTV_0 = ui->spinBoxInitLayerTV_0->value(),      initLayerTV_1 = ui->spinBoxInitLayerTV_1->value();
+        initLayerTF_0 = ui->spinBoxInitLayerTF_0->value(),      initLayerTF_1 = ui->spinBoxInitLayerTF_1->value();
+
+        initLayerCV_0 = ui->spinBoxInitLayerCV_0->value(),      initLayerCV_1 = ui->spinBoxInitLayerCV_1->value();
+        initLayerCF_0 = ui->spinBoxInitLayerCF_0->value(),      initLayerCF_1 = ui->spinBoxInitLayerCF_1->value();
 
         ui->inputLeftY->clear();
         ui->inputRightY->clear();
@@ -97,7 +106,14 @@ void MainWindow::getData()
     rightY = ui->inputRightY->text().toDouble();
     selectN = ui->inputRightX->text().toULongLong(&okey, 10);
 
+    initLayerTV_0 = ui->spinBoxInitLayerTV_0->value(),      initLayerTV_1 = ui->spinBoxInitLayerTV_1->value();
+    initLayerTF_0 = ui->spinBoxInitLayerTF_0->value(),      initLayerTF_1 = ui->spinBoxInitLayerTF_1->value();
+
+    initLayerCV_0 = ui->spinBoxInitLayerCV_0->value(),      initLayerCV_1 = ui->spinBoxInitLayerCV_1->value();
+    initLayerCF_0 = ui->spinBoxInitLayerCF_0->value(),      initLayerCF_1 = ui->spinBoxInitLayerCF_1->value();
+
     dt = (ui->selectStep->text().toDouble() <= 0.0)? 0.01 : abs(ui->selectStep->text().toDouble());
+    // dh = ... (in future)
 }
 
 void MainWindow::drawGraph()
