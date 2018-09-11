@@ -31,10 +31,12 @@ private slots:
     void on_draw_clicked();
     void on_save_clicked();
 
-    void on_LVM_clicked();
-    void on_NLVM_clicked();
-    void on_EVM_clicked();
-    void on_EFM_clicked();
+    void on_LVM_BP_clicked();
+    void on_NLVM_BP_clicked();
+    void on_EVM_BP_clicked();
+    void on_EFM_BP_clicked();
+    void on_EVM_TP_clicked();
+    void on_EFM_TP_clicked();
 
     void on_spaceParametr_valueChanged(int arg1);
 

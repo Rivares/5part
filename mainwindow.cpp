@@ -19,12 +19,12 @@ using std::cout;
 using std::endl;
 
 static bool okey = false;
-static double defaultH = 0.0000;
+static double dh = 0.0000;
+static double dt = 0.0000;
 static unsigned int selectZ = 0;
 static unsigned long long selectN = 0;
-double dt = 0.0000;
 
-static double dRC = 1.4;
+static double dRC = 1.400;
 static double initLayerTV_0 = 0.0, initLayerTV_1 = 0.0;
 static double initLayerTF_0 = 0.0, initLayerTF_1 = 0.0;
 static double initLayerCV_0 = 0.0, initLayerCV_1 = 0.0;
@@ -42,6 +42,9 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                  bool turnOn);
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                  vector <vector <double> > &CV, vector <vector <double> > &CF);
+void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+                 vector <vector <double> > &CV, vector <vector <double> > &CF,
+                 bool turnOn);
 
 void initialLayerTV(vector <vector <double> > &TV);         // Would be relize as template
 void initialLayerTF(vector <vector <double> > &TF);
@@ -67,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
         selectZ = static_cast <unsigned int> (ui->spaceParametr->value() + 2);
         selectN = ui->inputRightX->text().toULongLong(&okey, 10);
-        defaultH = dRC/(selectZ-2);                                     // dRC(Height RC) = 1.4m
+        dh = dRC/(selectZ-2);                                     // dRC(Height RC) = 1.4m
 
         initLayerTV_0 = ui->spinBoxInitLayerTV_0->value(),      initLayerTV_1 = ui->spinBoxInitLayerTV_1->value();
         initLayerTF_0 = ui->spinBoxInitLayerTF_0->value(),      initLayerTF_1 = ui->spinBoxInitLayerTF_1->value();
@@ -112,8 +115,7 @@ void MainWindow::getData()
     initLayerCV_0 = ui->spinBoxInitLayerCV_0->value(),      initLayerCV_1 = ui->spinBoxInitLayerCV_1->value();
     initLayerCF_0 = ui->spinBoxInitLayerCF_0->value(),      initLayerCF_1 = ui->spinBoxInitLayerCF_1->value();
 
-    dt = (ui->selectStep->text().toDouble() <= 0.0)? 0.01 : abs(ui->selectStep->text().toDouble());
-    // dh = ... (in future)
+    dt = (ui->selectStepT->text().toDouble() <= 0.0)? 0.01 : abs(ui->selectStepT->text().toDouble());
 }
 
 void MainWindow::drawGraph()
@@ -135,10 +137,10 @@ void MainWindow::drawGraph()
 
     ui->customPlot->yAxis->setLabel("Магия, dB");
 
-    if(ui->LVM->isChecked() || ui->NLVM->isChecked() || ui->EVM->isChecked())
+    if(ui->LVM_BP->isChecked() || ui->NLVM_BP->isChecked() || ui->EVM_BP->isChecked() || ui->EVM_TP->isChecked())
         ui->customPlot->yAxis->setLabel("Tемпература, 'C");
 
-    if(ui->EFM->isChecked())
+    if(ui->EFM_BP->isChecked() || ui->EFM_TP->isChecked())
         ui->customPlot->yAxis->setLabel("Концентрация, %");
 
     ui->customPlot->xAxis->setRange(0, (selectN / dt));
@@ -152,30 +154,46 @@ void MainWindow::drawGraph()
 
     ui->statusBar->showMessage(QString("(!) Calculating the mathematical model... (!)"));
 
-    if (ui->LVM->isChecked())
+    if (ui->LVM_BP->isChecked())
     {      
         calculateMM(TV, TF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
         drawModel(0);
     }
 
-    if (ui->NLVM->isChecked())
+    if (ui->NLVM_BP->isChecked())
     {
-        calculateMM(TV, TF, 1);                     // OVERLOADING CALCULATE OF FUNCTION
+        calculateMM(TV, TF, true);                     // OVERLOADING CALCULATE OF FUNCTION
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph...... (!)"));
         drawModel(0);
     }
 
-    if((ui->EVM->isChecked()) || (ui->EFM->isChecked()))
+    if((ui->EVM_BP->isChecked()) || (ui->EFM_BP->isChecked()))
     {
         calculateMM(TV, TF, CV, CF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-        if((ui->EVM->isChecked()))
+        if((ui->EVM_BP->isChecked()))
             drawModel(0);
         else
             drawModel(2);
     }
+
+    if((ui->EVM_TP->isChecked()) || (ui->EFM_TP->isChecked()))
+    {
+        calculateMM(TV, TF, CV, CF, true);
+        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+
+        if((ui->EVM_TP->isChecked()))
+            drawModel(0);
+        else
+            drawModel(2);
+    }
+
+    ui->spinBoxInitLayerTV_0->setValue(initLayerTV_0);
+    ui->spinBoxInitLayerTF_0->setValue(initLayerTF_0);
+    ui->spinBoxInitLayerCV_0->setValue(initLayerCV_0);
+    ui->spinBoxInitLayerCF_0->setValue(initLayerCF_0);
 
     ui->statusBar->showMessage(QString("Ready!"));
 
@@ -183,7 +201,7 @@ void MainWindow::drawGraph()
 
     // Out to display steady-state value temperature
     QList <QString> listStatesVapor, listStatesFluid;
-    if((ui->LVM->isChecked()) || (ui->NLVM->isChecked()) || (ui->EVM->isChecked()))
+    if((ui->LVM_BP->isChecked()) || (ui->NLVM_BP->isChecked()) || (ui->EVM_BP->isChecked()) || (ui->EVM_TP->isChecked()))
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
@@ -193,7 +211,7 @@ void MainWindow::drawGraph()
     }
 
     // Out to display steady-state concentration of absorbent
-    if(ui->EFM->isChecked())
+    if(ui->EFM_BP->isChecked() || ui->EFM_TP->isChecked())
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
@@ -368,7 +386,7 @@ void MainWindow::drawModel(int choiceModel)
 
 void MainWindow::on_save_clicked()
 {
-    if(ui->EVM->isChecked() || ui->EFM->isChecked())
+    if(ui->EVM_BP->isChecked() || ui->EFM_BP->isChecked())
     {
         std::thread threadToFileTVMM(toFileMM, ref(TV), "TV");
         std::thread threadToFileTFMM(toFileMM, ref(TF), "TF");
@@ -381,7 +399,7 @@ void MainWindow::on_save_clicked()
         threadToFileCFMM.join();       
     }
 
-    if(ui->LVM->isChecked())
+    if(ui->LVM_BP->isChecked())
     {
         std::thread threadToFileTVMM(toFileMM, ref(TV), "TV");
         std::thread threadToFileTFMM(toFileMM, ref(TF), "TF");
@@ -390,7 +408,7 @@ void MainWindow::on_save_clicked()
         threadToFileTFMM.join();
     }
 
-    if(ui->NLVM->isChecked())
+    if(ui->NLVM_BP->isChecked())
     {
         std::thread threadToFileTVMM(toFileMM, ref(TV), "NTV");
         std::thread threadToFileTFMM(toFileMM, ref(TF), "NTF");
@@ -450,7 +468,7 @@ void MainWindow::on_save_clicked()
     msgBox.exec();
 }
 
-void MainWindow::on_LVM_clicked()
+void MainWindow::on_LVM_BP_clicked()
 {
     ui->valuePetrubationCVM->hide();
     ui->valuePetrubationCFM->hide();
@@ -465,7 +483,7 @@ void MainWindow::on_LVM_clicked()
     rightY = ui->inputRightY->text().toDouble();
 }
 
-void MainWindow::on_NLVM_clicked()
+void MainWindow::on_NLVM_BP_clicked()
 {
     ui->valuePetrubationCVM->hide();
     ui->valuePetrubationCFM->hide();
@@ -480,7 +498,7 @@ void MainWindow::on_NLVM_clicked()
     rightY = ui->inputRightY->text().toDouble();
 }
 
-void MainWindow::on_EVM_clicked()
+void MainWindow::on_EVM_BP_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
@@ -495,7 +513,7 @@ void MainWindow::on_EVM_clicked()
     rightY = ui->inputRightY->text().toDouble();
 }
 
-void MainWindow::on_EFM_clicked()
+void MainWindow::on_EFM_BP_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
@@ -510,12 +528,42 @@ void MainWindow::on_EFM_clicked()
     rightY = ui->inputRightY->text().toDouble();
 }
 
-//--------------------------LINER MODEL!!!-----------------------------------
+void MainWindow::on_EVM_TP_clicked()
+{
+    ui->inputLeftY->clear();
+    ui->inputRightY->clear();
+
+    ui->valuePetrubationCVM->show();
+    ui->valuePetrubationCFM->show();
+
+    ui->inputLeftY->insert("100");
+    ui->inputRightY->insert("170");
+
+    leftY = ui->inputLeftY->text().toDouble();
+    rightY = ui->inputRightY->text().toDouble();
+}
+
+void MainWindow::on_EFM_TP_clicked()
+{
+    ui->inputLeftY->clear();
+    ui->inputRightY->clear();
+
+    ui->valuePetrubationCVM->show();
+    ui->valuePetrubationCFM->show();
+
+    ui->inputLeftY->insert("0");
+    ui->inputRightY->insert("90");
+
+    leftY = ui->inputLeftY->text().toDouble();
+    rightY = ui->inputRightY->text().toDouble();
+}
+
+//--------------------------LINER MODEL-----------------------------------
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 {
     double  RvT = 0.0191806, RfT = 0.0000777,
-            PTV = (0.05654433 * dt) / defaultH,
-            PTF = (0.0002291314 * dt) / defaultH;
+            PTV = (0.05654433 * dt) / dh,
+            PTF = (0.0002291314 * dt) / dh;
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -559,14 +607,12 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
            TV[i][j] = (dt * RvT * TF[i-1][(selectZ-1)-j])
                     + (PTV * TV[i-1][j-1])
                     + TV[i-1][j] * (-(dt * RvT) - PTV)
-                    + TV[i-1][j]
-                    + P_TV;
+                    + TV[i-1][j];
 
            TF[i][j] = (dt * RfT * TV[i-1][(selectZ-1)-j])
                     + (PTF * TF[i-1][j-1])
                     + TF[i-1][j] * (-PTF - (dt * RfT))
-                    + TF[i-1][j]
-                    + P_TF;
+                    + TF[i-1][j];
        }
     }
 
@@ -582,7 +628,7 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     }cout << endl;
 }
 
-//--------------------------NON-LINER MODEL!!!-----------------------------------
+//--------------------------NON-LINER MODEL-----------------------------------
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, bool turnOn) // turnOn is nonsense
 {
     turnOn = (!turnOn);
@@ -590,9 +636,9 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, b
 
     // -----Model's heat exchenger parameters------
     double  RvT = 0.0191806, RfT = 0.0000777, a0 = 1.6966E-4,
-            PTV_L = (a0 * 273.15 * dt) / defaultH,
+            PTV_L = (a0 * 273.15 * dt) / dh,
             PTV_N = 0.0,
-            PTF = (0.0002291314 * dt) / defaultH;
+            PTF = (0.0002291314 * dt) / dh;
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -633,20 +679,18 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, b
     {
        for(uint j = 1; j < (selectZ-1); ++j)
        {
-           PTV_N = (a0 * TV[i-1][j] * dt) / defaultH;
+           PTV_N = (a0 * TV[i-1][j] * dt) / dh;
 
            TV[i][j] = (dt * RvT * TF[i-1][(selectZ-1)-j])
                     - (PTV_N * TV[i-1][j+1])
                     - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
                     + (PTV_L * TV[i-1][j-1])
-                    + TV[i-1][j]
-                    + P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
+                    + TV[i-1][j];
 
            TF[i][j] = (dt * RfT * TV[i-1][(selectZ-1)-j])
                     + (PTF * TF[i-1][j-1])
                     - TF[i-1][j] * (dt*RfT + PTF)
-                    + TF[i-1][j]
-                    + P_TF;
+                    + TF[i-1][j];
         }
     }
 
@@ -662,15 +706,15 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, b
     }cout << endl;
 }
 
-//---------------------------INTERCONNECTED MODEL!!!------------------------------
+//---------------------------INTERCONNECTED MODEL(BOTTOM PART)------------------------------
 void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                  vector <vector <double> > &CV, vector <vector <double> > &CF)
 {
     // -----Model's heat exchenger parameters------
     double  RvT = 0.0191806, RfT = 0.0000777, a0 = 1.6966E-4,
-            PTV_L = (a0 * 273.15 * dt) / defaultH,
+            PTV_L = (a0 * 273.15 * dt) / dh,
             PTV_N = 0.0,
-            PTF = (0.0002291314 * dt) / defaultH;
+            PTF = (0.0002291314 * dt) / dh;
 
     // -----Model's mass exchenger parameters------
     double E = 1.0E-9, RvM = 0.004302, RfM = 1.222E-5;
@@ -734,20 +778,18 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         for(size_t j = 1; j < (selectZ-1); ++j)      // place
         {
             // -----Calculate layer heat exchenger model------
-            PTV_N = (a0 * TV[i-1][j] * dt) / defaultH;
+            PTV_N = (a0 * TV[i-1][j] * dt) / dh;
 
             TV[i][j] = (dt * RvT * TF[i-1][(selectZ-1)-j])
                     - (PTV_N * TV[i-1][j+1])
                     - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
                     + (PTV_L * TV[i-1][j-1])
-                    + TV[i-1][j]
-                    + P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
+                    + TV[i-1][j];
 
             TF[i][j] = (dt * RfT * TV[i-1][(selectZ-1)-j])
                     + (PTF * TF[i-1][j-1])
                     - TF[i-1][j] * (dt*RfT + PTF)
-                    + TF[i-1][j]
-                    + P_TF;
+                    + TF[i-1][j];
 
             // -----Calculate layer mass exchenger model------
 
@@ -755,14 +797,138 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
             CV[i][j] = - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
                     + (PTV_L + PTV_N) * CV[i-1][j-1]
                     - CV[i-1][j] * (- dt*RvM + PTV_L + PTV_N)
-                    + CV[i-1][j]
-                    + P_CV;
+                    + CV[i-1][j];
 
             CF[i][j] = - (dt * RfM * CV[i-1][(selectZ-1)-j])
                     + (PTF * CF[i-1][j-1])
                     - CF[i-1][j] * (-(dt*RfM*E) + PTF)
-                    + CF[i-1][j]
-                    + P_CF;
+                    + CF[i-1][j];
+        }
+
+    }
+
+    cout << endl << "Steady-state values:" << endl;
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+    }cout << endl;
+
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
+    }cout << endl;
+
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << CV[size_t((selectN-1) / dt)][j] << " | ";
+    }cout << endl;
+
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << CF[size_t((selectN-1) / dt)][j] << " | ";
+    }cout << endl;
+}
+
+//---------------------------INTERCONNECTED MODEL(TOP PART)------------------------------
+void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+                 vector <vector <double> > &CV, vector <vector <double> > &CF,
+                 bool turnOn) // turnOn is nonsense
+{
+     turnOn = (!turnOn);
+
+    // -----Model's heat exchenger parameters------
+    double  RvT = 0.0191806, RfT = 0.0000777, a0 = 1.6966E-4,
+            PTV_L = (a0 * 273.15 * dt) / dh,
+            PTV_N = 0.0,
+            PTF = (0.0002291314 * dt) / dh;
+
+    // -----Model's mass exchenger parameters------
+    double E = 1.0E-9, RvM = 0.004302, RfM = 1.222E-5;
+                       //RfM = 0.000010734, RvM = 0.0216487318;
+
+    vector <double> bmp;
+    bmp.assign(selectZ, 0.0);
+
+    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    {
+        TV.erase(TV.begin(), TV.end());
+        TF.erase(TF.begin(), TF.end());
+        CV.erase(CV.begin(), CV.end());
+        CF.erase(CF.begin(), CF.end());
+    }
+
+    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    {
+        TV.push_back(bmp);
+        TF.push_back(bmp);
+        CV.push_back(bmp);
+        CF.push_back(bmp);
+    }
+
+    std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
+    std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
+    std::thread threadInitialLayerCV(initialLayerCV, ref(CV));
+    std::thread threadInitialLayerCF(initialLayerCF, ref(CF));
+
+    threadInitialLayerTV.join();
+    threadInitialLayerTF.join();
+    threadInitialLayerCV.join();
+    threadInitialLayerCF.join();
+
+    cout << endl << "Initial values:" << endl;
+    std::cout.precision(8);
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << TV[0][j] << std::fixed << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << TF[0][j] << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << CV[0][j] << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << CF[0][j] << " | ";
+    }   cout << endl;
+
+    // Calculate model
+    for(size_t i = 1; i < size_t(selectN / dt); ++i)// time
+    {
+        for(size_t j = 1; j < (selectZ-1); ++j)      // place
+        {
+            // -----Calculate layer heat exchenger model------
+            PTV_N = (a0 * TV[i-1][j] * dt) / dh;
+
+            TV[i][j] = (dt * RvT * TF[i-1][(selectZ-1)-j])
+                    - (PTV_N * TV[i-1][j+1])
+                    - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
+                    + (PTV_L * TV[i-1][j-1])
+                    + TV[i-1][j];
+
+            TF[i][j] = (dt * RfT * TV[i-1][(selectZ-1)-j])
+                    + (PTF * TF[i-1][j-1])
+                    - TF[i-1][j] * (dt*RfT + PTF)
+                    + TF[i-1][j];
+
+            // -----Calculate layer mass exchenger model------
+
+            /* New schema: CV(i,i-1); CV(i,i-1). Error was increase..., but dynamic of process good*/
+            CV[i][j] = - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                    + (PTV_L + PTV_N) * CV[i-1][j-1]
+                    - CV[i-1][j] * (- dt*RvM + PTV_L + PTV_N)
+                    + CV[i-1][j];
+
+            CF[i][j] = - (dt * RfM * CV[i-1][(selectZ-1)-j])
+                    + (PTF * CF[i-1][j-1])
+                    - CF[i-1][j] * (-(dt*RfM*E) + PTF)
+                    + CF[i-1][j];
         }
 
     }
@@ -795,6 +961,8 @@ void initialLayerTV(vector <vector <double> > &TV)
     double stepInit = 0.0;
     size_t i = 0;
 
+    initLayerTV_0 += P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
+
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
         TV[i][0] = initLayerTV_0;
@@ -818,6 +986,8 @@ void initialLayerTF(vector <vector <double> > &TF)
     double *initLayerTF = new double [selectZ];
     double stepInit = 0.0;
     size_t i = 0;
+
+    initLayerTF_0 += P_TF;  // adding perturbation of the temperature
 
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
@@ -843,6 +1013,8 @@ void initialLayerCV(vector <vector <double> > &CV)
     double stepInit = 0.0;
     size_t i = 0;
 
+    initLayerCV_0 += P_CV;  // adding perturbation of the concentration
+
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
         CV[i][0] = initLayerCV_0;
@@ -866,6 +1038,8 @@ void initialLayerCF(vector <vector <double> > &CF)
     double *initLayerCF = new double [selectZ];
     double stepInit = 0.0;
     size_t i = 0;
+
+    initLayerCF_0 += P_CF;  // adding perturbation of the concentration
 
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
@@ -947,6 +1121,8 @@ double TwoProduct(double a, double b, double& err)
 void MainWindow::on_spaceParametr_valueChanged(int countSpacePoints)
 {
     selectZ = static_cast <unsigned int> (countSpacePoints + 2);
+    dh = dRC/((double)countSpacePoints);
+    ui->selectStepH->setText(QString::number(dh));
 }
 
 void MainWindow::on_valuePetrubationTVM_editingFinished()

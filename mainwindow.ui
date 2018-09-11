@@ -35,7 +35,7 @@
       <x>620</x>
       <y>15</y>
       <width>264</width>
-      <height>481</height>
+      <height>484</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -373,35 +373,35 @@
             </widget>
            </item>
            <item row="4" column="0">
-            <widget class="QRadioButton" name="LVM">
+            <widget class="QRadioButton" name="LVM_BP">
              <property name="text">
               <string>ЛТМ ОРК</string>
              </property>
             </widget>
            </item>
            <item row="4" column="1">
-            <widget class="QRadioButton" name="radioButton_2">
+            <widget class="QRadioButton" name="EVM_TP">
              <property name="text">
               <string>ВТМ УРК</string>
              </property>
             </widget>
            </item>
            <item row="5" column="0">
-            <widget class="QRadioButton" name="NLVM">
+            <widget class="QRadioButton" name="NLVM_BP">
              <property name="text">
               <string>НТМ ОРК</string>
              </property>
             </widget>
            </item>
            <item row="5" column="1">
-            <widget class="QRadioButton" name="radioButton">
+            <widget class="QRadioButton" name="EFM_TP">
              <property name="text">
               <string>ВММ УРК</string>
              </property>
             </widget>
            </item>
            <item row="6" column="0">
-            <widget class="QRadioButton" name="EVM">
+            <widget class="QRadioButton" name="EVM_BP">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -439,14 +439,14 @@
             </widget>
            </item>
            <item row="6" column="1">
-            <widget class="QRadioButton" name="radioButton_3">
+            <widget class="QRadioButton" name="ACU">
              <property name="text">
               <string>АВО</string>
              </property>
             </widget>
            </item>
            <item row="7" column="0">
-            <widget class="QRadioButton" name="EFM">
+            <widget class="QRadioButton" name="EFM_BP">
              <property name="maximumSize">
               <size>
                <width>300</width>
@@ -459,7 +459,7 @@
             </widget>
            </item>
            <item row="7" column="1">
-            <widget class="QRadioButton" name="radioButton_4">
+            <widget class="QRadioButton" name="EVAP">
              <property name="text">
               <string>Испаритель</string>
              </property>
@@ -787,12 +787,12 @@
           </size>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Шаг дискретизации : dt = &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Шаг дискретизации по времени : dt = &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="selectStep">
+        <widget class="QLineEdit" name="selectStepT">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -802,13 +802,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>23</height>
+           <height>21</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>70</width>
-           <height>23</height>
+           <height>21</height>
           </size>
          </property>
          <property name="baseSize">
@@ -849,7 +849,7 @@
           </size>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Шаг дискретизации : dh = &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Шаг дискретизации по пространству : dh = &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -864,13 +864,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>23</height>
+           <height>21</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>70</width>
-           <height>23</height>
+           <height>21</height>
           </size>
          </property>
          <property name="baseSize">
@@ -880,7 +880,10 @@
           </size>
          </property>
          <property name="text">
-          <string>0.01</string>
+          <string>0.4666</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -888,11 +891,6 @@
      </item>
     </layout>
    </widget>
-   <zorder>layoutWidget</zorder>
-   <zorder>verticalLayoutWidget_2</zorder>
-   <zorder>customPlot</zorder>
-   <zorder>label_11</zorder>
-   <zorder>verticalLayoutWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
