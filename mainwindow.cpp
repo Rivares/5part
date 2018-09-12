@@ -19,18 +19,19 @@ using std::cout;
 using std::endl;
 
 static bool okey = false;
+
+static double dRC = 0.0;
 static double dh = 0.0000;
 static double dt = 0.0000;
 static unsigned int selectZ = 0;
 static unsigned long long selectN = 0;
 
-static double dRC = 1.400;
 static double initLayerTV_0 = 0.0, initLayerTV_1 = 0.0;
 static double initLayerTF_0 = 0.0, initLayerTF_1 = 0.0;
 static double initLayerCV_0 = 0.0, initLayerCV_1 = 0.0;
 static double initLayerCF_0 = 0.0, initLayerCF_1 = 0.0;
 
-//----------Petrtubation----------//    Temperature(min:???; maxHeat:???), gas flow or pressure differential?
+//----------Petrtubation----------//    Temperature(min:?, max:?), gas flow or pressure differential?
 static double P_TV = 0.0;
 static double P_TF = 0.0;
 static double P_CV = 0.0;
@@ -69,8 +70,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         ui->inputLeftX->setReadOnly(true);
 
         selectZ = static_cast <unsigned int> (ui->spaceParametr->value() + 2);
-        selectN = ui->inputRightX->text().toULongLong(&okey, 10);
-        dh = dRC/(selectZ-2);                                     // dRC(Height RC) = 1.4m
+        selectN = ui->inputRightX->text().toULongLong(&okey, 10);      
+        dRC = ui->selectDRC->text().toDouble(&okey);
+
+        dh = dRC/(selectZ-2);
 
         initLayerTV_0 = ui->spinBoxInitLayerTV_0->value(),      initLayerTV_1 = ui->spinBoxInitLayerTV_1->value();
         initLayerTF_0 = ui->spinBoxInitLayerTF_0->value(),      initLayerTF_1 = ui->spinBoxInitLayerTF_1->value();
@@ -116,6 +119,7 @@ void MainWindow::getData()
     initLayerCF_0 = ui->spinBoxInitLayerCF_0->value(),      initLayerCF_1 = ui->spinBoxInitLayerCF_1->value();
 
     dt = (ui->selectStepT->text().toDouble() <= 0.0)? 0.01 : abs(ui->selectStepT->text().toDouble());
+    dh = dRC/(selectZ-2);
 }
 
 void MainWindow::drawGraph()
@@ -481,6 +485,16 @@ void MainWindow::on_LVM_BP_clicked()
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
+
+    ui->selectDRC->setText(QString::number(1.400));
+
+    ui->spinBoxInitLayerTV_0->setValue(160.000);    ui->spinBoxInitLayerTV_1->setValue(147.999);
+    ui->spinBoxInitLayerTF_0->setValue(120.377);    ui->spinBoxInitLayerTF_1->setValue(132.399);
+    ui->spinBoxInitLayerCV_0->setValue(0.0);        ui->spinBoxInitLayerCV_1->setValue(0.0);
+    ui->spinBoxInitLayerCF_0->setValue(0.0);        ui->spinBoxInitLayerCF_1->setValue(0.0);
+
+    ui->spinBoxInitLayerCV_0->setDisabled(true);    ui->spinBoxInitLayerCV_1->setDisabled(true);
+    ui->spinBoxInitLayerCF_0->setDisabled(true);    ui->spinBoxInitLayerCF_1->setDisabled(true);
 }
 
 void MainWindow::on_NLVM_BP_clicked()
@@ -496,6 +510,16 @@ void MainWindow::on_NLVM_BP_clicked()
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
+
+    ui->selectDRC->setText(QString::number(1.400));
+
+    ui->spinBoxInitLayerTV_0->setValue(160.000);    ui->spinBoxInitLayerTV_1->setValue(147.999);
+    ui->spinBoxInitLayerTF_0->setValue(120.377);    ui->spinBoxInitLayerTF_1->setValue(132.399);
+    ui->spinBoxInitLayerCV_0->setValue(0.0);        ui->spinBoxInitLayerCV_1->setValue(0.0);
+    ui->spinBoxInitLayerCF_0->setValue(0.0);        ui->spinBoxInitLayerCF_1->setValue(0.0);
+
+    ui->spinBoxInitLayerCV_0->setDisabled(true);    ui->spinBoxInitLayerCV_1->setDisabled(true);
+    ui->spinBoxInitLayerCF_0->setDisabled(true);    ui->spinBoxInitLayerCF_1->setDisabled(true);
 }
 
 void MainWindow::on_EVM_BP_clicked()
@@ -511,6 +535,16 @@ void MainWindow::on_EVM_BP_clicked()
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
+
+    ui->selectDRC->setText(QString::number(1.400));
+
+    ui->spinBoxInitLayerTV_0->setValue(160.000);    ui->spinBoxInitLayerTV_1->setValue(147.999);
+    ui->spinBoxInitLayerTF_0->setValue(120.377);    ui->spinBoxInitLayerTF_1->setValue(132.399);
+    ui->spinBoxInitLayerCV_0->setValue(67.9440);    ui->spinBoxInitLayerCV_1->setValue(72.044);
+    ui->spinBoxInitLayerCF_0->setValue(6.550);      ui->spinBoxInitLayerCF_1->setValue(2.788);
+
+    ui->spinBoxInitLayerCV_0->setDisabled(false);   ui->spinBoxInitLayerCV_1->setDisabled(false);
+    ui->spinBoxInitLayerCF_0->setDisabled(false);   ui->spinBoxInitLayerCF_1->setDisabled(false);
 }
 
 void MainWindow::on_EFM_BP_clicked()
@@ -526,6 +560,16 @@ void MainWindow::on_EFM_BP_clicked()
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
+
+    ui->selectDRC->setText(QString::number(1.400));
+
+    ui->spinBoxInitLayerTV_0->setValue(160.000);    ui->spinBoxInitLayerTV_1->setValue(147.999);
+    ui->spinBoxInitLayerTF_0->setValue(120.377);    ui->spinBoxInitLayerTF_1->setValue(132.399);
+    ui->spinBoxInitLayerCV_0->setValue(67.9440);    ui->spinBoxInitLayerCV_1->setValue(72.044);
+    ui->spinBoxInitLayerCF_0->setValue(6.550);      ui->spinBoxInitLayerCF_1->setValue(2.788);
+
+    ui->spinBoxInitLayerCV_0->setDisabled(false);   ui->spinBoxInitLayerCV_1->setDisabled(false);
+    ui->spinBoxInitLayerCF_0->setDisabled(false);   ui->spinBoxInitLayerCF_1->setDisabled(false);
 }
 
 void MainWindow::on_EVM_TP_clicked()
@@ -536,11 +580,21 @@ void MainWindow::on_EVM_TP_clicked()
     ui->valuePetrubationCVM->show();
     ui->valuePetrubationCFM->show();
 
-    ui->inputLeftY->insert("100");
-    ui->inputRightY->insert("170");
+    ui->inputLeftY->insert("20");
+    ui->inputRightY->insert("150");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
+
+    ui->selectDRC->setText(QString::number(1.170));
+
+    ui->spinBoxInitLayerTV_0->setValue(142.500);    ui->spinBoxInitLayerTV_1->setValue(45.300);
+    ui->spinBoxInitLayerTF_0->setValue(30.000);     ui->spinBoxInitLayerTF_1->setValue(139.000);
+    ui->spinBoxInitLayerCV_0->setValue(0.5300);     ui->spinBoxInitLayerCV_1->setValue(1.1380);
+    ui->spinBoxInitLayerCF_0->setValue(1.000);      ui->spinBoxInitLayerCF_1->setValue(0.5525330);
+
+    ui->spinBoxInitLayerCV_0->setDisabled(false);   ui->spinBoxInitLayerCV_1->setDisabled(false);
+    ui->spinBoxInitLayerCF_0->setDisabled(false);   ui->spinBoxInitLayerCF_1->setDisabled(false);
 }
 
 void MainWindow::on_EFM_TP_clicked()
@@ -552,10 +606,20 @@ void MainWindow::on_EFM_TP_clicked()
     ui->valuePetrubationCFM->show();
 
     ui->inputLeftY->insert("0");
-    ui->inputRightY->insert("90");
+    ui->inputRightY->insert("1.5");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
+
+    ui->selectDRC->setText(QString::number(1.170));
+
+    ui->spinBoxInitLayerTV_0->setValue(142.500);    ui->spinBoxInitLayerTV_1->setValue(45.300);
+    ui->spinBoxInitLayerTF_0->setValue(30.000);     ui->spinBoxInitLayerTF_1->setValue(139.000);
+    ui->spinBoxInitLayerCV_0->setValue(0.5300);     ui->spinBoxInitLayerCV_1->setValue(1.1380);
+    ui->spinBoxInitLayerCF_0->setValue(1.000);      ui->spinBoxInitLayerCF_1->setValue(0.5525330);
+
+    ui->spinBoxInitLayerCV_0->setDisabled(false);   ui->spinBoxInitLayerCV_1->setDisabled(false);
+    ui->spinBoxInitLayerCF_0->setDisabled(false);   ui->spinBoxInitLayerCF_1->setDisabled(false);
 }
 
 //--------------------------LINER MODEL-----------------------------------
@@ -837,14 +901,13 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
      turnOn = (!turnOn);
 
     // -----Model's heat exchenger parameters------
-    double  RvT = 0.0191806, RfT = 0.0000777, a0 = 1.6966E-4,
+    double  RvT = 2.500, RfT = 0.000085500, a0 = 0.002702752,
             PTV_L = (a0 * 273.15 * dt) / dh,
             PTV_N = 0.0,
-            PTF = (0.0002291314 * dt) / dh;
+            PTF = (0.0000400 * dt) / dh;
 
     // -----Model's mass exchenger parameters------
-    double E = 1.0E-9, RvM = 0.004302, RfM = 1.222E-5;
-                       //RfM = 0.000010734, RvM = 0.0216487318;
+    double E = 1.0E-9, RvM = 1.45, RfM = 6.0E-6;  // RvM = 0.000000000145 in Simulink-model... It's strange -> 0.000000000145 == 145.0*E-9
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -1121,26 +1184,35 @@ double TwoProduct(double a, double b, double& err)
 void MainWindow::on_spaceParametr_valueChanged(int countSpacePoints)
 {
     selectZ = static_cast <unsigned int> (countSpacePoints + 2);
+
     dh = dRC/((double)countSpacePoints);
     ui->selectStepH->setText(QString::number(dh));
 }
 
-void MainWindow::on_valuePetrubationTVM_editingFinished()
+void MainWindow::on_selectDRC_textChanged(QString dRCNew)
 {
-    P_TV = ui->valuePetrubationTVM->text().toDouble();
+    dRC = dRCNew.toDouble(&okey);
+
+    dh = dRC/((double)(selectZ-2));
+    ui->selectStepH->setText(QString::number(dh));
 }
 
-void MainWindow::on_valuePetrubationTFM_editingFinished()
+void MainWindow::on_valuePetrubationTVM_textChanged(QString P_TV_New)
 {
-    P_TF = ui->valuePetrubationTFM->text().toDouble();
+    P_TV = P_TV_New.toDouble(&okey);
 }
 
-void MainWindow::on_valuePetrubationCVM_editingFinished()
+void MainWindow::on_valuePetrubationTFM_textChanged(QString P_TF_New)
 {
-   P_CV = ui->valuePetrubationCVM->text().toDouble();
+    P_TF = P_TF_New.toDouble(&okey);
 }
 
-void MainWindow::on_valuePetrubationCFM_editingFinished()
+void MainWindow::on_valuePetrubationCVM_textChanged(QString P_CV_New)
 {
-    P_CF = ui->valuePetrubationCFM->text().toDouble();
+    P_CV = P_CV_New.toDouble(&okey);
+}
+
+void MainWindow::on_valuePetrubationCFM_textChanged(QString P_CF_New)
+{
+    P_CF = P_CF_New.toDouble(&okey);
 }
