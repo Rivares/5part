@@ -390,12 +390,25 @@ void MainWindow::drawModel(int choiceModel)
 
 void MainWindow::on_save_clicked()
 {
+    if(ui->EVM_TP->isChecked() || ui->EFM_TP->isChecked())
+    {
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_TP");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_TP");
+        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV_TP");
+        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF_TP");
+
+        threadToFileTVMM.join();
+        threadToFileTFMM.join();
+        threadToFileCVMM.join();
+        threadToFileCFMM.join();
+    }
+
     if(ui->EVM_BP->isChecked() || ui->EFM_BP->isChecked())
     {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF");
-        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV");
-        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF");
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_BP");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_BP");
+        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV_BP");
+        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF_BP");
 
         threadToFileTVMM.join();
         threadToFileTFMM.join();
@@ -405,8 +418,8 @@ void MainWindow::on_save_clicked()
 
     if(ui->LVM_BP->isChecked())
     {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF");
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_BP");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_BP");
 
         threadToFileTVMM.join();
         threadToFileTFMM.join();
@@ -414,8 +427,8 @@ void MainWindow::on_save_clicked()
 
     if(ui->NLVM_BP->isChecked())
     {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "NTV");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "NTF");
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "NTV_BP");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "NTF_BP");
 
         threadToFileTVMM.join();
         threadToFileTFMM.join();
@@ -586,7 +599,7 @@ void MainWindow::on_EVM_TP_clicked()
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
 
-    ui->selectDRC->setText(QString::number(1.170));
+    ui->selectDRC->setText(QString::number(3.510));
 
     ui->spinBoxInitLayerTV_0->setValue(142.500);    ui->spinBoxInitLayerTV_1->setValue(45.300);
     ui->spinBoxInitLayerTF_0->setValue(30.000);     ui->spinBoxInitLayerTF_1->setValue(139.000);
@@ -611,7 +624,7 @@ void MainWindow::on_EFM_TP_clicked()
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
 
-    ui->selectDRC->setText(QString::number(1.170));
+    ui->selectDRC->setText(QString::number(3.510));
 
     ui->spinBoxInitLayerTV_0->setValue(142.500);    ui->spinBoxInitLayerTV_1->setValue(45.300);
     ui->spinBoxInitLayerTF_0->setValue(30.000);     ui->spinBoxInitLayerTF_1->setValue(139.000);
@@ -901,13 +914,13 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
      turnOn = (!turnOn);
 
     // -----Model's heat exchenger parameters------
-    double  RvT = 2.500, RfT = 0.000085500, a0 = 0.002702752,
+    double  RvT = 2.500, RfT = 0.000085500, a0 = 0.0034868520, // (a0 = 0.0034868520) != (a0_Simulink = 0.002702752)
             PTV_L = (a0 * 273.15 * dt) / dh,
             PTV_N = 0.0,
             PTF = (0.0000400 * dt) / dh;
 
     // -----Model's mass exchenger parameters------
-    double E = 1.0E-9, RvM = 1.45, RfM = 6.0E-6;  // RvM = 0.000000000145 in Simulink-model... It's strange -> 0.000000000145 == 145.0*E-9
+    double E = 1.0E-9, RvM = 0.1450, RfM = 6.0E-6;
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -992,8 +1005,13 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                     + (PTF * CF[i-1][j-1])
                     - CF[i-1][j] * (-(dt*RfM*E) + PTF)
                     + CF[i-1][j];
-        }
 
+            /* Old schema: CV(i,i-1); CV(i+1,i)
+
+            CV[i][j] = -CV[i-1][j] * (PTV_L - 1 - PTV_N - dt*RvM) + (PTV_L * CV[i-1][j-1]) - (PTV_N * CV[i-1][j+1])
+                                                                                        - (dt * RvM * E * CF[i-1][(selectZ-1)-j]) + P_CV;*/
+
+        }
     }
 
     cout << endl << "Steady-state values:" << endl;
@@ -1042,6 +1060,8 @@ void initialLayerTV(vector <vector <double> > &TV)
         initLayerTV[i] = initLayerTV[i-1] - stepInit;
         TV[0][i-1] = initLayerTV[i-1];
     }
+
+    delete [] initLayerTV;
 }
 
 void initialLayerTF(vector <vector <double> > &TF)
@@ -1068,6 +1088,8 @@ void initialLayerTF(vector <vector <double> > &TF)
         initLayerTF[i] = initLayerTF[i-1] + stepInit;
         TF[0][i-1] = initLayerTF[i-1];
     }
+
+    delete [] initLayerTF;
 }
 
 void initialLayerCV(vector <vector <double> > &CV)
@@ -1094,6 +1116,8 @@ void initialLayerCV(vector <vector <double> > &CV)
         initLayerCV[i] = initLayerCV[i-1] + stepInit;
         CV[0][i-1] = initLayerCV[i-1];
     }
+
+    delete [] initLayerCV;
 }
 
 void initialLayerCF(vector <vector <double> > &CF)
@@ -1120,6 +1144,8 @@ void initialLayerCF(vector <vector <double> > &CF)
         initLayerCF[i] = initLayerCF[i-1] - stepInit;
         CF[0][i-1] = initLayerCF[i-1];
     }
+
+    delete [] initLayerCF;
 }
 
 void toFileMM(vector <vector <double> > MMM, string nameModel)
