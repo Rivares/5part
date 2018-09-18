@@ -600,7 +600,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinBoxInitLayerTV_0">
+        <widget class="QDoubleSpinBox" name="spinBoxInitLayer0_0">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -620,7 +620,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinBoxInitLayerTV_1">
+        <widget class="QDoubleSpinBox" name="spinBoxInitLayer0_1">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -640,7 +640,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinBoxInitLayerTF_0">
+        <widget class="QDoubleSpinBox" name="spinBoxInitLayer1_0">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -660,7 +660,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinBoxInitLayerTF_1">
+        <widget class="QDoubleSpinBox" name="spinBoxInitLayer1_1">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -684,7 +684,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinBoxInitLayerCV_0">
+        <widget class="QDoubleSpinBox" name="spinBoxInitLayer2_0">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -704,7 +704,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinBoxInitLayerCV_1">
+        <widget class="QDoubleSpinBox" name="spinBoxInitLayer2_1">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -724,7 +724,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinBoxInitLayerCF_0">
+        <widget class="QDoubleSpinBox" name="spinBoxInitLayer3_0">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -744,7 +744,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="spinBoxInitLayerCF_1">
+        <widget class="QDoubleSpinBox" name="spinBoxInitLayer3_1">
          <property name="decimals">
           <number>3</number>
          </property>

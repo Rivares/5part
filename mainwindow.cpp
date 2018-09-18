@@ -30,6 +30,7 @@ static double initLayerTV_0 = 0.0, initLayerTV_1 = 0.0;
 static double initLayerTF_0 = 0.0, initLayerTF_1 = 0.0;
 static double initLayerCV_0 = 0.0, initLayerCV_1 = 0.0;
 static double initLayerCF_0 = 0.0, initLayerCF_1 = 0.0;
+static double initLayerTST_0 = 0.0, initLayerTST_1 = 0.0;
 
 //----------Petrtubation----------//    Temperature(min:?, max:?), gas flow or pressure differential?
 static double P_TV = 0.0;
@@ -38,19 +39,21 @@ static double P_CV = 0.0;
 static double P_CF = 0.0;
 
 
-void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
-void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
-                 bool turnOn);
-void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
-                 vector <vector <double> > &CV, vector <vector <double> > &CF);
-void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
-                 vector <vector <double> > &CV, vector <vector <double> > &CF,
-                 bool turnOn);
+void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
+
+void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
+void TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
+void ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+             vector <vector <double> > &CV, vector <vector <double> > &CF);
+void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+             vector <vector <double> > &CV, vector <vector <double> > &CF);
+void ACUMM(vector <vector <double> > TV, vector <vector <double> > TST);
 
 void initialLayerTV(vector <vector <double> > &TV);         // Would be relize as template
 void initialLayerTF(vector <vector <double> > &TF);
 void initialLayerCV(vector <vector <double> > &CV);
 void initialLayerCF(vector <vector <double> > &CF);
+void initialLayerTST(vector <vector <double> > &TST);
 
 void toFileMM(vector <vector <double> > MMM, string nameModel);
 
@@ -75,11 +78,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
         dh = dRC/(selectZ-2);
 
-        initLayerTV_0 = ui->spinBoxInitLayerTV_0->value(),      initLayerTV_1 = ui->spinBoxInitLayerTV_1->value();
-        initLayerTF_0 = ui->spinBoxInitLayerTF_0->value(),      initLayerTF_1 = ui->spinBoxInitLayerTF_1->value();
+        initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
+        initLayerTF_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTF_1 = ui->spinBoxInitLayer1_1->value();
 
-        initLayerCV_0 = ui->spinBoxInitLayerCV_0->value(),      initLayerCV_1 = ui->spinBoxInitLayerCV_1->value();
-        initLayerCF_0 = ui->spinBoxInitLayerCF_0->value(),      initLayerCF_1 = ui->spinBoxInitLayerCF_1->value();
+        initLayerCV_0 = ui->spinBoxInitLayer2_0->value(),      initLayerCV_1 = ui->spinBoxInitLayer2_1->value();
+        initLayerCF_0 = ui->spinBoxInitLayer3_0->value(),      initLayerCF_1 = ui->spinBoxInitLayer3_1->value();
+
+        initLayerTST_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTST_1 = ui->spinBoxInitLayer1_1->value();
 
         ui->inputLeftY->clear();
         ui->inputRightY->clear();
@@ -112,11 +117,13 @@ void MainWindow::getData()
     rightY = ui->inputRightY->text().toDouble();
     selectN = ui->inputRightX->text().toULongLong(&okey, 10);
 
-    initLayerTV_0 = ui->spinBoxInitLayerTV_0->value(),      initLayerTV_1 = ui->spinBoxInitLayerTV_1->value();
-    initLayerTF_0 = ui->spinBoxInitLayerTF_0->value(),      initLayerTF_1 = ui->spinBoxInitLayerTF_1->value();
+    initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
+    initLayerTF_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTF_1 = ui->spinBoxInitLayer1_1->value();
 
-    initLayerCV_0 = ui->spinBoxInitLayerCV_0->value(),      initLayerCV_1 = ui->spinBoxInitLayerCV_1->value();
-    initLayerCF_0 = ui->spinBoxInitLayerCF_0->value(),      initLayerCF_1 = ui->spinBoxInitLayerCF_1->value();
+    initLayerCV_0 = ui->spinBoxInitLayer2_0->value(),      initLayerCV_1 = ui->spinBoxInitLayer2_1->value();
+    initLayerCF_0 = ui->spinBoxInitLayer3_0->value(),      initLayerCF_1 = ui->spinBoxInitLayer3_1->value();
+
+    initLayerTST_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTST_1 = ui->spinBoxInitLayer1_1->value();
 
     dt = (ui->selectStepT->text().toDouble() <= 0.0)? 0.01 : abs(ui->selectStepT->text().toDouble());
     dh = dRC/(selectZ-2);
@@ -160,21 +167,21 @@ void MainWindow::drawGraph()
 
     if (ui->LVM_BP->isChecked())
     {      
-        calculateMM(TV, TF);
+        TMTPLMM(TV, TF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
         drawModel(0);
     }
 
     if (ui->NLVM_BP->isChecked())
     {
-        calculateMM(TV, TF, true);                     // OVERLOADING CALCULATE OF FUNCTION
+        TMTPNMM(TV, TF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph...... (!)"));
         drawModel(0);
     }
 
     if((ui->EVM_BP->isChecked()) || (ui->EFM_BP->isChecked()))
     {
-        calculateMM(TV, TF, CV, CF);
+        ETMBPMM(TV, TF, CV, CF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
         if((ui->EVM_BP->isChecked()))
@@ -185,7 +192,7 @@ void MainWindow::drawGraph()
 
     if((ui->EVM_TP->isChecked()) || (ui->EFM_TP->isChecked()))
     {
-        calculateMM(TV, TF, CV, CF, true);
+        ETMTPMM(TV, TF, CV, CF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
         if((ui->EVM_TP->isChecked()))
@@ -194,10 +201,19 @@ void MainWindow::drawGraph()
             drawModel(2);
     }
 
-    ui->spinBoxInitLayerTV_0->setValue(initLayerTV_0);
-    ui->spinBoxInitLayerTF_0->setValue(initLayerTF_0);
-    ui->spinBoxInitLayerCV_0->setValue(initLayerCV_0);
-    ui->spinBoxInitLayerCF_0->setValue(initLayerCF_0);
+    if((ui->ACU->isChecked()))
+    {
+        ACUMM(TV, TST);
+        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+
+        drawModel(0); // ?
+    }
+
+    ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
+    ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
+    ui->spinBoxInitLayer2_0->setValue(initLayerCV_0);
+    ui->spinBoxInitLayer3_0->setValue(initLayerCF_0);
+    ui->spinBoxInitLayer1_0->setValue(initLayerTST_0);
 
     ui->statusBar->showMessage(QString("Ready!"));
 
@@ -501,13 +517,13 @@ void MainWindow::on_LVM_BP_clicked()
 
     ui->selectDRC->setText(QString::number(1.400));
 
-    ui->spinBoxInitLayerTV_0->setValue(160.000);    ui->spinBoxInitLayerTV_1->setValue(147.999);
-    ui->spinBoxInitLayerTF_0->setValue(120.377);    ui->spinBoxInitLayerTF_1->setValue(132.399);
-    ui->spinBoxInitLayerCV_0->setValue(0.0);        ui->spinBoxInitLayerCV_1->setValue(0.0);
-    ui->spinBoxInitLayerCF_0->setValue(0.0);        ui->spinBoxInitLayerCF_1->setValue(0.0);
+    ui->spinBoxInitLayer0_0->setValue(160.000);    ui->spinBoxInitLayer0_1->setValue(147.999);
+    ui->spinBoxInitLayer1_0->setValue(120.377);    ui->spinBoxInitLayer1_1->setValue(132.399);
+    ui->spinBoxInitLayer2_0->setValue(0.0);        ui->spinBoxInitLayer2_1->setValue(0.0);
+    ui->spinBoxInitLayer3_0->setValue(0.0);        ui->spinBoxInitLayer3_1->setValue(0.0);
 
-    ui->spinBoxInitLayerCV_0->setDisabled(true);    ui->spinBoxInitLayerCV_1->setDisabled(true);
-    ui->spinBoxInitLayerCF_0->setDisabled(true);    ui->spinBoxInitLayerCF_1->setDisabled(true);
+    ui->spinBoxInitLayer2_0->setDisabled(true);    ui->spinBoxInitLayer2_1->setDisabled(true);
+    ui->spinBoxInitLayer3_0->setDisabled(true);    ui->spinBoxInitLayer3_1->setDisabled(true);
 }
 
 void MainWindow::on_NLVM_BP_clicked()
@@ -526,13 +542,13 @@ void MainWindow::on_NLVM_BP_clicked()
 
     ui->selectDRC->setText(QString::number(1.400));
 
-    ui->spinBoxInitLayerTV_0->setValue(160.000);    ui->spinBoxInitLayerTV_1->setValue(147.999);
-    ui->spinBoxInitLayerTF_0->setValue(120.377);    ui->spinBoxInitLayerTF_1->setValue(132.399);
-    ui->spinBoxInitLayerCV_0->setValue(0.0);        ui->spinBoxInitLayerCV_1->setValue(0.0);
-    ui->spinBoxInitLayerCF_0->setValue(0.0);        ui->spinBoxInitLayerCF_1->setValue(0.0);
+    ui->spinBoxInitLayer0_0->setValue(160.000);    ui->spinBoxInitLayer0_1->setValue(147.999);
+    ui->spinBoxInitLayer1_0->setValue(120.377);    ui->spinBoxInitLayer1_1->setValue(132.399);
+    ui->spinBoxInitLayer2_0->setValue(0.0);        ui->spinBoxInitLayer2_1->setValue(0.0);
+    ui->spinBoxInitLayer3_0->setValue(0.0);        ui->spinBoxInitLayer3_1->setValue(0.0);
 
-    ui->spinBoxInitLayerCV_0->setDisabled(true);    ui->spinBoxInitLayerCV_1->setDisabled(true);
-    ui->spinBoxInitLayerCF_0->setDisabled(true);    ui->spinBoxInitLayerCF_1->setDisabled(true);
+    ui->spinBoxInitLayer2_0->setDisabled(true);    ui->spinBoxInitLayer2_1->setDisabled(true);
+    ui->spinBoxInitLayer3_0->setDisabled(true);    ui->spinBoxInitLayer3_1->setDisabled(true);
 }
 
 void MainWindow::on_EVM_BP_clicked()
@@ -551,13 +567,13 @@ void MainWindow::on_EVM_BP_clicked()
 
     ui->selectDRC->setText(QString::number(1.400));
 
-    ui->spinBoxInitLayerTV_0->setValue(160.000);    ui->spinBoxInitLayerTV_1->setValue(147.999);
-    ui->spinBoxInitLayerTF_0->setValue(120.377);    ui->spinBoxInitLayerTF_1->setValue(132.399);
-    ui->spinBoxInitLayerCV_0->setValue(67.9440);    ui->spinBoxInitLayerCV_1->setValue(72.044);
-    ui->spinBoxInitLayerCF_0->setValue(6.550);      ui->spinBoxInitLayerCF_1->setValue(2.788);
+    ui->spinBoxInitLayer0_0->setValue(160.000);    ui->spinBoxInitLayer0_1->setValue(147.999);
+    ui->spinBoxInitLayer1_0->setValue(120.377);    ui->spinBoxInitLayer1_1->setValue(132.399);
+    ui->spinBoxInitLayer2_0->setValue(67.9440);    ui->spinBoxInitLayer2_1->setValue(72.044);
+    ui->spinBoxInitLayer3_0->setValue(6.550);      ui->spinBoxInitLayer3_1->setValue(2.788);
 
-    ui->spinBoxInitLayerCV_0->setDisabled(false);   ui->spinBoxInitLayerCV_1->setDisabled(false);
-    ui->spinBoxInitLayerCF_0->setDisabled(false);   ui->spinBoxInitLayerCF_1->setDisabled(false);
+    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
+    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
 }
 
 void MainWindow::on_EFM_BP_clicked()
@@ -576,13 +592,13 @@ void MainWindow::on_EFM_BP_clicked()
 
     ui->selectDRC->setText(QString::number(1.400));
 
-    ui->spinBoxInitLayerTV_0->setValue(160.000);    ui->spinBoxInitLayerTV_1->setValue(147.999);
-    ui->spinBoxInitLayerTF_0->setValue(120.377);    ui->spinBoxInitLayerTF_1->setValue(132.399);
-    ui->spinBoxInitLayerCV_0->setValue(67.9440);    ui->spinBoxInitLayerCV_1->setValue(72.044);
-    ui->spinBoxInitLayerCF_0->setValue(6.550);      ui->spinBoxInitLayerCF_1->setValue(2.788);
+    ui->spinBoxInitLayer0_0->setValue(160.000);    ui->spinBoxInitLayer0_1->setValue(147.999);
+    ui->spinBoxInitLayer1_0->setValue(120.377);    ui->spinBoxInitLayer1_1->setValue(132.399);
+    ui->spinBoxInitLayer2_0->setValue(67.9440);    ui->spinBoxInitLayer2_1->setValue(72.044);
+    ui->spinBoxInitLayer3_0->setValue(6.550);      ui->spinBoxInitLayer3_1->setValue(2.788);
 
-    ui->spinBoxInitLayerCV_0->setDisabled(false);   ui->spinBoxInitLayerCV_1->setDisabled(false);
-    ui->spinBoxInitLayerCF_0->setDisabled(false);   ui->spinBoxInitLayerCF_1->setDisabled(false);
+    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
+    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
 }
 
 void MainWindow::on_EVM_TP_clicked()
@@ -601,13 +617,13 @@ void MainWindow::on_EVM_TP_clicked()
 
     ui->selectDRC->setText(QString::number(3.510));
 
-    ui->spinBoxInitLayerTV_0->setValue(142.500);    ui->spinBoxInitLayerTV_1->setValue(45.300);
-    ui->spinBoxInitLayerTF_0->setValue(30.000);     ui->spinBoxInitLayerTF_1->setValue(139.000);
-    ui->spinBoxInitLayerCV_0->setValue(0.5300);     ui->spinBoxInitLayerCV_1->setValue(1.1380);
-    ui->spinBoxInitLayerCF_0->setValue(1.000);      ui->spinBoxInitLayerCF_1->setValue(0.5525330);
+    ui->spinBoxInitLayer0_0->setValue(142.500);    ui->spinBoxInitLayer0_1->setValue(45.300);
+    ui->spinBoxInitLayer1_0->setValue(30.000);     ui->spinBoxInitLayer1_1->setValue(139.000);
+    ui->spinBoxInitLayer2_0->setValue(0.5300);     ui->spinBoxInitLayer2_1->setValue(1.1380);
+    ui->spinBoxInitLayer3_0->setValue(1.000);      ui->spinBoxInitLayer3_1->setValue(0.5525330);
 
-    ui->spinBoxInitLayerCV_0->setDisabled(false);   ui->spinBoxInitLayerCV_1->setDisabled(false);
-    ui->spinBoxInitLayerCF_0->setDisabled(false);   ui->spinBoxInitLayerCF_1->setDisabled(false);
+    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
+    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
 }
 
 void MainWindow::on_EFM_TP_clicked()
@@ -626,17 +642,40 @@ void MainWindow::on_EFM_TP_clicked()
 
     ui->selectDRC->setText(QString::number(3.510));
 
-    ui->spinBoxInitLayerTV_0->setValue(142.500);    ui->spinBoxInitLayerTV_1->setValue(45.300);
-    ui->spinBoxInitLayerTF_0->setValue(30.000);     ui->spinBoxInitLayerTF_1->setValue(139.000);
-    ui->spinBoxInitLayerCV_0->setValue(0.5300);     ui->spinBoxInitLayerCV_1->setValue(1.1380);
-    ui->spinBoxInitLayerCF_0->setValue(1.000);      ui->spinBoxInitLayerCF_1->setValue(0.5525330);
+    ui->spinBoxInitLayer0_0->setValue(142.500);    ui->spinBoxInitLayer0_1->setValue(45.300);
+    ui->spinBoxInitLayer1_0->setValue(30.000);     ui->spinBoxInitLayer1_1->setValue(139.000);
+    ui->spinBoxInitLayer2_0->setValue(0.5300);     ui->spinBoxInitLayer2_1->setValue(1.1380);
+    ui->spinBoxInitLayer3_0->setValue(1.000);      ui->spinBoxInitLayer3_1->setValue(0.5525330);
 
-    ui->spinBoxInitLayerCV_0->setDisabled(false);   ui->spinBoxInitLayerCV_1->setDisabled(false);
-    ui->spinBoxInitLayerCF_0->setDisabled(false);   ui->spinBoxInitLayerCF_1->setDisabled(false);
+    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
+    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
+}
+
+void MainWindow::on_ACU_clicked()
+{
+    ui->inputLeftY->clear();
+    ui->inputRightY->clear();
+
+    ui->valuePetrubationCVM->show();
+    ui->valuePetrubationCFM->show();
+
+    ui->inputLeftY->insert("0");
+    ui->inputRightY->insert("200");
+
+    leftY = ui->inputLeftY->text().toDouble();
+    rightY = ui->inputRightY->text().toDouble();
+
+    ui->selectDRC->setText(QString::number(4.0));
+
+    ui->spinBoxInitLayer0_0->setValue(72.50);    ui->spinBoxInitLayer0_1->setValue(42.4940);
+    ui->spinBoxInitLayer1_0->setValue(30.7492);     ui->spinBoxInitLayer1_1->setValue(26.3387);
+
+    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
+    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
 }
 
 //--------------------------LINER MODEL-----------------------------------
-void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
+void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 {
     double  RvT = 0.0191806, RfT = 0.0000777,
             PTV = (0.05654433 * dt) / dh,
@@ -706,9 +745,8 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 }
 
 //--------------------------NON-LINER MODEL-----------------------------------
-void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, bool turnOn) // turnOn is nonsense
+void TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 {
-    turnOn = (!turnOn);
     //double a0 = 0.0001152735759 or 0.00016966, What is TRUE?????????
 
     // -----Model's heat exchenger parameters------
@@ -784,8 +822,8 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF, b
 }
 
 //---------------------------INTERCONNECTED MODEL(BOTTOM PART)------------------------------
-void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
-                 vector <vector <double> > &CV, vector <vector <double> > &CF)
+void ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+             vector <vector <double> > &CV, vector <vector <double> > &CF)
 {
     // -----Model's heat exchenger parameters------
     double  RvT = 0.0191806, RfT = 0.0000777, a0 = 1.6966E-4,
@@ -907,12 +945,9 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 }
 
 //---------------------------INTERCONNECTED MODEL(TOP PART)------------------------------
-void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
-                 vector <vector <double> > &CV, vector <vector <double> > &CF,
-                 bool turnOn) // turnOn is nonsense
+void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+             vector <vector <double> > &CV, vector <vector <double> > &CF)
 {
-     turnOn = (!turnOn);
-
     // -----Model's heat exchenger parameters------
     double  RvT = 2.500, RfT = 0.000085500, a0 = 0.0034868520, // (a0 = 0.0034868520) != (a0_Simulink = 0.002702752)
             PTV_L = (a0 * 273.15 * dt) / dh,
@@ -1036,6 +1071,84 @@ void calculateMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     }cout << endl;
 }
 
+//---------------------------AIR-COOLING UNIT MODEL(ACU)------------------------------
+void ACUMM(vector<vector<double> > TV, vector<vector<double> > TST)
+{
+    // -----Model's heat parameters------
+    double  RvT = 8.400, a0 = 1.60039,
+            PTV_L = (a0 * 273.15 * dt) / dh,
+            PTV_N = 0.0;
+
+    // -----Model's boarder parameters------
+    double RB1 = 0.0, RB2 = 0.480;
+
+    vector <double> bmp;
+    bmp.assign(selectZ, 0.0);
+
+    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    {
+        TV.erase(TV.begin(), TV.end());
+        TST.erase(TST.begin(), TST.end());
+    }
+
+    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    {
+        TV.push_back(bmp);
+        TST.push_back(bmp);
+    }
+
+    std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
+    std::thread threadInitialLayerTST(initialLayerTST, ref(TST));
+
+    threadInitialLayerTV.join();
+    threadInitialLayerTST.join();
+
+    cout << endl << "Initial values:" << endl;
+    std::cout.precision(8);
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << TV[0][j] << std::fixed << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < selectZ; ++j)
+    {
+        cout << TST[0][j] << " | ";
+    }   cout << endl;
+
+    // Calculate model
+    for(size_t i = 1; i < size_t(selectN / dt); ++i)// time
+    {
+        for(size_t j = 1; j < (selectZ-1); ++j)      // place
+        {
+            // -----Calculate layer heat exchenger model------
+            PTV_N = (a0 * TV[i-1][j] * dt) / dh;
+
+            TV[i][j] = (dt * RvT * TST[i-1][(selectZ-1)-j])
+                    - (PTV_N * TV[i-1][j+1])
+                    - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
+                    + (PTV_L * TV[i-1][j-1])
+                    + TV[i-1][j];
+
+            TST[i][j] = (dt * RB2 * TV[i-1][(selectZ-1)-j])
+                    + (TST[i-1][j-1])
+                    - TST[i-1][j] * (dt*RB1)
+                    + TST[i-1][j];
+        }
+    }
+
+    cout << endl << "Steady-state values:" << endl;
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+    }cout << endl;
+
+    for(uint j = 1; j < (selectZ-1); ++j)
+    {
+        cout << TST[size_t((selectN-1) / dt)][j] << " | ";
+    }cout << endl;
+}
+
 void initialLayerTV(vector <vector <double> > &TV)
 {
     double *initLayerTV = new double [selectZ];
@@ -1146,6 +1259,34 @@ void initialLayerCF(vector <vector <double> > &CF)
     }
 
     delete [] initLayerCF;
+}
+
+void initialLayerTST(vector <vector <double> > &TST)
+{
+    double *initLayerTST = new double [selectZ];
+    double stepInit = 0.0;
+    size_t i = 0;
+
+    initLayerTST_0 += P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
+
+    for(i = 0; i < size_t(selectN / dt); ++i)
+    {
+        TST[i][0] = initLayerTST_0;
+        TST[i][selectZ-1] = initLayerTST_1;
+    }
+
+    stepInit = abs(initLayerTST_0 - initLayerTST_1)/(selectZ-1);
+
+    initLayerTST[0] = initLayerTST_0;
+    initLayerTST[selectZ-1] = initLayerTST_1;
+
+    for(i = 1; i < selectZ; ++i)
+    {
+        initLayerTST[i] = initLayerTST[i-1] - stepInit;
+        TST[0][i-1] = initLayerTST[i-1];
+    }
+
+    delete [] initLayerTST;
 }
 
 void toFileMM(vector <vector <double> > MMM, string nameModel)

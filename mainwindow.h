@@ -47,6 +47,8 @@ private slots:
     void on_valuePetrubationCVM_textChanged(QString P_CV_New);
     void on_valuePetrubationCFM_textChanged(QString P_CF_New);
 
+    void on_ACU_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -60,6 +62,7 @@ private:
     vector <vector <double> > TF;
     vector <vector <double> > CV;
     vector <vector <double> > CF;
+    vector <vector <double> > TST;
 
     double leftX,rightX;
     double leftY,rightY;
