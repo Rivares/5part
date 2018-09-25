@@ -52,17 +52,12 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    // -----Model's heat exchenger parameters------
-    double RvT, RfT, a0, PTV_L, PTV_N, PTF;
-
-    // -----Model's mass exchenger parameters------
-    double RvM, RfM, E, PCV, PCF;
-
     vector <vector <double> > TV;
     vector <vector <double> > TF;
     vector <vector <double> > CV;
     vector <vector <double> > CF;
-    vector <vector <double> > TST;
+    vector <vector <double> > TB;
+    vector <vector <double> > TFG;
 
     double leftX,rightX;
     double leftY,rightY;
