@@ -37,6 +37,7 @@ private slots:
     void on_EFM_BP_clicked();
     void on_EVM_TP_clicked();
     void on_EFM_TP_clicked();
+    void on_ACU_clicked();
 
     void on_spaceParametr_valueChanged(int countSpacePoints);
 
@@ -45,9 +46,7 @@ private slots:
     void on_valuePetrubationTVM_textChanged(QString P_TV_New);
     void on_valuePetrubationTFM_textChanged(QString P_TF_New);
     void on_valuePetrubationCVM_textChanged(QString P_CV_New);
-    void on_valuePetrubationCFM_textChanged(QString P_CF_New);
-
-    void on_ACU_clicked();
+    void on_valuePetrubationCFM_textChanged(QString P_CF_New);  
 
 private:
     Ui::MainWindow *ui;

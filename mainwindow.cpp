@@ -50,7 +50,7 @@ void ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF);
 void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF);
-void ACUMM(vector <vector <double> > TV, vector <vector <double> > TB);
+void ACUMM(vector <vector <double> > &TV, vector <vector <double> > &TB);
 
 void initialLayerTV(vector <vector <double> > &TV);         // Would be relize as template
 void initialLayerTF(vector <vector <double> > &TF);
@@ -174,6 +174,9 @@ void MainWindow::drawGraph()
         TMTPLMM(TV, TF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
         drawModel(0);
+
+        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
+        ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
     }
 
     if (ui->NLVM_BP->isChecked())
@@ -181,6 +184,9 @@ void MainWindow::drawGraph()
         TMTPNMM(TV, TF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph...... (!)"));
         drawModel(0);
+
+        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
+        ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
     }
 
     if((ui->EVM_BP->isChecked()) || (ui->EFM_BP->isChecked()))
@@ -192,6 +198,11 @@ void MainWindow::drawGraph()
             drawModel(0);
         else
             drawModel(1);
+
+        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
+        ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
+        ui->spinBoxInitLayer2_0->setValue(initLayerCV_0);
+        ui->spinBoxInitLayer3_0->setValue(initLayerCF_0);
     }
 
     if((ui->EVM_TP->isChecked()) || (ui->EFM_TP->isChecked()))
@@ -203,6 +214,11 @@ void MainWindow::drawGraph()
             drawModel(0);
         else
             drawModel(1);
+
+        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
+        ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
+        ui->spinBoxInitLayer2_0->setValue(initLayerCV_0);
+        ui->spinBoxInitLayer3_0->setValue(initLayerCF_0);
     }
 
     if((ui->ACU->isChecked()))
@@ -211,13 +227,10 @@ void MainWindow::drawGraph()
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
         drawModel(2);
-    }
 
-    ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
-    ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
-    ui->spinBoxInitLayer2_0->setValue(initLayerCV_0);
-    ui->spinBoxInitLayer3_0->setValue(initLayerCF_0);
-    ui->spinBoxInitLayer1_0->setValue(initLayerTB_0);
+        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
+        ui->spinBoxInitLayer1_0->setValue(initLayerTB_0);
+    }
 
     ui->statusBar->showMessage(QString("Ready!"));
 
@@ -241,6 +254,16 @@ void MainWindow::drawGraph()
         {
             listStatesVapor.append(QString::number(CV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
             listStatesFluid.append(QString::number(CF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+        }
+    }
+
+    // Out to display steady-state value temperature (ACU)
+    if(ui->ACU->isChecked())
+    {
+        for(uint j = 1; j < selectZ-1; ++j)
+        {
+            listStatesVapor.append(QString::number(TV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFluid.append(QString::number(TB[ static_cast <size_t> ((selectN-1) / dt) ][j]));
         }
     }
     QStringList vaporStates(listStatesVapor);
@@ -437,32 +460,6 @@ void MainWindow::drawModel(int choiceModel)
 
 void MainWindow::on_save_clicked()
 {
-    if(ui->EVM_TP->isChecked() || ui->EFM_TP->isChecked())
-    {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_TP");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_TP");
-        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV_TP");
-        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF_TP");
-
-        threadToFileTVMM.join();
-        threadToFileTFMM.join();
-        threadToFileCVMM.join();
-        threadToFileCFMM.join();
-    }
-
-    if(ui->EVM_BP->isChecked() || ui->EFM_BP->isChecked())
-    {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_BP");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_BP");
-        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV_BP");
-        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF_BP");
-
-        threadToFileTVMM.join();
-        threadToFileTFMM.join();
-        threadToFileCVMM.join();
-        threadToFileCFMM.join();
-    }
-
     if(ui->LVM_BP->isChecked())
     {
         std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_BP");
@@ -479,6 +476,52 @@ void MainWindow::on_save_clicked()
 
         threadToFileTVMM.join();
         threadToFileTFMM.join();
+    }
+
+    if(ui->EVM_BP->isChecked() || ui->EFM_BP->isChecked())
+    {
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_BP");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_BP");
+        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV_BP");
+        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF_BP");
+
+        threadToFileTVMM.join();
+        threadToFileTFMM.join();
+        threadToFileCVMM.join();
+        threadToFileCFMM.join();
+    }
+
+    if(ui->EVM_TP->isChecked() || ui->EFM_TP->isChecked())
+    {
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_TP");
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_TP");
+        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV_TP");
+        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF_TP");
+
+        threadToFileTVMM.join();
+        threadToFileTFMM.join();
+        threadToFileCVMM.join();
+        threadToFileCFMM.join();
+    }
+
+    if(ui->ACU->isChecked())
+    {
+        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_ACU");
+        std::thread threadToFileTBMM(toFileMM, ref(TB), "TB_ACU");
+
+        threadToFileTVMM.join();
+        threadToFileTBMM.join();
+    }
+
+    if(ui->EVAP->isChecked())
+    {
+        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_EVAP");
+        std::thread threadToFileTBMM(toFileMM, ref(TB), "TB_EVAP");
+        std::thread threadToFileTFGMM(toFileMM, ref(TFG), "TFG_EVAP");
+
+        threadToFileTFMM.join();
+        threadToFileTBMM.join();
+        threadToFileTFGMM.join();
     }
 
     QTime time = QTime::currentTime();
@@ -686,23 +729,27 @@ void MainWindow::on_ACU_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
+    ui->inputRightX->clear();
 
     ui->valuePetrubationCVM->show();
     ui->valuePetrubationCFM->show();
 
     ui->inputLeftY->insert("0");
-    ui->inputRightY->insert("200");
+    ui->inputRightY->insert("80");
+    ui->inputRightX->insert("30");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
 
     ui->selectDRC->setText(QString::number(4.0));
 
-    ui->spinBoxInitLayer0_0->setValue(72.50);    ui->spinBoxInitLayer0_1->setValue(42.4940);
-    ui->spinBoxInitLayer1_0->setValue(32.614);     ui->spinBoxInitLayer1_1->setValue(23.2897);
+    ui->spinBoxInitLayer0_0->setValue(72.50);       ui->spinBoxInitLayer0_1->setValue(42.4940);
+    ui->spinBoxInitLayer1_0->setValue(30.750);     ui->spinBoxInitLayer1_1->setValue(23.2897);
+    ui->spinBoxInitLayer2_0->setValue(0.0);         ui->spinBoxInitLayer2_1->setValue(0.0);
+    ui->spinBoxInitLayer3_0->setValue(0.0);         ui->spinBoxInitLayer3_1->setValue(0.0);
 
-    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
-    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
+    ui->spinBoxInitLayer2_0->setDisabled(true);     ui->spinBoxInitLayer2_1->setDisabled(true);
+    ui->spinBoxInitLayer3_0->setDisabled(true);     ui->spinBoxInitLayer3_1->setDisabled(true);
 }
 
 //--------------------------LINER MODEL-----------------------------------
@@ -1103,16 +1150,16 @@ void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 }
 
 //---------------------------AIR-COOLING UNIT MODEL(ACU)------------------------------
-void ACUMM(vector<vector<double> > TV, vector<vector<double> > TB)
+void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 {
     // -----Model's heat parameters------
-    double  RvT = 8.400, a0 = 0.0639,
+    double  RvT = 8.400, a0 = 0.050,//0.0532,
             PTV_L = (a0 * 273.150) / dh;
 
     // -----Model's boarder parameters------
     double RB1 = 0.00661, RB2 = 0.480   // Boarders
-         , TE = 12.380  // Temperature of enviroment
-         , CP = 134.0;  // Count piplines;
+         , TE = 12.380                  // Temperature of enviroment
+         , CP = 134.0;                  // Count piplines;
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -1149,9 +1196,9 @@ void ACUMM(vector<vector<double> > TV, vector<vector<double> > TB)
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)// time
+    for(size_t i = 1; i < size_t(selectN / dt); ++i)    // time
     {
-        for(size_t j = 1; j < (selectZ-1); ++j)      // place
+        for(size_t j = 1; j < (selectZ-1); ++j)         // place
         {
             // -----Calculate layer heat exchenger model------
             TV[i][j] = (dt * RvT * TB[i-1][(selectZ-1)-j])
@@ -1159,7 +1206,7 @@ void ACUMM(vector<vector<double> > TV, vector<vector<double> > TB)
                     + (dt * PTV_L * TV[i-1][j-1])
                     + TV[i-1][j];
 
-            TB[i][j] = (dt * RB2 * TV[i-1][(selectZ-1)-j])
+            TB[i][j] = (dt * RB2 * TV[i-1][j])
                     + (CP*dt*RB1*TE)                        // ? TE - const or function?
                     - TB[i-1][j] * (CP*dt*RB1 + dt*RB2)    // ? not optimization, yet
                     + TB[i-1][j];
