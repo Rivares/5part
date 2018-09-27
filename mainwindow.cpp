@@ -43,8 +43,6 @@ static double P_TFG = 0.0;
 
 
 void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
-
-void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
 void TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
 void ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF);
@@ -103,7 +101,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         drawGraph();
 
         clock_t timeDiff = clock() - timeMW_0;
-        msec = timeDiff * 1000 / CLOCKS_PER_SEC;
+        msec = (double)(timeDiff * 1000) / (double)CLOCKS_PER_SEC;
         cout << "General time of program taken " << msec/1000 << " seconds, and " << msec%1000 <<" milliseconds!" << endl;
 }
 
@@ -273,7 +271,7 @@ void MainWindow::drawGraph()
     ui->fluidState->addItems(fluidStates);
 
     clock_t timeDiff = clock() - timeMW_1;
-    msec = timeDiff * 1000 / CLOCKS_PER_SEC;
+    msec = (double)(timeDiff * 1000) / (double)CLOCKS_PER_SEC;
     cout << endl <<"Drawing time of program taken " << msec/1000 << " seconds, and " << msec%1000 <<" milliseconds!" << endl;
     return;
 }
@@ -454,7 +452,7 @@ void MainWindow::drawModel(int choiceModel)
     ui->customPlot->replot();
 
     clock_t timeDiff = clock() - timeMW_Cust;
-    msec = timeDiff * 1000 / CLOCKS_PER_SEC;
+    msec = (double)(timeDiff * 1000) / (double)CLOCKS_PER_SEC;
     cout << endl <<"(QCustomPlot) Drawing time of program taken " << msec/1000 << " seconds, and " << msec%1000 <<" milliseconds!" << endl;
 }
 
@@ -1153,7 +1151,7 @@ void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 {
     // -----Model's heat parameters------
-    double  RvT = 8.400, a0 = 0.050,//0.0532,
+    double  RvT = 8.400, a0 = 0.06,     // ?
             PTV_L = (a0 * 273.150) / dh;
 
     // -----Model's boarder parameters------
