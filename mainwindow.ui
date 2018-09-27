@@ -605,7 +605,7 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>180.000000000000000</double>
+          <double>500.000000000000000</double>
          </property>
          <property name="value">
           <double>160.000000000000000</double>
@@ -625,7 +625,7 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>180.000000000000000</double>
+          <double>500.000000000000000</double>
          </property>
          <property name="value">
           <double>147.998999999999995</double>
@@ -645,7 +645,7 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>180.000000000000000</double>
+          <double>500.000000000000000</double>
          </property>
          <property name="value">
           <double>120.376999999999995</double>
@@ -665,7 +665,7 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>180.000000000000000</double>
+          <double>500.000000000000000</double>
          </property>
          <property name="value">
           <double>132.399000000000001</double>
@@ -689,7 +689,7 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>180.000000000000000</double>
+          <double>500.000000000000000</double>
          </property>
          <property name="value">
           <double>67.944000000000003</double>
@@ -709,7 +709,7 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>180.000000000000000</double>
+          <double>500.000000000000000</double>
          </property>
          <property name="value">
           <double>72.043999999999997</double>
@@ -729,7 +729,7 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>100.000000000000000</double>
+          <double>500.000000000000000</double>
          </property>
          <property name="value">
           <double>6.550000000000000</double>
@@ -749,7 +749,7 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>100.000000000000000</double>
+          <double>500.000000000000000</double>
          </property>
          <property name="value">
           <double>2.788000000000000</double>

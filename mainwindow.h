@@ -48,6 +48,8 @@ private slots:
     void on_valuePetrubationCVM_textChanged(QString P_CV_New);
     void on_valuePetrubationCFM_textChanged(QString P_CF_New);  
 
+    void on_EVAP_clicked();
+
 private:
     Ui::MainWindow *ui;
 
