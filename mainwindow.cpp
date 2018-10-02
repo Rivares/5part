@@ -33,7 +33,7 @@ static double initLayerCF_0 = 0.0, initLayerCF_1 = 0.0;
 static double initLayerTB_0 = 0.0, initLayerTB_1 = 0.0;
 static double initLayerTFG_0 = 0.0, initLayerTFG_1 = 0.0;
 
-//----------Petrtubation----------//    Temperature(min:?, max:?), gas flow or pressure differential?
+//----------Petrtubation----------//
 static double P_TV = 0.0;
 static double P_TF = 0.0;
 static double P_CV = 0.0;
@@ -112,16 +112,7 @@ void MainWindow::getData()
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
     selectN = ui->inputRightX->text().toULongLong(&okey, 10);
-/*
-    initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
-    initLayerTF_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTF_1 = ui->spinBoxInitLayer1_1->value();
 
-    initLayerCV_0 = ui->spinBoxInitLayer2_0->value(),      initLayerCV_1 = ui->spinBoxInitLayer2_1->value();
-    initLayerCF_0 = ui->spinBoxInitLayer3_0->value(),      initLayerCF_1 = ui->spinBoxInitLayer3_1->value();
-
-    initLayerTB_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTB_1 = ui->spinBoxInitLayer1_1->value();
-    initLayerTFG_0 = ui->spinBoxInitLayer2_0->value(),      initLayerTFG_1 = ui->spinBoxInitLayer2_1->value();
-*/
     if(ui->LVM_BP->isChecked())
     {
         initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
@@ -816,7 +807,7 @@ void MainWindow::on_ACU_clicked()
 
 }
 
-void MainWindow::on_EVAP_clicked()  // ?
+void MainWindow::on_EVAP_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
@@ -827,7 +818,7 @@ void MainWindow::on_EVAP_clicked()  // ?
 
     ui->inputLeftY->insert("0");
     ui->inputRightY->insert("300");
-    ui->inputRightX->insert("30000");
+    ui->inputRightX->insert("3000");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
@@ -836,7 +827,7 @@ void MainWindow::on_EVAP_clicked()  // ?
     ui->spaceParametr->setValue(4);
 
     ui->spinBoxInitLayer0_0->setValue(139.0);       ui->spinBoxInitLayer0_1->setValue(160.1616);
-    ui->spinBoxInitLayer1_0->setValue(160.0);     ui->spinBoxInitLayer1_1->setValue(147.0722);
+    ui->spinBoxInitLayer1_0->setValue(164.4825);     ui->spinBoxInitLayer1_1->setValue(147.0722);
     ui->spinBoxInitLayer2_0->setValue(300.0);         ui->spinBoxInitLayer2_1->setValue(240.5403);
     ui->spinBoxInitLayer3_0->setValue(0.0);         ui->spinBoxInitLayer3_1->setValue(0.0);
 
@@ -1245,7 +1236,7 @@ void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 {
     // -----Model's heat parameters------
-    double  RvT = 8.400, a0 = 0.06,     // ?
+    double  RvT = 8.400, a0 = 0.06,     // a0 = 0.06 ?
             PTV_L = (a0 * 273.150) / dh;
 
     // -----Model's boarder parameters------
@@ -1320,10 +1311,10 @@ void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <vector <double> > &TFG)
 {
     // -----Model's gas parameters------
-    double  RFG = 0.470, PTFG = 4.60;
+    double  RFG = 0.470, PTFG = 4.60 / dh;
 
     // -----Model's fluide parameters------
-    double  RF = 0.0030, PTF = 0.0030;
+    double  RF = 0.0030, PTF = 0.0030 / dh;
 
     // -----Model's boarder parameters------
     double  RFB = 0.220, RFGB = 0.0080;
@@ -1376,17 +1367,17 @@ void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     {
         for(size_t j = 1; j < (selectZ-1); ++j)         // place
         {
-            TF[i][j] = (dt * RF * TB[i-1][j])
-                    - (dt * PTF * TF[i-1][j-1])
-                    - TF[i-1][j] * (dt*RF + (-dt*PTF))
+            TF[i][j] = (dt * RF * TB[i-1][j+1]) // ?
+                    + (dt * PTF * TF[i-1][j+1])
+                    - TF[i-1][j] * (dt*RF + (dt*PTF))
                     + TF[i-1][j];
 
-            TB[i][j] = (dt * RFB * TF[i-1][j])
-                    + (dt * RFGB * TB[i-1][j-1])
+            TB[i][j] = (dt * RFB * TF[i-1][j]) // ?
+                    + (dt * RFGB * TFG[i-1][(selectZ-1)-j])// ?
                     - TB[i-1][j] * (dt*RFGB + dt*RFB)
                     + TB[i-1][j];
 
-            TFG[i][j] = (dt * RFG * TB[i-1][j])
+            TFG[i][j] = (dt * RFG * TB[i-1][j+1]) // ?
                     + (dt * PTFG * TFG[i-1][j-1])
                     - TFG[i-1][j] * (dt*RFG + dt*PTFG)
                     + TFG[i-1][j];
