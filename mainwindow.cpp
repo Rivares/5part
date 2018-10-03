@@ -402,12 +402,14 @@ void MainWindow::drawModel(int choiceModel)
 
     /*-------------Choice drawing processes------------------*/
 
+    uint countModels = 0;
     QVector <QVector <double>> drawingProcces_0, drawingProcces_1, drawingProcces_2;
 
     if( (choiceModel == 0) || (choiceModel == 1) || (choiceModel == 2) )
     {
         drawingProcces_0 = M_mat0;
         drawingProcces_1 = M_mat1;
+        countModels = 2;
     }
 
     if(choiceModel == 3)
@@ -415,6 +417,7 @@ void MainWindow::drawModel(int choiceModel)
         drawingProcces_0 = M_mat0;
         drawingProcces_1 = M_mat1;
         drawingProcces_2 = M_mat2;
+        countModels = 3;
     }
 
 
@@ -431,7 +434,7 @@ void MainWindow::drawModel(int choiceModel)
     int translucent = 35;
 
     uint counter = 1;
-    for(uint j = 0; j < (selectZ-2) * 2; ++j)
+    for(uint j = 0; j < (selectZ-2) * countModels; ++j)
     {
         ui->customPlot->addGraph();
 
@@ -449,12 +452,13 @@ void MainWindow::drawModel(int choiceModel)
             ui->customPlot->graph(j)->setName(QString(tr("Vapor phase_%1")).arg(j));
         }
         else
-        {
-            /*-------------Customize of pen to drawing second model------------------*/
+            if(counter <= (selectZ-2) * countModels)
+            {
+                /*-------------Customize of pen to drawing second model------------------*/
 
-            pen.setStyle(Qt::DotLine);
-            ui->customPlot->graph(j)->setName(QString(tr("Liquid phase_%1")).arg(j - (selectZ-2)));
-        }
+                pen.setStyle(Qt::DotLine);
+                ui->customPlot->graph(j)->setName(QString(tr("Liquid phase_%1")).arg(j - (selectZ-2)));
+            }
 
         pen.setWidthF(widthPen);
         ui->customPlot->graph(j)->setPen(pen);
@@ -816,7 +820,7 @@ void MainWindow::on_EVAP_clicked()
     ui->valuePetrubationCVM->show();
     ui->valuePetrubationCFM->show();
 
-    ui->inputLeftY->insert("0");
+    ui->inputLeftY->insert("140");
     ui->inputRightY->insert("300");
     ui->inputRightX->insert("3000");
 
@@ -826,8 +830,8 @@ void MainWindow::on_EVAP_clicked()
     ui->selectDRC->setText(QString::number(5.5));
     ui->spaceParametr->setValue(4);
 
-    ui->spinBoxInitLayer0_0->setValue(139.0);       ui->spinBoxInitLayer0_1->setValue(160.1616);
-    ui->spinBoxInitLayer1_0->setValue(164.4825);     ui->spinBoxInitLayer1_1->setValue(147.0722);
+    ui->spinBoxInitLayer0_0->setValue(160.1616);       ui->spinBoxInitLayer0_1->setValue(139.0);
+    ui->spinBoxInitLayer1_0->setValue(147.0722);     ui->spinBoxInitLayer1_1->setValue(164.4825);
     ui->spinBoxInitLayer2_0->setValue(300.0);         ui->spinBoxInitLayer2_1->setValue(240.5403);
     ui->spinBoxInitLayer3_0->setValue(0.0);         ui->spinBoxInitLayer3_1->setValue(0.0);
 
