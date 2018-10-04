@@ -449,22 +449,29 @@ void MainWindow::drawModel(int choiceModel)
             /*-------------Customize of pen to drawing first model------------------*/
 
             pen.setStyle(Qt::SolidLine);
-            ui->customPlot->graph(j)->setName(QString(tr("Vapor phase_%1")).arg(j));
+            ui->customPlot->graph(j)->setName(QString(tr("First phase_%1")).arg(j));
         }
         else
-            if(counter <= (selectZ-2) * countModels)
+            if(counter <= (selectZ-2) * (countModels-1))
             {
                 /*-------------Customize of pen to drawing second model------------------*/
 
+                pen.setStyle(Qt::DashLine);
+                ui->customPlot->graph(j)->setName(QString(tr("Thrid phase_%1")).arg(j - (selectZ-2)));
+            }
+        else
+            {
+                /*-------------Customize of pen to drawing thrid model------------------*/
+
                 pen.setStyle(Qt::DotLine);
-                ui->customPlot->graph(j)->setName(QString(tr("Liquid phase_%1")).arg(j - (selectZ-2)));
+                ui->customPlot->graph(j)->setName(QString(tr("Second phase_%1")).arg(j - (selectZ-2)));
             }
 
         pen.setWidthF(widthPen);
         ui->customPlot->graph(j)->setPen(pen);
         ui->customPlot->graph(j)->setBrush(QBrush(QColor (randColorR,
-                                                           randColorG,
-                                                           randColorB, translucent) ));
+                                                          randColorG,
+                                                          randColorB, translucent) ));
         ++counter;
     }
 
@@ -485,19 +492,25 @@ void MainWindow::drawModel(int choiceModel)
     int msec = 0;
 
     counter = 1;
-    uint j = 1;
-    for(uint i = 0; i < (selectZ-2) * 2; ++i)
+    uint j = 1, k = 1;
+    for(uint i = 0; i < (selectZ-2) * countModels; ++i)
     {
         if(counter <= (selectZ-2))
         {
             ui->customPlot->graph(i)->setData(t, drawingProcces_0[i+1]);
         }
-
         else
-        {
-            ui->customPlot->graph(i)->setData(t, drawingProcces_1[j]);
-            ++j;
-        }
+            if(counter <= (selectZ-2) * (countModels-1))
+            {
+                ui->customPlot->graph(i)->setData(t, drawingProcces_2[k]);
+                ++k;
+            }
+            else
+            {
+                ui->customPlot->graph(i)->setData(t, drawingProcces_1[j]);
+                ++j;
+            }
+
         ++counter;
     }
 
