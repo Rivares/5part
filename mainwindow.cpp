@@ -163,8 +163,9 @@ void MainWindow::drawGraph()
     clock_t timeMW_1 = clock();
     int msec = 0;
 
-    ui->vaporState->clear();
-    ui->fluidState->clear();
+    ui->firstState->clear();
+    ui->secondState->clear();
+    ui->thirdState->clear();
 
     // configure right and top axis to show ticks but no labels:
     ui->customPlot->xAxis2->setVisible(true);
@@ -274,13 +275,13 @@ void MainWindow::drawGraph()
     /*----------------------------------------------------------------------*/
 
     // Out to display steady-state value temperature
-    QList <QString> listStatesVapor, listStatesFluid;
+    QList <QString> listStatesFirst, listStatesSecond, listStatesThird;
     if((ui->LVM_BP->isChecked()) || (ui->NLVM_BP->isChecked()) || (ui->EVM_BP->isChecked()) || (ui->EVM_TP->isChecked()))
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
-            listStatesVapor.append(QString::number(TV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
-            listStatesFluid.append(QString::number(TF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
         }
     }
 
@@ -289,8 +290,8 @@ void MainWindow::drawGraph()
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
-            listStatesVapor.append(QString::number(CV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
-            listStatesFluid.append(QString::number(CF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFirst.append(QString::number(CV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesSecond.append(QString::number(CF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
         }
     }
 
@@ -299,8 +300,8 @@ void MainWindow::drawGraph()
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
-            listStatesVapor.append(QString::number(TV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
-            listStatesFluid.append(QString::number(TB[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN-1) / dt) ][j]));
         }
     }
 
@@ -309,15 +310,18 @@ void MainWindow::drawGraph()
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
-            listStatesVapor.append(QString::number(TF[ static_cast <size_t> ((selectN-1) / dt) ][j])); // ?
-            listStatesFluid.append(QString::number(TB[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFirst.append(QString::number(TF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesThird.append(QString::number(TFG[ static_cast <size_t> ((selectN-1) / dt) ][j]));
         }
     }
-    QStringList vaporStates(listStatesVapor);
-    QStringList fluidStates(listStatesFluid);
+    QStringList firstStates(listStatesFirst);
+    QStringList secondStates(listStatesSecond);
+    QStringList thirdStates(listStatesThird);
 
-    ui->vaporState->addItems(vaporStates);
-    ui->fluidState->addItems(fluidStates);
+    ui->firstState->addItems(firstStates);
+    ui->secondState->addItems(secondStates);
+    ui->thirdState->addItems(thirdStates);
 
     clock_t timeDiff = clock() - timeMW_1;
     msec = (double)(timeDiff * 1000) / (double)CLOCKS_PER_SEC;
@@ -433,7 +437,7 @@ void MainWindow::drawModel(int choiceModel)
     qreal widthPen = 2.2;
     int translucent = 35;
 
-    uint counter = 1;
+    uint counter = 1, num = 0;
     for(uint j = 0; j < (selectZ-2) * countModels; ++j)
     {
         ui->customPlot->addGraph();
@@ -457,14 +461,16 @@ void MainWindow::drawModel(int choiceModel)
                 /*-------------Customize of pen to drawing second model------------------*/
 
                 pen.setStyle(Qt::DashLine);
-                ui->customPlot->graph(j)->setName(QString(tr("Thrid phase_%1")).arg(j - (selectZ-2)));
+                ui->customPlot->graph(j)->setName(QString(tr("Third phase_%1")).arg(num));
+                ++num;
             }
-        else
+            else
             {
-                /*-------------Customize of pen to drawing thrid model------------------*/
+                /*-------------Customize of pen to drawing third model------------------*/
 
                 pen.setStyle(Qt::DotLine);
-                ui->customPlot->graph(j)->setName(QString(tr("Second phase_%1")).arg(j - (selectZ-2)));
+                ui->customPlot->graph(j)->setName(QString(tr("Second phase_%1")).arg(num - (selectZ-2)));
+                ++num;
             }
 
         pen.setWidthF(widthPen);
@@ -646,9 +652,11 @@ void MainWindow::on_LVM_BP_clicked()
 
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
+    ui->inputRightX->clear();
 
     ui->inputLeftY->insert("100");
     ui->inputRightY->insert("170");
+    ui->inputRightX->insert("10000");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
@@ -672,9 +680,11 @@ void MainWindow::on_NLVM_BP_clicked()
 
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
+    ui->inputRightX->clear();
 
     ui->inputLeftY->insert("100");
     ui->inputRightY->insert("170");
+    ui->inputRightX->insert("10000");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
@@ -695,12 +705,14 @@ void MainWindow::on_EVM_BP_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
+    ui->inputRightX->clear();
 
     ui->valuePetrubationCVM->show();
     ui->valuePetrubationCFM->show();
 
     ui->inputLeftY->insert("100");
     ui->inputRightY->insert("170");
+    ui->inputRightX->insert("10000");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
@@ -721,12 +733,14 @@ void MainWindow::on_EFM_BP_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
+    ui->inputRightX->clear();
 
     ui->valuePetrubationCVM->show();
     ui->valuePetrubationCFM->show();
 
     ui->inputLeftY->insert("0");
     ui->inputRightY->insert("90");
+    ui->inputRightX->insert("10000");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
@@ -747,12 +761,14 @@ void MainWindow::on_EVM_TP_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
+    ui->inputRightX->clear();
 
     ui->valuePetrubationCVM->show();
     ui->valuePetrubationCFM->show();
 
     ui->inputLeftY->insert("20");
     ui->inputRightY->insert("150");
+    ui->inputRightX->insert("50000");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
@@ -773,12 +789,14 @@ void MainWindow::on_EFM_TP_clicked()
 {
     ui->inputLeftY->clear();
     ui->inputRightY->clear();
+    ui->inputRightX->clear();
 
     ui->valuePetrubationCVM->show();
     ui->valuePetrubationCFM->show();
 
     ui->inputLeftY->insert("0");
     ui->inputRightY->insert("1.5");
+    ui->inputRightX->insert("50000");
 
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
@@ -843,8 +861,8 @@ void MainWindow::on_EVAP_clicked()
     ui->selectDRC->setText(QString::number(5.5));
     ui->spaceParametr->setValue(4);
 
-    ui->spinBoxInitLayer0_0->setValue(160.1616);       ui->spinBoxInitLayer0_1->setValue(139.0);
-    ui->spinBoxInitLayer1_0->setValue(147.0722);     ui->spinBoxInitLayer1_1->setValue(164.4825);
+    ui->spinBoxInitLayer0_0->setValue(139.0);       ui->spinBoxInitLayer0_1->setValue(160.1616);
+    ui->spinBoxInitLayer1_0->setValue(164.4825);     ui->spinBoxInitLayer1_1->setValue(147.0722);
     ui->spinBoxInitLayer2_0->setValue(300.0);         ui->spinBoxInitLayer2_1->setValue(240.5403);
     ui->spinBoxInitLayer3_0->setValue(0.0);         ui->spinBoxInitLayer3_1->setValue(0.0);
 
