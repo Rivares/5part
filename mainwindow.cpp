@@ -437,8 +437,7 @@ void MainWindow::drawModel(int choiceModel)
     qreal widthPen = 2.2;
     int translucent = 35;
 
-    uint counter = 1, num = 0;
-    for(uint j = 0; j < (selectZ-2) * countModels; ++j)
+    for(uint i = 0, j = 0, k = 0, counter = 1; i < (selectZ-2) * countModels; ++i, ++counter)
     {
         ui->customPlot->addGraph();
 
@@ -453,7 +452,7 @@ void MainWindow::drawModel(int choiceModel)
             /*-------------Customize of pen to drawing first model------------------*/
 
             pen.setStyle(Qt::SolidLine);
-            ui->customPlot->graph(j)->setName(QString(tr("First phase_%1")).arg(j));
+            ui->customPlot->graph(i)->setName(QString(tr("First phase_%1")).arg(i));
         }
         else
             if(counter <= (selectZ-2) * (countModels-1))
@@ -461,45 +460,29 @@ void MainWindow::drawModel(int choiceModel)
                 /*-------------Customize of pen to drawing second model------------------*/
 
                 pen.setStyle(Qt::DashLine);
-                ui->customPlot->graph(j)->setName(QString(tr("Third phase_%1")).arg(num));
-                ++num;
+                ui->customPlot->graph(i)->setName(QString(tr("Third phase_%1")).arg(k));
+                ++k;
             }
             else
             {
                 /*-------------Customize of pen to drawing third model------------------*/
 
                 pen.setStyle(Qt::DotLine);
-                ui->customPlot->graph(j)->setName(QString(tr("Second phase_%1")).arg(num - (selectZ-2)));
-                ++num;
+                ui->customPlot->graph(i)->setName(QString(tr("Second phase_%1")).arg(j));
+                ++j;
             }
 
         pen.setWidthF(widthPen);
-        ui->customPlot->graph(j)->setPen(pen);
-        ui->customPlot->graph(j)->setBrush(QBrush(QColor (randColorR,
+        ui->customPlot->graph(i)->setPen(pen);
+        ui->customPlot->graph(i)->setBrush(QBrush(QColor (randColorR,
                                                           randColorG,
                                                           randColorB, translucent) ));
-        ++counter;
     }
-
-    /*-------------Drawing graphs------------------*/
-/*
-    // Test outputing data
-    for(uint j = 1; j < selectZ-3; ++j)
-    {
-        for(uint i = 0; i < selectN; ++i)
-        {
-            cout << drawingProcces_0[j][i] << " , ";
-        }
-        cout << endl;
-    }
-*/
 
     clock_t timeMW_Cust = clock();
     int msec = 0;
 
-    counter = 1;
-    uint j = 1, k = 1;
-    for(uint i = 0; i < (selectZ-2) * countModels; ++i)
+    for(uint i = 0, j = 1, k = 1, counter = 1; i < (selectZ-2) * countModels; ++i, ++counter)
     {
         if(counter <= (selectZ-2))
         {
@@ -516,8 +499,6 @@ void MainWindow::drawModel(int choiceModel)
                 ui->customPlot->graph(i)->setData(t, drawingProcces_1[j]);
                 ++j;
             }
-
-        ++counter;
     }
 
     ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
@@ -1404,7 +1385,7 @@ void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
         {
             TF[i][j] = (dt * RF * TB[i-1][j+1]) // ?
                     + (dt * PTF * TF[i-1][j+1])
-                    - TF[i-1][j] * (dt*RF + (dt*PTF))
+                    - TF[i-1][j] * (dt*RF + dt*PTF)
                     + TF[i-1][j];
 
             TB[i][j] = (dt * RFB * TF[i-1][j]) // ?
@@ -1434,6 +1415,90 @@ void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     {
         cout << TFG[size_t((selectN-1) / dt)][j] << " | ";
     }cout << endl;
+
+
+/*
+    string nameModel = "MM_TF_1.txt";
+    ofstream foutTF_1(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTF_1 << TF[i][1] << endl;
+    }
+    foutTF_1.close();
+
+    nameModel = "MM_TF_2.txt";
+    ofstream foutTF_2(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTF_2 << TF[i][2] << endl;
+    }
+    foutTF_2.close();
+
+    nameModel = "MM_TF_3.txt";
+    ofstream foutTF_3(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTF_3 << TF[i][3] << endl;
+    }
+    foutTF_3.close();
+
+    nameModel = "MM_TB_1.txt";
+    ofstream foutTB_1(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTB_1 << TB[i][1] << endl;
+    }
+    foutTB_1.close();
+
+    nameModel = "MM_TB_2.txt";
+    ofstream foutTB_2(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTB_2 << TB[i][2] << endl;
+    }
+    foutTB_2.close();
+
+    nameModel = "MM_TB_3.txt";
+    ofstream foutTB_3(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTB_3 << TB[i][3] << endl;
+    }
+    foutTB_3.close();
+
+    nameModel = "MM_TFG_1.txt";
+    ofstream foutTFG_1(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTFG_1 << TFG[i][1] << endl;
+    }
+    foutTFG_1.close();
+
+    nameModel = "MM_TFG_2.txt";
+    ofstream foutTFG_2(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTFG_2 << TFG[i][2] << endl;
+    }
+    foutTFG_2.close();
+
+    nameModel = "MM_TFG_3.txt";
+    ofstream foutTFG_3(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
+    {
+        foutTFG_3 << TFG[i][3] << endl;
+    }
+    foutTFG_3.close();
+    */
 }
 
 void initialLayerTV(vector <vector <double> > &TV)
