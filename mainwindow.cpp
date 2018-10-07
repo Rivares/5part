@@ -51,14 +51,14 @@ static double P_CF = 0.0;
 //static double P_TFG = 0.0;
 
 
-void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
-void TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
-void ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+bool TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
+bool TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
+bool ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF);
-void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+bool ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF);
-void ACUMM(vector <vector <double> > &TV, vector <vector <double> > &TB);
-void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB,
+bool ACUMM(vector <vector <double> > &TV, vector <vector <double> > &TB);
+bool EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB,
           vector <vector <double> > &TFG);
 
 void initialLayerTV(vector <vector <double> > &TV);         // Would be relize as template
@@ -298,54 +298,104 @@ void MainWindow::drawGraph()
 
     if (ui->LVM_BP->isChecked())
     {
-        TMTPLMM(TV, TF);
-        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
-        drawModel(0);
+        if(!TMTPLMM(TV, TF))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+
+            drawModel(0);
+        }
     }
 
     if (ui->NLVM_BP->isChecked())
-    {
-        TMTPNMM(TV, TF);
-        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph...... (!)"));
-        drawModel(0);
+    {       
+        if(!TMTPNMM(TV, TF))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+
+            drawModel(0);
+        }
     }
 
     if((ui->EVM_BP->isChecked()) || (ui->EFM_BP->isChecked()))
-    {
-        ETMBPMM(TV, TF, CV, CF);
-        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
-
-        if((ui->EVM_BP->isChecked()))
-            drawModel(0);
+    {       
+        if(!ETMBPMM(TV, TF, CV, CF))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
         else
-            drawModel(1);
+        {
+            if((ui->EVM_BP->isChecked()))
+                drawModel(0);
+            else
+                drawModel(1);
+
+            ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+        }
     }
 
     if((ui->EVM_TP->isChecked()) || (ui->EFM_TP->isChecked()))
-    {
-        ETMTPMM(TV, TF, CV, CF);
-        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
-
-        if((ui->EVM_TP->isChecked()))
-            drawModel(0);
+    {       
+        if(!ETMTPMM(TV, TF, CV, CF))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
         else
-            drawModel(1);
+        {
+            if((ui->EVM_TP->isChecked()))
+                drawModel(0);
+            else
+                drawModel(1);
+
+            ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+        }
     }
 
     if((ui->ACU->isChecked()))
-    {
-        ACUMM(TV, TB);
-        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+    {       
+        if(!ACUMM(TV, TB))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-        drawModel(2);
+            drawModel(2);
+        }
     }
 
     if((ui->EVAP->isChecked()))
     {
-        EVAP(TF, TB, TFG);
-        ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+        if(!EVAP(TF, TB, TFG))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-        drawModel(3);
+            drawModel(3);
+        }
     }
 
     ui->statusBar->showMessage(QString("Ready!"));
@@ -358,8 +408,8 @@ void MainWindow::drawGraph()
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
-            listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
-            listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
         }
     }
 
@@ -368,8 +418,8 @@ void MainWindow::drawGraph()
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
-            listStatesFirst.append(QString::number(CV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
-            listStatesSecond.append(QString::number(CF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFirst.append(QString::number(CV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            listStatesSecond.append(QString::number(CF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
         }
     }
 
@@ -378,8 +428,8 @@ void MainWindow::drawGraph()
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
-            listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN-1) / dt) ][j]));
-            listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
         }
     }
 
@@ -388,9 +438,9 @@ void MainWindow::drawGraph()
     {
         for(uint j = 1; j < selectZ-1; ++j)
         {
-            listStatesFirst.append(QString::number(TF[ static_cast <size_t> ((selectN-1) / dt) ][j]));
-            listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN-1) / dt) ][j]));
-            listStatesThird.append(QString::number(TFG[ static_cast <size_t> ((selectN-1) / dt) ][j]));
+            listStatesFirst.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            listStatesThird.append(QString::number(TFG[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
         }
     }
     QStringList firstStates(listStatesFirst);
@@ -428,7 +478,7 @@ void MainWindow::drawModel(int choiceModel)
 {
     /*-------------Prepare data to output to screen------------------*/
 
-    QVector <double> t((selectN / dt));
+    QVector <double> t((size_t)(selectN / dt));
 
     QVector <QVector <double>> M_mat0, M_mat1, M_mat2;
 
@@ -437,7 +487,7 @@ void MainWindow::drawModel(int choiceModel)
     {
         QVector <double> tmpVectorM0, tmpVectorM1, tmpVectorM2;
 
-        for(uint j = 0; j < (selectN / dt); ++j)
+        for(uint j = 0; j < ((size_t)((selectN / dt))); ++j)
         {
             if(choiceModel == 0)    // Heat exchange part
             {
@@ -1256,11 +1306,17 @@ void MainWindow::on_EVAP_clicked()
 }
 
 //--------------------------LINER MODEL-----------------------------------
-void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
+bool TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 {
     double  RvT = 0.0191806, RfT = 0.0000777,
             PTV = (0.05654433 * dt) / dh,
             PTF = (0.0002291314 * dt) / dh;
+
+    if( (PTV > 0.5) || (PTF > 0.5) )
+    {
+        qDebug() << "The scheme diverges!!!";
+        return false;
+    }
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -1316,17 +1372,19 @@ void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
+
+    return true;
 }
 
 //--------------------------NON-LINER MODEL-----------------------------------
-void TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
+bool TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 {
     //double a0 = 0.0001152735759 or 0.00016966, What is TRUE?????????
 
@@ -1335,6 +1393,12 @@ void TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
             PTV_L = (a0 * 273.15 * dt) / dh,
             PTV_N = 0.0,
             PTF = (0.0002291314 * dt) / dh;
+
+    if( (PTV_L > 0.5) || (PTF > 0.5) )
+    {
+        qDebug() << "The scheme diverges!!!";
+        return false;
+    }
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -1393,17 +1457,19 @@ void TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
+
+    return true;
 }
 
 //---------------------------INTERCONNECTED MODEL(BOTTOM PART)------------------------------
-void ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+bool ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF)
 {
     // -----Model's heat exchenger parameters------
@@ -1415,6 +1481,12 @@ void ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     // -----Model's mass exchenger parameters------
     double E = 1.0E-9, RvM = 0.004302, RfM = 1.222E-5;
                        //RfM = 0.000010734, RvM = 0.0216487318;
+
+    if( (PTV_L > 0.5) || (PTF > 0.5) )
+    {
+        qDebug() << "The scheme diverges!!!";
+        return false;
+    }
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -1506,27 +1578,29 @@ void ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << CV[size_t((selectN-1) / dt)][j] << " | ";
+        cout << CV[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << CF[size_t((selectN-1) / dt)][j] << " | ";
+        cout << CF[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
+
+    return true;
 }
 
 //---------------------------INTERCONNECTED MODEL(TOP PART)------------------------------
-void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+bool ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF)
 {
     // -----Model's heat exchenger parameters------
@@ -1537,6 +1611,12 @@ void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     // -----Model's mass exchenger parameters------
     double E = 1.0E-9, RvM = 0.1450, RfM = 6.0E-6;
+
+    if( (PTV_L > 0.5) || (PTF > 0.5) )
+    {
+        qDebug() << "The scheme diverges!!!";
+        return false;
+    }
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -1633,27 +1713,29 @@ void ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << CV[size_t((selectN-1) / dt)][j] << " | ";
+        cout << CV[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << CF[size_t((selectN-1) / dt)][j] << " | ";
+        cout << CF[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
+
+    return true;
 }
 
 //---------------------------AIR-COOLING UNIT MODEL(ACU)------------------------------
-void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
+bool ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 {
     // -----Model's heat parameters------
     double  RvT = 8.400, a0 = 0.06,     // a0 = 0.06 ?
@@ -1663,6 +1745,12 @@ void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     double RB1 = 0.00661, RB2 = 0.480
          , TE = 12.380                  // Temperature of enviroment
          , CP = 134.0;                  // Count piplines;
+
+    if((dt * PTV_L) > 0.5 )
+    {
+        qDebug() << "The scheme diverges!!!";
+        return false;
+    }
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -1719,16 +1807,18 @@ void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TB[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TB[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
+
+    return true;
 }
 
-void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <vector <double> > &TFG)
+bool EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <vector <double> > &TFG)
 {
     // -----Model's gas parameters------
     double  RFG = 0.470, PTFG = 4.60 / dh;
@@ -1738,6 +1828,12 @@ void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
 
     // -----Model's boarder parameters------
     double  RFB = 0.220, RFGB = 0.0080;
+
+    if((dt * PTFG) > 0.5 )
+    {
+        qDebug() << "The scheme diverges!!!";
+        return false;
+    }
 
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
@@ -1807,17 +1903,17 @@ void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TB[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TB[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TFG[size_t((selectN-1) / dt)][j] << " | ";
+        cout << TFG[size_t((selectN-2) / dt)][j] << " | ";
     }cout << endl;
 
 
@@ -1825,11 +1921,13 @@ void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     string nameModel = "MM_TF_1.txt";
     ofstream foutTF_1(nameModel, ios_base::out | ios_base::trunc);
 
-    for(size_t i = 0; i < (selectN / dt); ++i)
+    for(size_t i = 0; i < ((size_t)selectN / dt); ++i)
     {
         foutTF_1 << TF[i][1] << endl;
     }
     foutTF_1.close();
+
+    return true;
 }
 
 void initialLayerTV(vector <vector <double> > &TV)
