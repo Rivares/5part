@@ -26,6 +26,15 @@ static double dt = 0.0000;
 static unsigned int selectZ = 0;
 static unsigned long long selectN = 0;
 
+
+vector <double> initLayerTV;
+vector <double> initLayerTF;
+vector <double> initLayerCV;
+vector <double> initLayerCF;
+vector <double> initLayerTB;
+vector <double> initLayerTFG;
+
+//---------------Borders--------------//
 static double initLayerTV_0 = 0.0, initLayerTV_1 = 0.0;
 static double initLayerTF_0 = 0.0, initLayerTF_1 = 0.0;
 static double initLayerCV_0 = 0.0, initLayerCV_1 = 0.0;
@@ -38,8 +47,8 @@ static double P_TV = 0.0;
 static double P_TF = 0.0;
 static double P_CV = 0.0;
 static double P_CF = 0.0;
-static double P_TB = 0.0;
-static double P_TFG = 0.0;
+//static double P_TB = 0.0;
+//static double P_TFG = 0.0;
 
 
 void TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF);
@@ -115,43 +124,135 @@ void MainWindow::getData()
 
     if(ui->LVM_BP->isChecked())
     {
-        initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
-        initLayerTF_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTF_1 = ui->spinBoxInitLayer1_1->value();
+        initLayerTV_0 = (ui->tableBordersAndInitialConditions_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (ui->tableBordersAndInitialConditions_1->item(0, ui->tableBordersAndInitialConditions_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTF_0 = (ui->tableBordersAndInitialConditions_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (ui->tableBordersAndInitialConditions_2->item(0, ui->tableBordersAndInitialConditions_2->columnCount()-1)->text()).toDouble();
+
+        initLayerTV.assign((selectZ-2), 0.0);
+        initLayerTF.assign((selectZ-2), 0.0);
+
+        for(uint j = 1; j <= (selectZ-2); ++j)
+        {
+            initLayerTV[j-1] = (ui->tableBordersAndInitialConditions_1->item(0, j)->text()).toDouble();
+            initLayerTF[j-1] = (ui->tableBordersAndInitialConditions_2->item(0, j)->text()).toDouble();
+        }
     }
 
     if(ui->NLVM_BP->isChecked())
     {
-        initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
-        initLayerTF_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTF_1 = ui->spinBoxInitLayer1_1->value();
+        initLayerTV_0 = (ui->tableBordersAndInitialConditions_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (ui->tableBordersAndInitialConditions_1->item(0, ui->tableBordersAndInitialConditions_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTF_0 = (ui->tableBordersAndInitialConditions_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (ui->tableBordersAndInitialConditions_2->item(0, ui->tableBordersAndInitialConditions_2->columnCount()-1)->text()).toDouble();
+
+        initLayerTV.assign((selectZ-2), 0.0);
+        initLayerTF.assign((selectZ-2), 0.0);
+
+        for(uint j = 1; j <= (selectZ-2); ++j)
+        {
+            initLayerTV[j-1] = (ui->tableBordersAndInitialConditions_1->item(0, j)->text()).toDouble();
+            initLayerTF[j-1] = (ui->tableBordersAndInitialConditions_2->item(0, j)->text()).toDouble();
+        }
     }
 
     if( (ui->EVM_BP->isChecked()) | (ui->EFM_BP->isChecked()) )
     {
-        initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
-        initLayerTF_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTF_1 = ui->spinBoxInitLayer1_1->value();
-        initLayerCV_0 = ui->spinBoxInitLayer2_0->value(),      initLayerCV_1 = ui->spinBoxInitLayer2_1->value();
-        initLayerCF_0 = ui->spinBoxInitLayer3_0->value(),      initLayerCF_1 = ui->spinBoxInitLayer3_1->value();
+        initLayerTV_0 = (ui->tableBordersAndInitialConditions_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (ui->tableBordersAndInitialConditions_1->item(0, ui->tableBordersAndInitialConditions_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTF_0 = (ui->tableBordersAndInitialConditions_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (ui->tableBordersAndInitialConditions_2->item(0, ui->tableBordersAndInitialConditions_2->columnCount()-1)->text()).toDouble();
+
+        initLayerCV_0 = (ui->tableBordersAndInitialConditions_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1 = (ui->tableBordersAndInitialConditions_3->item(0, ui->tableBordersAndInitialConditions_3->columnCount()-1)->text()).toDouble();
+
+        initLayerCF_0 = (ui->tableBordersAndInitialConditions_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1 = (ui->tableBordersAndInitialConditions_4->item(0, ui->tableBordersAndInitialConditions_4->columnCount()-1)->text()).toDouble();
+
+        initLayerTV.assign((selectZ-2), 0.0);
+        initLayerTF.assign((selectZ-2), 0.0);
+        initLayerCV.assign((selectZ-2), 0.0);
+        initLayerCF.assign((selectZ-2), 0.0);
+
+        for(uint j = 1; j <= (selectZ-2); ++j)
+        {
+            initLayerTV[j-1] = (ui->tableBordersAndInitialConditions_1->item(0, j)->text()).toDouble();
+            initLayerTF[j-1] = (ui->tableBordersAndInitialConditions_2->item(0, j)->text()).toDouble();
+            initLayerCV[j-1] = (ui->tableBordersAndInitialConditions_3->item(0, j)->text()).toDouble();
+            initLayerCF[j-1] = (ui->tableBordersAndInitialConditions_4->item(0, j)->text()).toDouble();
+        }
     }
 
     if( (ui->EVM_TP->isChecked()) | (ui->EFM_TP->isChecked()) )
     {
-        initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
-        initLayerTF_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTF_1 = ui->spinBoxInitLayer1_1->value();
-        initLayerCV_0 = ui->spinBoxInitLayer2_0->value(),      initLayerCV_1 = ui->spinBoxInitLayer2_1->value();
-        initLayerCF_0 = ui->spinBoxInitLayer3_0->value(),      initLayerCF_1 = ui->spinBoxInitLayer3_1->value();
+        initLayerTV_0 = (ui->tableBordersAndInitialConditions_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (ui->tableBordersAndInitialConditions_1->item(0, ui->tableBordersAndInitialConditions_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTF_0 = (ui->tableBordersAndInitialConditions_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (ui->tableBordersAndInitialConditions_2->item(0, ui->tableBordersAndInitialConditions_2->columnCount()-1)->text()).toDouble();
+
+        initLayerCV_0 = (ui->tableBordersAndInitialConditions_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1 = (ui->tableBordersAndInitialConditions_3->item(0, ui->tableBordersAndInitialConditions_3->columnCount()-1)->text()).toDouble();
+
+        initLayerCF_0 = (ui->tableBordersAndInitialConditions_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1 = (ui->tableBordersAndInitialConditions_4->item(0, ui->tableBordersAndInitialConditions_4->columnCount()-1)->text()).toDouble();
+
+        initLayerTV.assign((selectZ-2), 0.0);
+        initLayerTF.assign((selectZ-2), 0.0);
+        initLayerCV.assign((selectZ-2), 0.0);
+        initLayerCF.assign((selectZ-2), 0.0);
+
+        for(uint j = 1; j <= (selectZ-2); ++j)
+        {
+            initLayerTV[j-1] = (ui->tableBordersAndInitialConditions_1->item(0, j)->text()).toDouble();
+            initLayerTF[j-1] = (ui->tableBordersAndInitialConditions_2->item(0, j)->text()).toDouble();
+            initLayerCV[j-1] = (ui->tableBordersAndInitialConditions_3->item(0, j)->text()).toDouble();
+            initLayerCF[j-1] = (ui->tableBordersAndInitialConditions_4->item(0, j)->text()).toDouble();
+        }
     }
 
     if(ui->ACU->isChecked())
     {
-        initLayerTV_0 = ui->spinBoxInitLayer0_0->value(),      initLayerTV_1 = ui->spinBoxInitLayer0_1->value();
-        initLayerTB_0 = ui->spinBoxInitLayer1_0->value(),      initLayerTB_1 = ui->spinBoxInitLayer1_1->value();
+        initLayerTV_0 = (ui->tableBordersAndInitialConditions_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (ui->tableBordersAndInitialConditions_1->item(0, ui->tableBordersAndInitialConditions_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTB_0 = (ui->tableBordersAndInitialConditions_2->item(0, 0)->text()).toDouble();
+        initLayerTB_1 = (ui->tableBordersAndInitialConditions_2->item(0, ui->tableBordersAndInitialConditions_2->columnCount()-1)->text()).toDouble();
+
+        initLayerTV.assign((selectZ-2), 0.0);
+        initLayerTB.assign((selectZ-2), 0.0);
+
+        for(uint j = 1; j <= (selectZ-2); ++j)
+        {
+            initLayerTV[j-1] = (ui->tableBordersAndInitialConditions_1->item(0, j)->text()).toDouble();
+            initLayerTB[j-1] = (ui->tableBordersAndInitialConditions_2->item(0, j)->text()).toDouble();
+        }
     }
 
     if(ui->EVAP->isChecked())
     {
-        initLayerTF_0  = ui->spinBoxInitLayer0_0->value(),      initLayerTF_1  = ui->spinBoxInitLayer0_1->value();
-        initLayerTB_0  = ui->spinBoxInitLayer1_0->value(),      initLayerTB_1  = ui->spinBoxInitLayer1_1->value();
-        initLayerTFG_0 = ui->spinBoxInitLayer2_0->value(),      initLayerTFG_1 = ui->spinBoxInitLayer2_1->value();
+        initLayerTF_0 = (ui->tableBordersAndInitialConditions_1->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (ui->tableBordersAndInitialConditions_1->item(0, ui->tableBordersAndInitialConditions_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTB_0 = (ui->tableBordersAndInitialConditions_2->item(0, 0)->text()).toDouble();
+        initLayerTB_1 = (ui->tableBordersAndInitialConditions_2->item(0, ui->tableBordersAndInitialConditions_2->columnCount()-1)->text()).toDouble();
+
+        initLayerTFG_0 = (ui->tableBordersAndInitialConditions_3->item(0, 0)->text()).toDouble();
+        initLayerTFG_1 = (ui->tableBordersAndInitialConditions_3->item(0, ui->tableBordersAndInitialConditions_3->columnCount()-1)->text()).toDouble();
+
+        initLayerTF.assign((selectZ-2), 0.0);
+        initLayerTB.assign((selectZ-2), 0.0);
+        initLayerTFG.assign((selectZ-2), 0.0);
+
+        for(uint j = 1; j <= (selectZ-2); ++j)
+        {
+            initLayerTF[j-1]  = (ui->tableBordersAndInitialConditions_1->item(0, j)->text()).toDouble();
+            initLayerTB[j-1]  = (ui->tableBordersAndInitialConditions_2->item(0, j)->text()).toDouble();
+            initLayerTFG[j-1] = (ui->tableBordersAndInitialConditions_3->item(0, j)->text()).toDouble();
+        }
     }
 
     dt = (ui->selectStepT->text().toDouble() <= 0.0)? 0.01 : abs(ui->selectStepT->text().toDouble());
@@ -200,9 +301,6 @@ void MainWindow::drawGraph()
         TMTPLMM(TV, TF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
         drawModel(0);
-
-        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
-        ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
     }
 
     if (ui->NLVM_BP->isChecked())
@@ -210,9 +308,6 @@ void MainWindow::drawGraph()
         TMTPNMM(TV, TF);
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph...... (!)"));
         drawModel(0);
-
-        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
-        ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
     }
 
     if((ui->EVM_BP->isChecked()) || (ui->EFM_BP->isChecked()))
@@ -224,11 +319,6 @@ void MainWindow::drawGraph()
             drawModel(0);
         else
             drawModel(1);
-
-        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
-        ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
-        ui->spinBoxInitLayer2_0->setValue(initLayerCV_0);
-        ui->spinBoxInitLayer3_0->setValue(initLayerCF_0);
     }
 
     if((ui->EVM_TP->isChecked()) || (ui->EFM_TP->isChecked()))
@@ -240,11 +330,6 @@ void MainWindow::drawGraph()
             drawModel(0);
         else
             drawModel(1);
-
-        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
-        ui->spinBoxInitLayer1_0->setValue(initLayerTF_0);
-        ui->spinBoxInitLayer2_0->setValue(initLayerCV_0);
-        ui->spinBoxInitLayer3_0->setValue(initLayerCF_0);
     }
 
     if((ui->ACU->isChecked()))
@@ -253,9 +338,6 @@ void MainWindow::drawGraph()
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
         drawModel(2);
-
-        ui->spinBoxInitLayer0_0->setValue(initLayerTV_0);
-        ui->spinBoxInitLayer1_0->setValue(initLayerTB_0);
     }
 
     if((ui->EVAP->isChecked()))
@@ -264,10 +346,6 @@ void MainWindow::drawGraph()
         ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
         drawModel(3);
-
-        ui->spinBoxInitLayer0_0->setValue(initLayerTF_0);
-        ui->spinBoxInitLayer1_0->setValue(initLayerTB_0);
-        ui->spinBoxInitLayer2_0->setValue(initLayerTFG_0);
     }
 
     ui->statusBar->showMessage(QString("Ready!"));
@@ -645,13 +723,52 @@ void MainWindow::on_LVM_BP_clicked()
     ui->selectDRC->setText(QString::number(1.400));
     ui->spaceParametr->setValue(3);
 
-    ui->spinBoxInitLayer0_0->setValue(160.000);    ui->spinBoxInitLayer0_1->setValue(147.999);
-    ui->spinBoxInitLayer1_0->setValue(120.377);    ui->spinBoxInitLayer1_1->setValue(132.399);
-    ui->spinBoxInitLayer2_0->setValue(0.0);        ui->spinBoxInitLayer2_1->setValue(0.0);
-    ui->spinBoxInitLayer3_0->setValue(0.0);        ui->spinBoxInitLayer3_1->setValue(0.0);
 
-    ui->spinBoxInitLayer2_0->setDisabled(true);    ui->spinBoxInitLayer2_1->setDisabled(true);
-    ui->spinBoxInitLayer3_0->setDisabled(true);    ui->spinBoxInitLayer3_1->setDisabled(true);
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("160.000")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("160.000")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("156.999750")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("153.999500")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("150.999250")));
+
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("120.377000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, 0, new QTableWidgetItem(tr("120.377000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 1, new QTableWidgetItem(tr("123.382500")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 2, new QTableWidgetItem(tr("126.388000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 3, new QTableWidgetItem(tr("129.393500")));
+
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setDisabled(true);
+    ui->tableBordersAndInitialConditions_4->setDisabled(true);
 }
 
 void MainWindow::on_NLVM_BP_clicked()
@@ -673,13 +790,50 @@ void MainWindow::on_NLVM_BP_clicked()
     ui->selectDRC->setText(QString::number(1.400));
     ui->spaceParametr->setValue(3);
 
-    ui->spinBoxInitLayer0_0->setValue(160.000);    ui->spinBoxInitLayer0_1->setValue(147.999);
-    ui->spinBoxInitLayer1_0->setValue(120.377);    ui->spinBoxInitLayer1_1->setValue(132.399);
-    ui->spinBoxInitLayer2_0->setValue(0.0);        ui->spinBoxInitLayer2_1->setValue(0.0);
-    ui->spinBoxInitLayer3_0->setValue(0.0);        ui->spinBoxInitLayer3_1->setValue(0.0);
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("160.000")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("160.000")));
 
-    ui->spinBoxInitLayer2_0->setDisabled(true);    ui->spinBoxInitLayer2_1->setDisabled(true);
-    ui->spinBoxInitLayer3_0->setDisabled(true);    ui->spinBoxInitLayer3_1->setDisabled(true);
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("156.999750")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("153.999500")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("150.999250")));
+
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("120.377000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, 0, new QTableWidgetItem(tr("120.377000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 1, new QTableWidgetItem(tr("123.382500")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 2, new QTableWidgetItem(tr("126.388000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 3, new QTableWidgetItem(tr("129.393500")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setDisabled(true);
+    ui->tableBordersAndInitialConditions_4->setDisabled(true);
 }
 
 void MainWindow::on_EVM_BP_clicked()
@@ -701,13 +855,52 @@ void MainWindow::on_EVM_BP_clicked()
     ui->selectDRC->setText(QString::number(1.400));
     ui->spaceParametr->setValue(3);
 
-    ui->spinBoxInitLayer0_0->setValue(160.000);    ui->spinBoxInitLayer0_1->setValue(147.999);
-    ui->spinBoxInitLayer1_0->setValue(120.377);    ui->spinBoxInitLayer1_1->setValue(132.399);
-    ui->spinBoxInitLayer2_0->setValue(67.9440);    ui->spinBoxInitLayer2_1->setValue(72.044);
-    ui->spinBoxInitLayer3_0->setValue(6.550);      ui->spinBoxInitLayer3_1->setValue(2.788);
+    //---------------Temperature part------------//
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("160.000")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("160.000")));
 
-    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
-    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("156.999750")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("153.999500")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("150.999250")));
+
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("120.377000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, 0, new QTableWidgetItem(tr("120.377000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 1, new QTableWidgetItem(tr("123.382500")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 2, new QTableWidgetItem(tr("126.388000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 3, new QTableWidgetItem(tr("129.393500")));
+
+    //---------------Concentration part------------//
+    ui->tableBordersAndInitialConditions_3->setItem(0, 0, new QTableWidgetItem(tr("67.9440")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, 0, new QTableWidgetItem(tr("67.9440")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("68.9650")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("69.9900")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("71.0150")));
+
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("6.550")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, 0, new QTableWidgetItem(tr("6.550")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("5.570")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("4.640")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("3.710")));
+
+    ui->tableBordersAndInitialConditions_3->setDisabled(false);
+    ui->tableBordersAndInitialConditions_4->setDisabled(false);
 }
 
 void MainWindow::on_EFM_BP_clicked()
@@ -729,13 +922,53 @@ void MainWindow::on_EFM_BP_clicked()
     ui->selectDRC->setText(QString::number(1.400));
     ui->spaceParametr->setValue(3);
 
-    ui->spinBoxInitLayer0_0->setValue(160.000);    ui->spinBoxInitLayer0_1->setValue(147.999);
-    ui->spinBoxInitLayer1_0->setValue(120.377);    ui->spinBoxInitLayer1_1->setValue(132.399);
-    ui->spinBoxInitLayer2_0->setValue(67.9440);    ui->spinBoxInitLayer2_1->setValue(72.044);
-    ui->spinBoxInitLayer3_0->setValue(6.550);      ui->spinBoxInitLayer3_1->setValue(2.788);
 
-    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
-    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
+    //---------------Temperature part------------//
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("160.000")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("160.000")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("156.999750")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("153.999500")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("150.999250")));
+
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("120.377000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, 0, new QTableWidgetItem(tr("120.377000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 1, new QTableWidgetItem(tr("123.382500")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 2, new QTableWidgetItem(tr("126.388000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 3, new QTableWidgetItem(tr("129.393500")));
+
+    //---------------Concentration part------------//
+    ui->tableBordersAndInitialConditions_3->setItem(0, 0, new QTableWidgetItem(tr("67.9440")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, 0, new QTableWidgetItem(tr("67.9440")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("68.9650")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("69.9900")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("71.0150")));
+
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("6.550")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, 0, new QTableWidgetItem(tr("6.550")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("5.570")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("4.640")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("3.710")));
+
+    ui->tableBordersAndInitialConditions_3->setDisabled(false);
+    ui->tableBordersAndInitialConditions_4->setDisabled(false);
 }
 
 void MainWindow::on_EVM_TP_clicked()
@@ -757,13 +990,53 @@ void MainWindow::on_EVM_TP_clicked()
     ui->selectDRC->setText(QString::number(3.510));
     ui->spaceParametr->setValue(3);
 
-    ui->spinBoxInitLayer0_0->setValue(142.500);    ui->spinBoxInitLayer0_1->setValue(45.300);
-    ui->spinBoxInitLayer1_0->setValue(30.000);     ui->spinBoxInitLayer1_1->setValue(139.000);
-    ui->spinBoxInitLayer2_0->setValue(0.5300);     ui->spinBoxInitLayer2_1->setValue(1.1380);
-    ui->spinBoxInitLayer3_0->setValue(1.000);      ui->spinBoxInitLayer3_1->setValue(0.5525330);
 
-    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
-    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
+    //---------------Temperature part------------//
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("142.500")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("142.500")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("45.300")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("45.300")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("118.200000")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("93.9000000")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("69.6000000")));
+
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("30.0000000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, 0, new QTableWidgetItem(tr("30.0000000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("139.000000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("139.000000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 1, new QTableWidgetItem(tr("57.2500000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 2, new QTableWidgetItem(tr("84.5000000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 3, new QTableWidgetItem(tr("111.750000")));
+
+    //---------------Concentration part------------//
+    ui->tableBordersAndInitialConditions_3->setItem(0, 0, new QTableWidgetItem(tr("0.5300000")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, 0, new QTableWidgetItem(tr("0.5300000")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("1.138000")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("1.138000")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("0.6820000")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("0.8340000")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("0.9860000")));
+
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("1.0000000")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, 0, new QTableWidgetItem(tr("1.0000000")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.5530000")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.5530000")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("0.8882500")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("0.7765000")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("0.6647500")));
+
+    ui->tableBordersAndInitialConditions_3->setDisabled(false);
+    ui->tableBordersAndInitialConditions_4->setDisabled(false);
 }
 
 void MainWindow::on_EFM_TP_clicked()
@@ -785,13 +1058,53 @@ void MainWindow::on_EFM_TP_clicked()
     ui->selectDRC->setText(QString::number(3.510));
     ui->spaceParametr->setValue(3);
 
-    ui->spinBoxInitLayer0_0->setValue(142.500);    ui->spinBoxInitLayer0_1->setValue(45.300);
-    ui->spinBoxInitLayer1_0->setValue(30.000);     ui->spinBoxInitLayer1_1->setValue(139.000);
-    ui->spinBoxInitLayer2_0->setValue(0.5300);     ui->spinBoxInitLayer2_1->setValue(1.1380);
-    ui->spinBoxInitLayer3_0->setValue(1.000);      ui->spinBoxInitLayer3_1->setValue(0.5525330);
 
-    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
-    ui->spinBoxInitLayer3_0->setDisabled(false);   ui->spinBoxInitLayer3_1->setDisabled(false);
+    //---------------Temperature part------------//
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("142.500")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("142.500")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("45.300")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("45.300")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("118.200000")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("93.9000000")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("69.6000000")));
+
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("30.0000000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, 0, new QTableWidgetItem(tr("30.0000000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("139.000000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("139.000000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 1, new QTableWidgetItem(tr("57.2500000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 2, new QTableWidgetItem(tr("84.5000000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 3, new QTableWidgetItem(tr("111.750000")));
+
+    //---------------Concentration part------------//
+    ui->tableBordersAndInitialConditions_3->setItem(0, 0, new QTableWidgetItem(tr("0.5300000")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, 0, new QTableWidgetItem(tr("0.5300000")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("1.138000")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("1.138000")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("0.6820000")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("0.8340000")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("0.9860000")));
+
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("1.0000000")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, 0, new QTableWidgetItem(tr("1.0000000")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.5530000")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.5530000")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("0.8882500")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("0.7765000")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("0.6647500")));
+
+    ui->tableBordersAndInitialConditions_3->setDisabled(false);
+    ui->tableBordersAndInitialConditions_4->setDisabled(false);
 }
 
 void MainWindow::on_ACU_clicked()
@@ -813,13 +1126,52 @@ void MainWindow::on_ACU_clicked()
     ui->selectDRC->setText(QString::number(4.0));
     ui->spaceParametr->setValue(3);
 
-    ui->spinBoxInitLayer0_0->setValue(72.50);       ui->spinBoxInitLayer0_1->setValue(42.4940);
-    ui->spinBoxInitLayer1_0->setValue(30.750);     ui->spinBoxInitLayer1_1->setValue(23.2897);
-    ui->spinBoxInitLayer2_0->setValue(0.0);         ui->spinBoxInitLayer2_1->setValue(0.0);
-    ui->spinBoxInitLayer3_0->setValue(0.0);         ui->spinBoxInitLayer3_1->setValue(0.0);
+    //---------------Temperature part------------//
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("72.500")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("72.500")));
 
-    ui->spinBoxInitLayer2_0->setDisabled(true);     ui->spinBoxInitLayer2_1->setDisabled(true);
-    ui->spinBoxInitLayer3_0->setDisabled(true);     ui->spinBoxInitLayer3_1->setDisabled(true);
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("42.49400")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("42.49400")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("64.9985000")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("57.4970000")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("49.9955000")));
+
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("30.7500000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, 0, new QTableWidgetItem(tr("30.7500000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("23.2900000")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("23.2900000")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 1, new QTableWidgetItem(tr("28.8850000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 2, new QTableWidgetItem(tr("27.0200000")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 3, new QTableWidgetItem(tr("25.1550000")));
+
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_3->setDisabled(true);
+    ui->tableBordersAndInitialConditions_4->setDisabled(true);
 
 }
 
@@ -842,13 +1194,65 @@ void MainWindow::on_EVAP_clicked()
     ui->selectDRC->setText(QString::number(5.5));
     ui->spaceParametr->setValue(4);
 
-    ui->spinBoxInitLayer0_0->setValue(139.0);       ui->spinBoxInitLayer0_1->setValue(160.1616);
-    ui->spinBoxInitLayer1_0->setValue(164.4825);     ui->spinBoxInitLayer1_1->setValue(147.0722);
-    ui->spinBoxInitLayer2_0->setValue(300.0);         ui->spinBoxInitLayer2_1->setValue(240.5403);
-    ui->spinBoxInitLayer3_0->setValue(0.0);         ui->spinBoxInitLayer3_1->setValue(0.0);
 
-    ui->spinBoxInitLayer2_0->setDisabled(false);   ui->spinBoxInitLayer2_1->setDisabled(false);
-    ui->spinBoxInitLayer3_0->setDisabled(true);   ui->spinBoxInitLayer3_1->setDisabled(true);
+    if((ui->tableBordersAndInitialConditions_1->columnCount()-1) == 4)
+    {
+        ui->tableBordersAndInitialConditions_1->insertColumn(4);
+        ui->tableBordersAndInitialConditions_2->insertColumn(4);
+        ui->tableBordersAndInitialConditions_3->insertColumn(4);
+        ui->tableBordersAndInitialConditions_4->insertColumn(4);
+    }
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("139.00")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("139.00")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("160.16160")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("160.16160")));
+
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("143.673400")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("148.736080")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("154.220450")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 4, new QTableWidgetItem(tr("160.161650")));
+
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("160.200")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, 0, new QTableWidgetItem(tr("160.200")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("147.07220")));
+    ui->tableBordersAndInitialConditions_2->setItem(1, (ui->tableBordersAndInitialConditions_2->columnCount()-1), new QTableWidgetItem(tr("147.07220")));
+
+    ui->tableBordersAndInitialConditions_2->setItem(0, 1, new QTableWidgetItem(tr("164.48250")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 2, new QTableWidgetItem(tr("158.20900")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 3, new QTableWidgetItem(tr("152.41800")));
+    ui->tableBordersAndInitialConditions_2->setItem(0, 4, new QTableWidgetItem(tr("147.07220")));
+
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 0, new QTableWidgetItem(tr("300.0")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, 0, new QTableWidgetItem(tr("300.0")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("240.54030")));
+    ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("240.54030")));
+
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("283.30650")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("267.89660")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("253.67150")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 4, new QTableWidgetItem(tr("240.54030")));
+
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 4, new QTableWidgetItem(tr("0.0")));
+
+
+    ui->tableBordersAndInitialConditions_3->setDisabled(false);
+    ui->tableBordersAndInitialConditions_4->setDisabled(true);
 }
 
 //--------------------------LINER MODEL-----------------------------------
@@ -1256,7 +1660,7 @@ void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
             PTV_L = (a0 * 273.150) / dh;
 
     // -----Model's boarder parameters------
-    double RB1 = 0.00661, RB2 = 0.480   // Boarders
+    double RB1 = 0.00661, RB2 = 0.480
          , TE = 12.380                  // Temperature of enviroment
          , CP = 134.0;                  // Count piplines;
 
@@ -1307,7 +1711,7 @@ void ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 
             TB[i][j] = (dt * RB2 * TV[i-1][j])
                     + (CP*dt*RB1*TE)                        // ? TE - const or function?
-                    - TB[i-1][j] * (CP*dt*RB1 + dt*RB2)    // ? not optimization, yet
+                    - TB[i-1][j] * (CP*dt*RB1 + dt*RB2)
                     + TB[i-1][j];
         }
     }
@@ -1417,7 +1821,7 @@ void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     }cout << endl;
 
 
-/*
+
     string nameModel = "MM_TF_1.txt";
     ofstream foutTF_1(nameModel, ios_base::out | ios_base::trunc);
 
@@ -1426,247 +1830,126 @@ void EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
         foutTF_1 << TF[i][1] << endl;
     }
     foutTF_1.close();
-
-    nameModel = "MM_TF_2.txt";
-    ofstream foutTF_2(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutTF_2 << TF[i][2] << endl;
-    }
-    foutTF_2.close();
-
-    nameModel = "MM_TF_3.txt";
-    ofstream foutTF_3(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutTF_3 << TF[i][3] << endl;
-    }
-    foutTF_3.close();
-
-    nameModel = "MM_TB_1.txt";
-    ofstream foutTB_1(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutTB_1 << TB[i][1] << endl;
-    }
-    foutTB_1.close();
-
-    nameModel = "MM_TB_2.txt";
-    ofstream foutTB_2(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutTB_2 << TB[i][2] << endl;
-    }
-    foutTB_2.close();
-
-    nameModel = "MM_TB_3.txt";
-    ofstream foutTB_3(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutTB_3 << TB[i][3] << endl;
-    }
-    foutTB_3.close();
-
-    nameModel = "MM_TFG_1.txt";
-    ofstream foutTFG_1(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutTFG_1 << TFG[i][1] << endl;
-    }
-    foutTFG_1.close();
-
-    nameModel = "MM_TFG_2.txt";
-    ofstream foutTFG_2(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutTFG_2 << TFG[i][2] << endl;
-    }
-    foutTFG_2.close();
-
-    nameModel = "MM_TFG_3.txt";
-    ofstream foutTFG_3(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutTFG_3 << TFG[i][3] << endl;
-    }
-    foutTFG_3.close();
-    */
 }
 
 void initialLayerTV(vector <vector <double> > &TV)
 {
-    double *initLayerTV = new double [selectZ];
-    double stepInit = 0.0;
-    size_t i = 0;
+    size_t i = 0, j = 0;
 
-    initLayerTV_0 += P_TV;  // + perturbation of the temperature, the gas flow, the pressure differential
+    // + perturbation of the temperature, the gas flow, the pressure differential
 
+    // Borders
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
         TV[i][0] = initLayerTV_0;
         TV[i][selectZ-1] = initLayerTV_1;
     }
 
-    stepInit = abs(initLayerTV_0 - initLayerTV_1)/(selectZ-1);
-
-    initLayerTV[0] = initLayerTV_0;
-    initLayerTV[selectZ-1] = initLayerTV_1;
-
-    for(i = 1; i < selectZ; ++i)
+    // Initial values
+    for(j = 1; j <= (selectZ-2); ++j)
     {
-        initLayerTV[i] = initLayerTV[i-1] - stepInit;
-        TV[0][i-1] = initLayerTV[i-1];
+        TV[0][j] = initLayerTV[j-1];
     }
-
-    delete [] initLayerTV;
 }
 
 void initialLayerTF(vector <vector <double> > &TF)
 {
-    double *initLayerTF = new double [selectZ];
-    double stepInit = 0.0;
-    size_t i = 0;
+    size_t i = 0, j = 0;
 
-    initLayerTF_0 += P_TF;  // adding perturbation of the temperature
+    // + perturbation of the temperature, the gas flow, the pressure differential
 
+    // Borders
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
         TF[i][0] = initLayerTF_0;
         TF[i][selectZ-1] = initLayerTF_1;
     }
 
-    stepInit = abs(initLayerTF_0 - initLayerTF_1)/(selectZ-1);
-
-    initLayerTF[0] = initLayerTF_0;
-    initLayerTF[selectZ-1] = initLayerTF_1;
-
-    for(i = 1; i < selectZ; ++i)
+    // Initial values
+    for(j = 1; j <= (selectZ-2); ++j)
     {
-        initLayerTF[i] = initLayerTF[i-1] + stepInit;
-        TF[0][i-1] = initLayerTF[i-1];
+        TF[0][j] = initLayerTF[j-1];
     }
-
-    delete [] initLayerTF;
 }
 
 void initialLayerCV(vector <vector <double> > &CV)
 {
-    double *initLayerCV = new double [selectZ];
-    double stepInit = 0.0;
-    size_t i = 0;
+    size_t i = 0, j = 0;
 
-    initLayerCV_0 += P_CV;  // adding perturbation of the concentration
+    // + perturbation of the temperature, the gas flow, the pressure differential
 
+    // Borders
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
         CV[i][0] = initLayerCV_0;
         CV[i][selectZ-1] = initLayerCV_1;
     }
 
-    stepInit = abs(initLayerCV_0-initLayerCV_1)/(selectZ-1);
-
-    initLayerCV[0] = initLayerCV_0;
-    initLayerCV[selectZ-1] = initLayerCV_1;
-
-    for(i = 1; i < selectZ; ++i)
+    // Initial values
+    for(j = 1; j <= (selectZ-2); ++j)
     {
-        initLayerCV[i] = initLayerCV[i-1] + stepInit;
-        CV[0][i-1] = initLayerCV[i-1];
+        CV[0][j] = initLayerCV[j-1];
     }
-
-    delete [] initLayerCV;
 }
 
 void initialLayerCF(vector <vector <double> > &CF)
 {
-    double *initLayerCF = new double [selectZ];
-    double stepInit = 0.0;
-    size_t i = 0;
+    size_t i = 0, j = 0;
 
-    initLayerCF_0 += P_CF;  // adding perturbation of the concentration
+    // + perturbation of the temperature, the gas flow, the pressure differential
 
+    // Borders
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
         CF[i][0] = initLayerCF_0;
         CF[i][selectZ-1] = initLayerCF_1;
     }
 
-    stepInit = abs(initLayerCF_0-initLayerCF_1)/(selectZ-1);
-
-    initLayerCF[0] = initLayerCF_0;
-    initLayerCF[selectZ-1] = initLayerCF_1;
-
-    for(i = 1; i < selectZ; ++i)
+    // Initial values
+    for(j = 1; j <= (selectZ-2); ++j)
     {
-        initLayerCF[i] = initLayerCF[i-1] - stepInit;
-        CF[0][i-1] = initLayerCF[i-1];
+        CF[0][j] = initLayerCF[j-1];
     }
-
-    delete [] initLayerCF;
 }
 
 void initialLayerTB(vector <vector <double> > &TB)
 {
-    double *initLayerTB = new double [selectZ];
-    double stepInit = 0.0;
-    size_t i = 0;
+    size_t i = 0, j = 0;
 
-    initLayerTB_0 += P_TB;  // + perturbation of the temperature, the gas flow, the pressure differential
+    // + perturbation of the temperature, the gas flow, the pressure differential
 
+    // Borders
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
         TB[i][0] = initLayerTB_0;
         TB[i][selectZ-1] = initLayerTB_1;
     }
 
-    stepInit = abs(initLayerTB_0 - initLayerTB_1)/(selectZ-1);
-
-    initLayerTB[0] = initLayerTB_0;
-    initLayerTB[selectZ-1] = initLayerTB_1;
-
-    for(i = 1; i < selectZ; ++i)
+    // Initial values
+    for(j = 1; j <= (selectZ-2); ++j)
     {
-        initLayerTB[i] = initLayerTB[i-1] - stepInit;
-        TB[0][i-1] = initLayerTB[i-1];
+        TB[0][j] = initLayerTB[j-1];
     }
-
-    delete [] initLayerTB;
 }
 
 void initialLayerTFG(vector <vector <double> > &TFG)
 {
-    double *initLayerTFG = new double [selectZ];
-    double stepInit = 0.0;
-    size_t i = 0;
+    size_t i = 0, j = 0;
 
-    initLayerTFG_0 += P_TFG;  // + perturbation of the temperature, the gas flow, the pressure differential
+    // + perturbation of the temperature, the gas flow, the pressure differential
 
+    // Borders
     for(i = 0; i < size_t(selectN / dt); ++i)
     {
         TFG[i][0] = initLayerTFG_0;
         TFG[i][selectZ-1] = initLayerTFG_1;
     }
 
-    stepInit = abs(initLayerTFG_0 - initLayerTFG_1)/(selectZ-1);
-
-    initLayerTFG[0] = initLayerTFG_0;
-    initLayerTFG[selectZ-1] = initLayerTFG_1;
-
-    for(i = 1; i < selectZ; ++i)
+    // Initial values
+    for(j = 1; j <= (selectZ-2); ++j)
     {
-        initLayerTFG[i] = initLayerTFG[i-1] - stepInit;
-        TFG[0][i-1] = initLayerTFG[i-1];
+        TFG[0][j] = initLayerTFG[j-1];
     }
-
-    delete [] initLayerTFG;
 }
 
 void toFileMM(vector <vector <double> > MMM, string nameModel)
