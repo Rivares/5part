@@ -294,6 +294,9 @@ void MainWindow::drawGraph()
 
     /*----------------------------------------------------------------------*/
 
+    // Out to display steady-state value temperature
+    QList <QString> listStatesFirst, listStatesSecond, listStatesThird;
+
     ui->statusBar->showMessage(QString("(!) Calculating the mathematical model... (!)"));
 
     if (ui->LVM_BP->isChecked())
@@ -309,6 +312,12 @@ void MainWindow::drawGraph()
             ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
             drawModel(0);
+
+            for(uint j = 1; j < selectZ-1; ++j)
+            {
+                listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            }
         }
     }
 
@@ -325,6 +334,12 @@ void MainWindow::drawGraph()
             ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
             drawModel(0);
+
+            for(uint j = 1; j < selectZ-1; ++j)
+            {
+                listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            }
         }
     }
 
@@ -339,9 +354,26 @@ void MainWindow::drawGraph()
         else
         {
             if((ui->EVM_BP->isChecked()))
+            {
                 drawModel(0);
+
+                for(uint j = 1; j < selectZ-1; ++j)
+                {
+                    listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                    listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                }
+            }
             else
+            {
                 drawModel(1);
+
+                // Out to display steady-state concentration of absorbent
+                for(uint j = 1; j < selectZ-1; ++j)
+                {
+                    listStatesFirst.append(QString::number(CV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                    listStatesSecond.append(QString::number(CF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                }
+            }
 
             ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
         }
@@ -358,9 +390,26 @@ void MainWindow::drawGraph()
         else
         {
             if((ui->EVM_TP->isChecked()))
+            {
                 drawModel(0);
+
+                for(uint j = 1; j < selectZ-1; ++j)
+                {
+                    listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                    listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                }
+            }
             else
+            {
                 drawModel(1);
+
+                // Out to display steady-state concentration of absorbent
+                for(uint j = 1; j < selectZ-1; ++j)
+                {
+                    listStatesFirst.append(QString::number(CV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                    listStatesSecond.append(QString::number(CF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                }
+            }
 
             ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
         }
@@ -379,6 +428,13 @@ void MainWindow::drawGraph()
             ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
             drawModel(2);
+
+            // Out to display steady-state value temperature (ACU)
+            for(uint j = 1; j < selectZ-1; ++j)
+            {
+                listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            }
         }
     }
 
@@ -395,6 +451,14 @@ void MainWindow::drawGraph()
             ui->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
             drawModel(3);
+
+            // Out to display steady-state value temperature (EVAP)
+            for(uint j = 1; j < selectZ-1; ++j)
+            {
+                listStatesFirst.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesThird.append(QString::number(TFG[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            }
         }
     }
 
@@ -402,47 +466,6 @@ void MainWindow::drawGraph()
 
     /*----------------------------------------------------------------------*/
 
-    // Out to display steady-state value temperature
-    QList <QString> listStatesFirst, listStatesSecond, listStatesThird;
-    if((ui->LVM_BP->isChecked()) || (ui->NLVM_BP->isChecked()) || (ui->EVM_BP->isChecked()) || (ui->EVM_TP->isChecked()))
-    {
-        for(uint j = 1; j < selectZ-1; ++j)
-        {
-            listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-            listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-        }
-    }
-
-    // Out to display steady-state concentration of absorbent
-    if(ui->EFM_BP->isChecked() || ui->EFM_TP->isChecked())
-    {
-        for(uint j = 1; j < selectZ-1; ++j)
-        {
-            listStatesFirst.append(QString::number(CV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-            listStatesSecond.append(QString::number(CF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-        }
-    }
-
-    // Out to display steady-state value temperature (ACU)
-    if(ui->ACU->isChecked())
-    {
-        for(uint j = 1; j < selectZ-1; ++j)
-        {
-            listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-            listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-        }
-    }
-
-    // Out to display steady-state value temperature (EVAP)
-    if(ui->EVAP->isChecked())
-    {
-        for(uint j = 1; j < selectZ-1; ++j)
-        {
-            listStatesFirst.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-            listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-            listStatesThird.append(QString::number(TFG[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-        }
-    }
     QStringList firstStates(listStatesFirst);
     QStringList secondStates(listStatesSecond);
     QStringList thirdStates(listStatesThird);
@@ -478,7 +501,7 @@ void MainWindow::drawModel(int choiceModel)
 {
     /*-------------Prepare data to output to screen------------------*/
 
-    QVector <double> t((size_t)(selectN / dt));
+    QVector <double> t(static_cast <size_t>(selectN / dt));
 
     QVector <QVector <double>> M_mat0, M_mat1, M_mat2;
 
@@ -487,7 +510,7 @@ void MainWindow::drawModel(int choiceModel)
     {
         QVector <double> tmpVectorM0, tmpVectorM1, tmpVectorM2;
 
-        for(uint j = 0; j < ((size_t)((selectN / dt))); ++j)
+        for(uint j = 0; j < (static_cast <size_t>((selectN / dt))); ++j)
         {
             if(choiceModel == 0)    // Heat exchange part
             {
@@ -1321,13 +1344,13 @@ bool TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.erase(TV.begin(), TV.end());
         TF.erase(TF.begin(), TF.end());
     }
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.push_back(bmp);
         TF.push_back(bmp);
@@ -1353,7 +1376,7 @@ bool TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)// time
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)// time
     {
        for(uint j = 1; j < (selectZ-1); ++j)        // place
        {
@@ -1372,12 +1395,12 @@ bool TMTPLMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     return true;
@@ -1403,13 +1426,13 @@ bool TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.erase(TV.begin(), TV.end());
         TF.erase(TF.begin(), TF.end());
     }
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.push_back(bmp);
         TF.push_back(bmp);
@@ -1435,7 +1458,7 @@ bool TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)
     {
        for(uint j = 1; j < (selectZ-1); ++j)
        {
@@ -1457,12 +1480,12 @@ bool TMTPNMM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     return true;
@@ -1491,7 +1514,7 @@ bool ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.erase(TV.begin(), TV.end());
         TF.erase(TF.begin(), TF.end());
@@ -1499,7 +1522,7 @@ bool ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CF.erase(CF.begin(), CF.end());
     }
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.push_back(bmp);
         TF.push_back(bmp);
@@ -1541,7 +1564,7 @@ bool ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)// time
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)// time
     {
         for(size_t j = 1; j < (selectZ-1); ++j)      // place
         {
@@ -1578,22 +1601,22 @@ bool ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << CV[size_t((selectN-2) / dt)][j] << " | ";
+        cout << CV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << CF[size_t((selectN-2) / dt)][j] << " | ";
+        cout << CF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     return true;
@@ -1621,7 +1644,7 @@ bool ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.erase(TV.begin(), TV.end());
         TF.erase(TF.begin(), TF.end());
@@ -1629,7 +1652,7 @@ bool ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CF.erase(CF.begin(), CF.end());
     }
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.push_back(bmp);
         TF.push_back(bmp);
@@ -1671,7 +1694,7 @@ bool ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)// time
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)// time
     {
         for(size_t j = 1; j < (selectZ-1); ++j)      // place
         {
@@ -1713,22 +1736,22 @@ bool ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << CV[size_t((selectN-2) / dt)][j] << " | ";
+        cout << CV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << CF[size_t((selectN-2) / dt)][j] << " | ";
+        cout << CF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     return true;
@@ -1755,13 +1778,13 @@ bool ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.erase(TV.begin(), TV.end());
         TB.erase(TB.begin(), TB.end());
     }
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.push_back(bmp);
         TB.push_back(bmp);
@@ -1787,7 +1810,7 @@ bool ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)    // time
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)    // time
     {
         for(size_t j = 1; j < (selectZ-1); ++j)         // place
         {
@@ -1807,12 +1830,12 @@ bool ACUMM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TV[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TB[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TB[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     return true;
@@ -1838,14 +1861,14 @@ bool EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     vector <double> bmp;
     bmp.assign(selectZ, 0.0);
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TF.erase(TF.begin(), TF.end());
         TB.erase(TB.begin(), TB.end());
         TFG.erase(TFG.begin(), TFG.end());
     }
 
-    for (unsigned long long i = 0; i < size_t(selectN / dt); ++i)
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TF.push_back(bmp);
         TB.push_back(bmp);
@@ -1879,7 +1902,7 @@ bool EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < size_t(selectN / dt); ++i)    // time
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)    // time
     {
         for(size_t j = 1; j < (selectZ-1); ++j)         // place
         {
@@ -1903,17 +1926,17 @@ bool EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TF[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TB[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TB[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (selectZ-1); ++j)
     {
-        cout << TFG[size_t((selectN-2) / dt)][j] << " | ";
+        cout << TFG[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
 
@@ -1921,7 +1944,7 @@ bool EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
     string nameModel = "MM_TF_1.txt";
     ofstream foutTF_1(nameModel, ios_base::out | ios_base::trunc);
 
-    for(size_t i = 0; i < ((size_t)selectN / dt); ++i)
+    for(size_t i = 0; i < static_cast <size_t> (selectN / dt); ++i)
     {
         foutTF_1 << TF[i][1] << endl;
     }
@@ -1937,7 +1960,7 @@ void initialLayerTV(vector <vector <double> > &TV)
     // + perturbation of the temperature, the gas flow, the pressure differential
 
     // Borders
-    for(i = 0; i < size_t(selectN / dt); ++i)
+    for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV[i][0] = initLayerTV_0;
         TV[i][selectZ-1] = initLayerTV_1;
@@ -1957,7 +1980,7 @@ void initialLayerTF(vector <vector <double> > &TF)
     // + perturbation of the temperature, the gas flow, the pressure differential
 
     // Borders
-    for(i = 0; i < size_t(selectN / dt); ++i)
+    for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TF[i][0] = initLayerTF_0;
         TF[i][selectZ-1] = initLayerTF_1;
@@ -1977,7 +2000,7 @@ void initialLayerCV(vector <vector <double> > &CV)
     // + perturbation of the temperature, the gas flow, the pressure differential
 
     // Borders
-    for(i = 0; i < size_t(selectN / dt); ++i)
+    for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         CV[i][0] = initLayerCV_0;
         CV[i][selectZ-1] = initLayerCV_1;
@@ -1997,7 +2020,7 @@ void initialLayerCF(vector <vector <double> > &CF)
     // + perturbation of the temperature, the gas flow, the pressure differential
 
     // Borders
-    for(i = 0; i < size_t(selectN / dt); ++i)
+    for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         CF[i][0] = initLayerCF_0;
         CF[i][selectZ-1] = initLayerCF_1;
@@ -2017,7 +2040,7 @@ void initialLayerTB(vector <vector <double> > &TB)
     // + perturbation of the temperature, the gas flow, the pressure differential
 
     // Borders
-    for(i = 0; i < size_t(selectN / dt); ++i)
+    for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TB[i][0] = initLayerTB_0;
         TB[i][selectZ-1] = initLayerTB_1;
@@ -2037,7 +2060,7 @@ void initialLayerTFG(vector <vector <double> > &TFG)
     // + perturbation of the temperature, the gas flow, the pressure differential
 
     // Borders
-    for(i = 0; i < size_t(selectN / dt); ++i)
+    for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TFG[i][0] = initLayerTFG_0;
         TFG[i][selectZ-1] = initLayerTFG_1;
@@ -2056,7 +2079,7 @@ void toFileMM(vector <vector <double> > MMM, string nameModel)
 
     ofstream foutMM(nameModel, ios_base::out | ios_base::trunc);
 
-    for(size_t i = 0; i < (selectN / dt); ++i)
+    for(size_t i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         for(uint j = 0; j < selectZ; j++)
         {
@@ -2144,3 +2167,22 @@ void MainWindow::on_valuePetrubationCFM_textChanged(QString P_CF_New)
 {
     P_CF = P_CF_New.toDouble(&okey);
 }
+
+void MainWindow::on_addColumn_1_clicked()
+{
+    ui->tableBordersAndInitialConditions_1->insertColumn(ui->tableBordersAndInitialConditions_1->columnCount()-1);
+    ui->tableBordersAndInitialConditions_2->insertColumn(ui->tableBordersAndInitialConditions_2->columnCount()-1);
+    ui->tableBordersAndInitialConditions_3->insertColumn(ui->tableBordersAndInitialConditions_3->columnCount()-1);
+    ui->tableBordersAndInitialConditions_4->insertColumn(ui->tableBordersAndInitialConditions_4->columnCount()-1);
+}
+
+
+void MainWindow::on_removeColumn_1_clicked()
+{
+    ui->tableBordersAndInitialConditions_1->setColumnHidden(ui->tableBordersAndInitialConditions_1->columnCount()-1, true);
+    ui->tableBordersAndInitialConditions_2->setColumnHidden(ui->tableBordersAndInitialConditions_2->columnCount()-1, true);
+    ui->tableBordersAndInitialConditions_3->setColumnHidden(ui->tableBordersAndInitialConditions_3->columnCount()-1, true);
+    ui->tableBordersAndInitialConditions_4->setColumnHidden(ui->tableBordersAndInitialConditions_4->columnCount()-1, true);
+}
+
+

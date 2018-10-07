@@ -45,7 +45,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -830,15 +830,15 @@
     </widget>
     <widget class="QWidget" name="tabCustomize">
      <attribute name="title">
-      <string>Настройка границ и н.у.</string>
+      <string>Настройка н.у. и границ</string>
      </attribute>
      <widget class="QTableWidget" name="tableBordersAndInitialConditions_1">
       <property name="geometry">
        <rect>
         <x>90</x>
-        <y>40</y>
+        <y>30</y>
         <width>751</width>
-        <height>91</height>
+        <height>101</height>
        </rect>
       </property>
       <property name="selectionMode">
@@ -891,7 +891,7 @@
         <x>90</x>
         <y>140</y>
         <width>751</width>
-        <height>91</height>
+        <height>101</height>
        </rect>
       </property>
       <property name="selectionMode">
@@ -939,7 +939,7 @@
         <x>90</x>
         <y>250</y>
         <width>751</width>
-        <height>91</height>
+        <height>101</height>
        </rect>
       </property>
       <property name="selectionMode">
@@ -987,7 +987,7 @@
         <x>90</x>
         <y>360</y>
         <width>751</width>
-        <height>91</height>
+        <height>101</height>
        </rect>
       </property>
       <property name="selectionMode">
@@ -1028,6 +1028,32 @@
         <string>Правая граница</string>
        </property>
       </column>
+     </widget>
+     <widget class="QPushButton" name="addColumn_1">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>210</y>
+        <width>41</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>+</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="removeColumn_1">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>250</y>
+        <width>41</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
      </widget>
     </widget>
    </widget>
