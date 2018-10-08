@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
         ui->inputLeftX->setReadOnly(true);
 
-        selectZ = static_cast <unsigned int> (ui->spaceParametr->value() + 2);
+        selectZ = static_cast <size_t>(ui->tableBordersAndInitialConditions_1->columnCount());
         selectN = ui->inputRightX->text().toULongLong(&okey, 10);
         dRC = ui->selectDRC->text().toDouble(&okey);
 
@@ -121,6 +121,7 @@ void MainWindow::getData()
     leftY = ui->inputLeftY->text().toDouble();
     rightY = ui->inputRightY->text().toDouble();
     selectN = ui->inputRightX->text().toULongLong(&okey, 10);
+    selectZ = static_cast <size_t>(ui->tableBordersAndInitialConditions_1->columnCount());
 
     if(ui->LVM_BP->isChecked())
     {
@@ -133,7 +134,7 @@ void MainWindow::getData()
         initLayerTV.assign((selectZ-2), 0.0);
         initLayerTF.assign((selectZ-2), 0.0);
 
-        for(uint j = 1; j <= (selectZ-2); ++j)
+        for(uint j = 1; j < (selectZ-1); ++j)
         {
             initLayerTV[j-1] = (ui->tableBordersAndInitialConditions_1->item(0, j)->text()).toDouble();
             initLayerTF[j-1] = (ui->tableBordersAndInitialConditions_2->item(0, j)->text()).toDouble();
@@ -2135,7 +2136,27 @@ double TwoProduct(double a, double b, double& err)
 
 void MainWindow::on_spaceParametr_valueChanged(int countSpacePoints)
 {
-    selectZ = static_cast <unsigned int> (countSpacePoints + 2);
+    if((ui->tableBordersAndInitialConditions_1->columnCount()-1) <= countSpacePoints)
+    {
+        ui->tableBordersAndInitialConditions_1->insertColumn(ui->tableBordersAndInitialConditions_1->columnCount()-1);
+        ui->tableBordersAndInitialConditions_2->insertColumn(ui->tableBordersAndInitialConditions_2->columnCount()-1);
+        ui->tableBordersAndInitialConditions_3->insertColumn(ui->tableBordersAndInitialConditions_3->columnCount()-1);
+        ui->tableBordersAndInitialConditions_4->insertColumn(ui->tableBordersAndInitialConditions_4->columnCount()-1);
+    }
+    else
+    {
+        ui->tableBordersAndInitialConditions_1->setCurrentCell(0, ui->tableBordersAndInitialConditions_1->columnCount()-1);
+        ui->tableBordersAndInitialConditions_1->removeColumn(ui->tableBordersAndInitialConditions_1->currentColumn()-1);
+
+        ui->tableBordersAndInitialConditions_2->setCurrentCell(0, ui->tableBordersAndInitialConditions_2->columnCount()-1);
+        ui->tableBordersAndInitialConditions_2->removeColumn(ui->tableBordersAndInitialConditions_2->currentColumn()-1);
+
+        ui->tableBordersAndInitialConditions_3->setCurrentCell(0, ui->tableBordersAndInitialConditions_3->columnCount()-1);
+        ui->tableBordersAndInitialConditions_3->removeColumn(ui->tableBordersAndInitialConditions_3->currentColumn()-1);
+
+        ui->tableBordersAndInitialConditions_4->setCurrentCell(0, ui->tableBordersAndInitialConditions_4->columnCount()-1);
+        ui->tableBordersAndInitialConditions_4->removeColumn(ui->tableBordersAndInitialConditions_4->currentColumn()-1);
+    }
 
     dh = dRC/((double)countSpacePoints);
     ui->selectStepH->setText(QString::number(dh));
@@ -2168,29 +2189,3 @@ void MainWindow::on_valuePetrubationCFM_textChanged(QString P_CF_New)
 {
     P_CF = P_CF_New.toDouble(&okey);
 }
-
-void MainWindow::on_addColumn_1_clicked()
-{
-    ui->tableBordersAndInitialConditions_1->insertColumn(ui->tableBordersAndInitialConditions_1->columnCount()-1);
-    ui->tableBordersAndInitialConditions_2->insertColumn(ui->tableBordersAndInitialConditions_2->columnCount()-1);
-    ui->tableBordersAndInitialConditions_3->insertColumn(ui->tableBordersAndInitialConditions_3->columnCount()-1);
-    ui->tableBordersAndInitialConditions_4->insertColumn(ui->tableBordersAndInitialConditions_4->columnCount()-1);
-}
-
-
-void MainWindow::on_removeColumn_1_clicked()
-{
-    ui->tableBordersAndInitialConditions_1->setCurrentCell(0, ui->tableBordersAndInitialConditions_1->columnCount()-1);
-    ui->tableBordersAndInitialConditions_1->removeColumn(ui->tableBordersAndInitialConditions_1->currentColumn()-1);
-
-    ui->tableBordersAndInitialConditions_2->setCurrentCell(0, ui->tableBordersAndInitialConditions_2->columnCount()-1);
-    ui->tableBordersAndInitialConditions_2->removeColumn(ui->tableBordersAndInitialConditions_2->currentColumn()-1);
-
-    ui->tableBordersAndInitialConditions_3->setCurrentCell(0, ui->tableBordersAndInitialConditions_3->columnCount()-1);
-    ui->tableBordersAndInitialConditions_3->removeColumn(ui->tableBordersAndInitialConditions_3->currentColumn()-1);
-
-    ui->tableBordersAndInitialConditions_4->setCurrentCell(0, ui->tableBordersAndInitialConditions_4->columnCount()-1);
-    ui->tableBordersAndInitialConditions_4->removeColumn(ui->tableBordersAndInitialConditions_4->currentColumn()-1);
-}
-
-

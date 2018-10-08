@@ -49,10 +49,6 @@ private slots:
     void on_valuePetrubationCVM_textChanged(QString P_CV_New);
     void on_valuePetrubationCFM_textChanged(QString P_CF_New);  
 
-    void on_addColumn_1_clicked();
-
-    void on_removeColumn_1_clicked();
-
 private:
     Ui::MainWindow *ui;
 
