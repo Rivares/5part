@@ -45,7 +45,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -861,17 +861,17 @@
       </column>
       <column>
        <property name="text">
-        <string>1</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>2</string>
        </property>
       </column>
       <column>
        <property name="text">
         <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
        </property>
       </column>
       <column>
@@ -914,17 +914,17 @@
       </column>
       <column>
        <property name="text">
-        <string>1</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>2</string>
        </property>
       </column>
       <column>
        <property name="text">
         <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
        </property>
       </column>
       <column>
@@ -962,17 +962,17 @@
       </column>
       <column>
        <property name="text">
-        <string>1</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>2</string>
        </property>
       </column>
       <column>
        <property name="text">
         <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
        </property>
       </column>
       <column>
@@ -1010,17 +1010,17 @@
       </column>
       <column>
        <property name="text">
-        <string>1</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>2</string>
        </property>
       </column>
       <column>
        <property name="text">
         <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
        </property>
       </column>
       <column>

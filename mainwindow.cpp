@@ -1941,14 +1941,15 @@ bool EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
 
 
 
-    string nameModel = "MM_TF_1.txt";
-    ofstream foutTF_1(nameModel, ios_base::out | ios_base::trunc);
+    string initTF = std::to_string(TF[0][3]);
+    string nameModel = "MM_TF_" + initTF + ".txt";
 
-    for(size_t i = 0; i < static_cast <size_t> (selectN / dt); ++i)
+    ofstream foutMM(nameModel, ios_base::out | ios_base::trunc);
+
+    for(size_t i = 0; i < (selectN / dt); ++i)
     {
-        foutTF_1 << TF[i][1] << endl;
+        foutMM << TF[i][3] << endl;
     }
-    foutTF_1.close();
 
     return true;
 }
@@ -2179,10 +2180,17 @@ void MainWindow::on_addColumn_1_clicked()
 
 void MainWindow::on_removeColumn_1_clicked()
 {
-    ui->tableBordersAndInitialConditions_1->setColumnHidden(ui->tableBordersAndInitialConditions_1->columnCount()-1, true);
-    ui->tableBordersAndInitialConditions_2->setColumnHidden(ui->tableBordersAndInitialConditions_2->columnCount()-1, true);
-    ui->tableBordersAndInitialConditions_3->setColumnHidden(ui->tableBordersAndInitialConditions_3->columnCount()-1, true);
-    ui->tableBordersAndInitialConditions_4->setColumnHidden(ui->tableBordersAndInitialConditions_4->columnCount()-1, true);
+    ui->tableBordersAndInitialConditions_1->setCurrentCell(0, ui->tableBordersAndInitialConditions_1->columnCount()-1);
+    ui->tableBordersAndInitialConditions_1->removeColumn(ui->tableBordersAndInitialConditions_1->currentColumn()-1);
+
+    ui->tableBordersAndInitialConditions_2->setCurrentCell(0, ui->tableBordersAndInitialConditions_2->columnCount()-1);
+    ui->tableBordersAndInitialConditions_2->removeColumn(ui->tableBordersAndInitialConditions_2->currentColumn()-1);
+
+    ui->tableBordersAndInitialConditions_3->setCurrentCell(0, ui->tableBordersAndInitialConditions_3->columnCount()-1);
+    ui->tableBordersAndInitialConditions_3->removeColumn(ui->tableBordersAndInitialConditions_3->currentColumn()-1);
+
+    ui->tableBordersAndInitialConditions_4->setCurrentCell(0, ui->tableBordersAndInitialConditions_4->columnCount()-1);
+    ui->tableBordersAndInitialConditions_4->removeColumn(ui->tableBordersAndInitialConditions_4->currentColumn()-1);
 }
 
 
