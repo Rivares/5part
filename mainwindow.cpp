@@ -78,9 +78,6 @@ double TwoProduct(double a, double b, double& err);
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-        clock_t timeMW_0 = clock();
-        int msec = 0;
-
         ui->setupUi(this);
 
         ui->inputLeftX->setReadOnly(true);
@@ -102,10 +99,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
         getData();
         drawGraph();
-
-        clock_t timeDiff = clock() - timeMW_0;
-        msec = (double)(timeDiff * 1000) / (double)CLOCKS_PER_SEC;
-        cout << "General time of program taken " << msec/1000 << " seconds, and " << msec%1000 <<" milliseconds!" << endl;
 }
 
 
@@ -476,8 +469,11 @@ void MainWindow::drawGraph()
     ui->thirdState->addItems(thirdStates);
 
     clock_t timeDiff = clock() - timeMW_1;
-    msec = (double)(timeDiff * 1000) / (double)CLOCKS_PER_SEC;
-    cout << endl <<"Drawing time of program taken " << msec/1000 << " seconds, and " << msec%1000 <<" milliseconds!" << endl;
+    if (timeDiff != 0)
+    {
+        msec = (double)(timeDiff * 1000) / (double)CLOCKS_PER_SEC;
+        cout << endl <<"Drawing time of program taken " << msec/1000 << " seconds, and " << msec%1000 <<" milliseconds!" << endl;
+    }
     return;
 }
 
@@ -958,9 +954,9 @@ void MainWindow::on_EVM_BP_clicked()
     ui->tableBordersAndInitialConditions_3->setItem(0, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
     ui->tableBordersAndInitialConditions_3->setItem(1, (ui->tableBordersAndInitialConditions_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
 
-    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("68.9650")));
-    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("69.9900")));
-    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("71.0150")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 1, new QTableWidgetItem(tr("68.9690")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 2, new QTableWidgetItem(tr("69.9940")));
+    ui->tableBordersAndInitialConditions_3->setItem(0, 3, new QTableWidgetItem(tr("71.0190")));
 
 
     ui->tableBordersAndInitialConditions_4->setItem(0, 0, new QTableWidgetItem(tr("6.550")));
@@ -969,9 +965,9 @@ void MainWindow::on_EVM_BP_clicked()
     ui->tableBordersAndInitialConditions_4->setItem(0, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
     ui->tableBordersAndInitialConditions_4->setItem(1, (ui->tableBordersAndInitialConditions_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
 
-    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("5.570")));
-    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("4.640")));
-    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("3.710")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 1, new QTableWidgetItem(tr("5.60950")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 2, new QTableWidgetItem(tr("4.66900")));
+    ui->tableBordersAndInitialConditions_4->setItem(0, 3, new QTableWidgetItem(tr("3.72850")));
 
     ui->tableBordersAndInitialConditions_3->setDisabled(false);
     ui->tableBordersAndInitialConditions_4->setDisabled(false);
@@ -1277,16 +1273,16 @@ void MainWindow::on_EVAP_clicked()
         ui->tableBordersAndInitialConditions_4->insertColumn(4);
     }
 
-    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("139.00")));
-    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("139.00")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 0, new QTableWidgetItem(tr("160.00")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, 0, new QTableWidgetItem(tr("160.00")));
 
-    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("160.16160")));
-    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("160.16160")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("139.00")));
+    ui->tableBordersAndInitialConditions_1->setItem(1, (ui->tableBordersAndInitialConditions_1->columnCount()-1), new QTableWidgetItem(tr("139.00")));
 
-    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("143.673400")));
-    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("148.736080")));
-    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("154.220450")));
-    ui->tableBordersAndInitialConditions_1->setItem(0, 4, new QTableWidgetItem(tr("160.161650")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 1, new QTableWidgetItem(tr("160.161650")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 2, new QTableWidgetItem(tr("154.220450")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 3, new QTableWidgetItem(tr("148.736080")));
+    ui->tableBordersAndInitialConditions_1->setItem(0, 4, new QTableWidgetItem(tr("143.673400")));
 
 
     ui->tableBordersAndInitialConditions_2->setItem(0, 0, new QTableWidgetItem(tr("160.200")));
@@ -1585,16 +1581,69 @@ bool ETMBPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
             // -----Calculate layer mass exchenger model------
 
-            /* New schema: CV(i,i-1); CV(i,i-1). Error was increase..., but dynamic of process good*/
-            CV[i][j] = - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
-                    + (PTV_L + PTV_N) * CV[i-1][j-1]
-                    - CV[i-1][j] * (- dt*RvM + PTV_L + PTV_N)
-                    + CV[i-1][j];
+            /* New schema: CV(i,i-1); CV(i,i-1). Error was increase..., but dynamic of process good*/         
+            /* 1 A-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM + PTV_L + PTV_N + 1)
+                        - CV[i-1][j-1] * (PTV_L + PTV_N);*/
 
-            CF[i][j] = - (dt * RfM * CV[i-1][(selectZ-1)-j])
-                    + (PTF * CF[i-1][j-1])
-                    - CF[i-1][j] * (-(dt*RfM*E) + PTF)
-                    + CF[i-1][j];
+            /* 1 B+
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM - PTV_L - PTV_N + 1)
+                        + CV[i-1][j-1] * (PTV_L + PTV_N);*/
+
+            /* 2 A-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM + PTV_L - PTV_N + 1)
+                        - CV[i-1][j-1] * PTV_L
+                        + CV[i-1][j+1] * PTV_N;*/
+            /* 2 B-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM - PTV_L + PTV_N + 1)
+                        + CV[i-1][j-1] * PTV_L
+                        - CV[i-1][j+1] * PTV_N;*/
+
+            /* 3 A-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM - PTV_L + PTV_N + 1)
+                        - CV[i-1][j-1] * PTV_N
+                        + CV[i-1][j+1] * PTV_L;*/
+
+            /* 3 B-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM + PTV_L - PTV_N + 1)
+                        + CV[i-1][j-1] * PTV_N
+                        - CV[i-1][j+1] * PTV_L;*/
+
+            /* 4 A+*/
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM - PTV_L - PTV_N + 1)
+                        + CV[i-1][j+1] * (PTV_L + PTV_N);
+
+            /* 4 B-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM + PTV_L + PTV_N + 1)
+                        - CV[i-1][j+1] * (PTV_L + PTV_N);*/
+
+            /* 1 A-
+            CF[i][j] =  - (dt * RfM * CV[i-1][(selectZ-1)-j])
+                        + CF[i-1][j] * (dt*RfM*E + PTF + 1)
+                        - (PTF * CF[i-1][j-1]);*/
+
+            /* 1 B+*/
+            CF[i][j] =  - (dt * RfM * CV[i-1][j])
+                        + CF[i-1][j] * (dt*RfM*E - PTF + 1)
+                        + (PTF * CF[i-1][j-1]);
+
+            /* 2 A-
+            CF[i][j] =  - (dt * RfM * CV[i-1][(selectZ-1)-j])
+                        + CF[i-1][j] * (dt*RfM*E - PTF + 1)
+                        + (PTF * CF[i-1][j+1]);*/
+
+            /* 2 B-
+            CF[i][j] =  - (dt * RfM * CV[i-1][(selectZ-1)-j])
+                        + CF[i-1][j] * (dt*RfM*E + PTF + 1)
+                        - (PTF * CF[i-1][j+1]);*/
         }
 
     }
@@ -1715,21 +1764,21 @@ bool ETMTPMM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
             // -----Calculate layer mass exchenger model------
 
-            /* New schema: CV(i,i-1); CV(i,i-1). Error was increase..., but dynamic of process good*/
+            /* New schema: CV(i,i-1); CV(i,i-1). Error was increase..., but dynamic of process good*
             CV[i][j] = - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
                     + (PTV_L + PTV_N) * CV[i-1][j-1]
                     - CV[i-1][j] * (- dt*RvM + PTV_L + PTV_N)
-                    + CV[i-1][j];
+                    + CV[i-1][j];*/
 
             CF[i][j] = - (dt * RfM * CV[i-1][(selectZ-1)-j])
                     + (PTF * CF[i-1][j-1])
                     - CF[i-1][j] * (-(dt*RfM*E) + PTF)
                     + CF[i-1][j];
 
-            /* Old schema: CV(i,i-1); CV(i+1,i)
+            /* Old schema: CV(i,i-1); CV(i+1,i)*/
 
-            CV[i][j] = -CV[i-1][j] * (PTV_L - 1 - PTV_N - dt*RvM) + (PTV_L * CV[i-1][j-1]) - (PTV_N * CV[i-1][j+1])
-                                                                                        - (dt * RvM * E * CF[i-1][(selectZ-1)-j]) + P_CV;*/
+            CV[i][j] = -CV[i-1][j] * (PTV_L - 1 - PTV_N + dt*RvM) + (PTV_L * CV[i-1][j-1]) - (PTV_N * CV[i-1][j-1])
+                                                                                        - (dt * RvM * E * CF[i-1][(selectZ-1)-j]) + P_CV;
 
         }
     }
@@ -1943,7 +1992,7 @@ bool EVAP(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <
 
 
     string initTF = std::to_string(TF[0][3]);
-    string nameModel = "MM_TF_" + initTF + ".txt";
+    string nameModel = "MM_TF_" + initTF + ".dat";
 
     ofstream foutMM(nameModel, ios_base::out | ios_base::trunc);
 
@@ -2077,15 +2126,15 @@ void initialLayerTFG(vector <vector <double> > &TFG)
 
 void toFileMM(vector <vector <double> > MMM, string nameModel)
 {
-    nameModel = "MM_" + nameModel + ".txt";
+    nameModel = "MM_" + nameModel + ".dat";
 
     ofstream foutMM(nameModel, ios_base::out | ios_base::trunc);
 
     for(size_t i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        for(uint j = 0; j < selectZ; j++)
+        for(uint j = 1; j < (selectZ-1); j++)
         {
-            foutMM << MMM[i][j] << " | ";
+            foutMM << MMM[i][j] << " ";
         }
         foutMM << endl;
     }
