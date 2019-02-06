@@ -3,10 +3,12 @@
 #include "mainwindow.h"
 
 #include <QMessageBox>
+#include <Qt3DExtras>
 #include <QString>
 #include <QDebug>
 #include <vector>
 #include <cmath>
+#include <QUrl>
 #include <array>
 #include <vector>
 #include <thread>
@@ -70,10 +72,6 @@ void initialLayerTFG(vector <vector <double> > &TFG);
 
 void toFileMM(vector <vector <double> > MMM, string nameModel);
 
-void Split(double a, int s, double& a_hi, double& a_lo);
-double TwoSum(double a, double b, double& error);
-double TwoProduct(double a, double b, double& err);
-
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -96,9 +94,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
         leftY = ui->inputLeftY->text().toDouble();
         rightY = ui->inputRightY->text().toDouble();
-
-        getData();
-        drawGraph();
 }
 
 
@@ -578,7 +573,7 @@ void MainWindow::drawModel(int choiceModel)
     ui->customPlot->clearGraphs();
     ui->customPlot->legend->setVisible(true);
 
-    srand(time(NULL));
+    srand(time(0));
     int randColorR, randColorG, randColorB;
 
     QPen pen;
@@ -2141,48 +2136,6 @@ void toFileMM(vector <vector <double> > MMM, string nameModel)
     foutMM.close();
 }
 
-void Split(double a, int s, double& a_hi, double& a_lo)
-{
-    double c = (pow(2, s) + 1)*a;
-    double a_big = c - a;
-
-    a_hi = c - a_big;
-    a_lo = a - a_hi;
-}
-
-double TwoSum(double a, double b, double& error)
-{
-    double x = a + b;
-    double b_virt = x - a;
-    double a_virt = x - b_virt;
-    double b_roundoff = b - b_virt;
-    double a_roudnoff = a - a_virt;
-    double y = a_roudnoff + b_roundoff;
-
-    error += y;
-
-    return x;
-}
-
-double TwoProduct(double a, double b, double& err)
-{
-    double x = a*b;
-    double a_hi, a_low, b_hi, b_low;
-
-    Split(a, 12, a_hi, a_low);
-    Split(b, 12, b_hi, b_low);
-
-    double err1, err2, err3;
-
-    err1 = x - (a_hi*b_hi);
-    err2 = err1 - (a_low*b_hi);
-    err3 = err2 - (a_hi*b_low);
-
-    err += ((a_low * b_low) - err3);
-
-    return x;
-}
-
 void MainWindow::on_spaceParametr_valueChanged(int countSpacePoints)
 {
     if((ui->tableBordersAndInitialConditions_1->columnCount()-1) <= countSpacePoints)
@@ -2237,4 +2190,47 @@ void MainWindow::on_valuePetrubationCVM_textChanged(QString P_CV_New)
 void MainWindow::on_valuePetrubationCFM_textChanged(QString P_CF_New)
 {
     P_CF = P_CF_New.toDouble(&okey);
+}
+
+void MainWindow::on_action3D_model_triggered()
+{
+    QUrl data = QUrl::fromLocalFile("A:/Scientifics_work/Ph.D/Qt_dir/3d/my_distil.stl");
+
+    Qt3DExtras::Qt3DWindow view;
+
+    Qt3DCore::QEntity *rootEntity = new Qt3DCore::QEntity;
+    Qt3DCore::QEntity *flyingwedge = new Qt3DCore::QEntity(rootEntity);
+
+    Qt3DExtras::QPhongMaterial *material = new Qt3DExtras::QPhongMaterial();
+    material->setDiffuse(QColor(254, 254, 254));
+
+    Qt3DRender::QMesh *flyingwedgeMesh = new Qt3DRender::QMesh;
+    flyingwedgeMesh->setMeshName("DistilationColumn");
+    flyingwedgeMesh->setSource(data);
+    flyingwedge->addComponent(flyingwedgeMesh);
+    flyingwedge->addComponent(material);
+
+    Qt3DRender::QCamera *camera = view.camera();
+    camera->lens()->setPerspectiveProjection(40.0f, 16.0f/9.0f, 0.1f, 1000.0f);
+    camera->setPosition(QVector3D(0, 0, 40.0f));
+    camera->setViewCenter(QVector3D(0, 0, 0));
+
+    Qt3DCore::QEntity *lightEntity = new Qt3DCore::QEntity(rootEntity);
+    Qt3DRender::QPointLight *light = new Qt3DRender::QPointLight(lightEntity);
+    light->setColor("white");
+    light->setIntensity(0.8f);
+    lightEntity->addComponent(light);
+
+    Qt3DCore::QTransform *lightTransform = new Qt3DCore::QTransform(lightEntity);
+    lightTransform->setTranslation(QVector3D(60, 0, 40.0f));
+    lightEntity->addComponent(lightTransform);
+
+    Qt3DExtras::QOrbitCameraController *camController = new Qt3DExtras::QOrbitCameraController(rootEntity);
+    camController->setCamera(camera);
+
+    view.setRootEntity(rootEntity);
+    qApp->processEvents();
+    view.show();
+
+
 }
