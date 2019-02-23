@@ -1055,6 +1055,7 @@
     </property>
     <addaction name="actionAbout_rectification_column"/>
     <addaction name="action3D_model"/>
+    <addaction name="actionCheck_stat_of_values"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menuHelp"/>
@@ -1090,6 +1091,11 @@
    </property>
    <property name="menuRole">
     <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
+  </action>
+  <action name="actionCheck_stat_of_values">
+   <property name="text">
+    <string>Check stat of values</string>
    </property>
   </action>
  </widget>

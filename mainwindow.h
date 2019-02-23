@@ -51,6 +51,8 @@ private slots:
 
     void on_action3D_model_triggered();
 
+    void on_actionCheck_stat_of_values_triggered();
+
 private:
     Ui::MainWindow *ui;
 

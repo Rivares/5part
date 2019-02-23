@@ -2211,14 +2211,19 @@ void MainWindow::on_action3D_model_triggered()
     flyingwedge->addComponent(material);
 
     Qt3DRender::QCamera *camera = view.camera();
-    camera->lens()->setPerspectiveProjection(40.0f, 16.0f/9.0f, 0.1f, 1000.0f);
-    camera->setPosition(QVector3D(0, 0, 40.0f));
-    camera->setViewCenter(QVector3D(0, 0, 0));
+    float fieldOfView = 1000.0f,
+          aspectRatio = 1.0f,
+          nearPlane = 0.1f,
+          farPlane = 1000.0f;
+    camera->lens()->setPerspectiveProjection(fieldOfView, aspectRatio, nearPlane, farPlane);
+
+    camera->setPosition(QVector3D(50, -230, 100));
+    camera->setViewCenter(QVector3D(50, 100, 100));
 
     Qt3DCore::QEntity *lightEntity = new Qt3DCore::QEntity(rootEntity);
     Qt3DRender::QPointLight *light = new Qt3DRender::QPointLight(lightEntity);
-    light->setColor("white");
-    light->setIntensity(0.8f);
+    light->setColor("green");
+    light->setIntensity(1.1f);
     lightEntity->addComponent(light);
 
     Qt3DCore::QTransform *lightTransform = new Qt3DCore::QTransform(lightEntity);
@@ -2229,8 +2234,91 @@ void MainWindow::on_action3D_model_triggered()
     camController->setCamera(camera);
 
     view.setRootEntity(rootEntity);
-    qApp->processEvents();
     view.show();
 
+}
 
+void MainWindow::on_actionCheck_stat_of_values_triggered()
+{
+    // Get measurement values
+    std::vector<double> listFirstMeasurementState, listSecondMeasurementState, listThirdMeasurementState;
+
+    for(uint i = 0; i < uint(ui->firstState->count()); ++i)
+    {
+        listFirstMeasurementState.push_back(ui->firstState->itemText(int(i)).toDouble());
+        listSecondMeasurementState.push_back(ui->secondState->itemText(int(i)).toDouble());
+        listThirdMeasurementState.push_back(ui->thirdState->itemText(int(i)).toDouble());
+    }
+
+    // Get true values
+    std::vector<double> listFirstTrueState, listSecondTrueState, listThirdTrueState;
+
+    if ((ui->LVM_BP->isChecked()) || ( ui->NLVM_BP->isChecked() ) || ( ui->EVM_BP->isChecked() ))
+    {
+        listFirstTrueState = {157.000, 153.900, 150.600};
+        listSecondTrueState = {124.800, 129.000, 133.000};
+    }
+
+    if (ui->EFM_BP->isChecked())
+    {
+        listFirstTrueState = {77.000, 74.000, 71.140};
+        listSecondTrueState = {4.497, 2.524, 0.626};
+    }
+
+    if (ui->EVM_TP->isChecked())
+    {
+        listFirstTrueState = {122, 97.4, 69.59};
+        listSecondTrueState = {58.28, 86.23, 111.8};
+    }
+
+    if (ui->EFM_TP->isChecked())
+    {
+        listFirstTrueState = {0.6646, 0.8024, 0.9853};
+        listSecondTrueState = {0.8271, 0.6863, 0.5696};
+    }
+
+    if (ui->EVAP->isChecked())
+    {
+        listFirstTrueState = {160.161, 154.220, 148.736, 143.673};
+        listSecondTrueState = {164.482, 158.209, 152.418, 147.072};
+        listThirdTrueState = {283.306, 267.896, 253.671, 240.540};
+    }
+
+    if (ui->ACU->isChecked())
+    {
+        listFirstTrueState = {53.364, 39.552, 30.001};
+        listSecondTrueState = {26.846, 21.992, 18.635};
+    }
+
+    // Checking
+    std::vector<double> listFirstErrorState, listSecondErrorState, listThirdErrorState;
+    double passError = 0.1; // Passing error = 5%; 5% / 100% = 0.05
+
+    for(uint i = 0; i < uint(ui->firstState->count()); ++i)
+    {
+        listFirstErrorState.push_back(listFirstTrueState[i] * passError);
+        listSecondErrorState.push_back(listSecondTrueState[i] * passError);
+
+
+        if(listFirstErrorState[i] < abs(listFirstTrueState[i] - listFirstMeasurementState[i]))
+        {
+            cout << "Attention! Error has very big value - listFirstErrorState[" << i << "] = " << listFirstErrorState[i] << endl;
+        }
+
+        if(listSecondErrorState[i] < abs(listSecondTrueState[i] - listSecondMeasurementState[i]))
+        {
+            cout << "Attention! Error has very big value - listSecondErrorState[" << i << "] = " << listSecondErrorState[i] << endl;
+        }
+
+        if(ui->thirdState->count() > 0)
+        {
+            listThirdErrorState.push_back(listThirdTrueState[i] * passError);
+
+            if(listThirdErrorState[i] < abs(listThirdTrueState[i] - listThirdMeasurementState[i]))
+            {
+                cout << "Attention! Error has very big value - listThirdErrorState[" << i << "] = " << listThirdErrorState[i] << endl;
+            }
+        }
+
+    }
 }
