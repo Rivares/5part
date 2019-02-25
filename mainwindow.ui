@@ -1095,6 +1095,9 @@
   </action>
   <action name="actionCheck_stat_of_values">
    <property name="text">
+    <string>Check steady state</string>
+   </property>
+   <property name="toolTip">
     <string>Check stat of values</string>
    </property>
   </action>
