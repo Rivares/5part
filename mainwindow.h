@@ -54,7 +54,7 @@ private slots:
     void on_actionCheck_stat_of_values_triggered();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *uiMain;
 
     vector <vector <double> > TV;
     vector <vector <double> > TF;
