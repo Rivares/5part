@@ -2,6 +2,7 @@
 #define CHECKWINDOW_H
 
 #include <QDialog>
+#include "mainwindow.h"
 
 namespace Ui {
 class CheckWindow;
@@ -15,7 +16,7 @@ public:
     explicit CheckWindow(QWidget *parent = nullptr);
     ~CheckWindow();
 
-    double transfer(double passError);
+    void setParentToCheck(MainWindow *parentWindow);
 
 private slots:
     void on_toCheckButton_clicked();
@@ -23,6 +24,20 @@ private slots:
 
 private:
     Ui::CheckWindow *uiCheck;
+
+    QComboBox *firstState;
+    QComboBox *secondState;
+    QComboBox *thirdState;
+
+    QRadioButton *LVM_BP;
+    QRadioButton *NLVM_BP;
+    QRadioButton *EVM_BP;
+    QRadioButton *EFM_BP;
+    QRadioButton *EVM_TP;
+    QRadioButton *EFM_TP;
+    QRadioButton *EVAP;
+    QRadioButton *ACU;
+
     double passError;    // Default passing error = 5%; 5% / 100% = 0.05
 };
 

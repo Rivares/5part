@@ -2244,98 +2244,10 @@ void MainWindow::on_actionCheck_stat_of_values_triggered()
     // If you have something to check
     if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) || ( !(TFG.empty()) ) )
     {
-        cout << endl << "Checking steady state..." << endl;
+        CheckWindow *checkingWindow = new CheckWindow;
 
-        double passError = 0.0;    // Passing error
-        CheckWindow *checkingWindow;
-
-        //connect(checkingWindow, SIGNAL(transfer()), this, SLOT());
-
-        //qApp->processEvents();
-
-        checkingWindow->exec();
-
-        // Get measurement values
-        std::vector<double> listFirstMeasurementState, listSecondMeasurementState, listThirdMeasurementState;
-
-
-        for(uint i = 0; i < uint(uiMain->firstState->count()); ++i)
-        {
-            listFirstMeasurementState.push_back(uiMain->firstState->itemText(int(i)).toDouble());
-            listSecondMeasurementState.push_back(uiMain->secondState->itemText(int(i)).toDouble());
-            listThirdMeasurementState.push_back(uiMain->thirdState->itemText(int(i)).toDouble());
-        }
-
-        // Get true values
-        std::vector<double> listFirstTrueState, listSecondTrueState, listThirdTrueState;
-
-        if ((uiMain->LVM_BP->isChecked()) || ( uiMain->NLVM_BP->isChecked() ) || ( uiMain->EVM_BP->isChecked() ))
-        {
-            listFirstTrueState = {157.000, 153.900, 150.600};
-            listSecondTrueState = {124.800, 129.000, 133.000};
-        }
-
-        if (uiMain->EFM_BP->isChecked())
-        {
-            listFirstTrueState = {77.000, 74.000, 71.140};
-            listSecondTrueState = {4.497, 2.524, 0.626};
-        }
-
-        if (uiMain->EVM_TP->isChecked())
-        {
-            listFirstTrueState = {122, 97.4, 69.59};
-            listSecondTrueState = {58.28, 86.23, 111.8};
-        }
-
-        if (uiMain->EFM_TP->isChecked())
-        {
-            listFirstTrueState = {0.6646, 0.8024, 0.9853};
-            listSecondTrueState = {0.8271, 0.6863, 0.5696};
-        }
-
-        if (uiMain->EVAP->isChecked())
-        {
-            listFirstTrueState = {160.161, 154.220, 148.736, 143.673};
-            listSecondTrueState = {164.482, 158.209, 152.418, 147.072};
-            listThirdTrueState = {283.306, 267.896, 253.671, 240.540};
-        }
-
-        if (uiMain->ACU->isChecked())
-        {
-            listFirstTrueState = {53.364, 39.552, 30.001};
-            listSecondTrueState = {26.846, 21.992, 18.635};
-        }
-
-        // Checking
-        std::vector<double> listFirstErrorState, listSecondErrorState, listThirdErrorState;
-
-        for(uint i = 0; i < uint(uiMain->firstState->count()); ++i)
-        {
-            listFirstErrorState.push_back(listFirstTrueState[i] * passError);
-            listSecondErrorState.push_back(listSecondTrueState[i] * passError);
-
-
-            if(listFirstErrorState[i] < abs(listFirstTrueState[i] - listFirstMeasurementState[i]))
-            {
-                cout << "Attention! Error has very big value - listFirstErrorState[" << i << "] = " << listFirstErrorState[i] << endl;
-            }
-
-            if(listSecondErrorState[i] < abs(listSecondTrueState[i] - listSecondMeasurementState[i]))
-            {
-                cout << "Attention! Error has very big value - listSecondErrorState[" << i << "] = " << listSecondErrorState[i] << endl;
-            }
-
-            if(uiMain->thirdState->count() > 0)
-            {
-                listThirdErrorState.push_back(listThirdTrueState[i] * passError);
-
-                if(listThirdErrorState[i] < abs(listThirdTrueState[i] - listThirdMeasurementState[i]))
-                {
-                    cout << "Attention! Error has very big value - listThirdErrorState[" << i << "] = " << listThirdErrorState[i] << endl;
-                }
-            }
-
-        }
+        checkingWindow->show();
+        checkingWindow->setParentToCheck(this);
     }
     else
     {
