@@ -44,6 +44,9 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+    <property name="whatsThis">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Настройка н.у. и границ УРК&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="currentIndex">
      <number>0</number>
     </property>
@@ -54,10 +57,10 @@
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>710</x>
+        <x>720</x>
         <y>10</y>
         <width>264</width>
-        <height>484</height>
+        <height>481</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -220,6 +223,123 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <property name="spacing">
+          <number>1</number>
+         </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetNoConstraint</enum>
+         </property>
+         <item alignment="Qt::AlignLeft">
+          <widget class="QLabel" name="label_20">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Кол. пространствен.перем. ОРК   =</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spaceParametrBP">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="value">
+            <number>3</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_15">
+         <property name="spacing">
+          <number>1</number>
+         </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetNoConstraint</enum>
+         </property>
+         <item alignment="Qt::AlignLeft">
+          <widget class="QLabel" name="label_19">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Кол. пространствен.перем. УРК   =</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spaceParametrTP">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="value">
+            <number>3</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_16">
+         <property name="spacing">
+          <number>1</number>
+         </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetNoConstraint</enum>
+         </property>
+         <item alignment="Qt::AlignLeft">
+          <widget class="QLabel" name="label_21">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Кол. пространствен.перем. АВО   =</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spaceParametrACU">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="value">
+            <number>3</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_11">
          <property name="spacing">
           <number>1</number>
@@ -236,12 +356,12 @@
             </size>
            </property>
            <property name="text">
-            <string>Кол. пространствен.переменных: Z   =</string>
+            <string>Кол. пространствен.перем. Испар.   =</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spaceParametr">
+          <widget class="QSpinBox" name="spaceParametrEVAP">
            <property name="maximumSize">
             <size>
              <width>50</width>
@@ -270,159 +390,36 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QLabel" name="label_10">
-             <property name="minimumSize">
-              <size>
-               <width>105</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>130</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Возмущение по:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <layout class="QFormLayout" name="formLayout">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_18">
-               <property name="maximumSize">
-                <size>
-                 <width>140</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Температуре пара -&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="valuePetrubationTVM">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>0.0</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_15">
-               <property name="maximumSize">
-                <size>
-                 <width>140</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Температуре жидкости -&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="valuePetrubationTFM">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>0.0</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_17">
-               <property name="maximumSize">
-                <size>
-                 <width>120</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Концентрации пара -&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="valuePetrubationCVM">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>0.0</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_16">
-               <property name="maximumSize">
-                <size>
-                 <width>140</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Концентрации жидкости -&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="valuePetrubationCFM">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>0.0</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
               <widget class="QRadioButton" name="LVM_BP">
                <property name="text">
                 <string>ЛТМ ОРК</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="0" column="1">
               <widget class="QRadioButton" name="EVM_TP">
                <property name="text">
                 <string>ВТМ УРК</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="0">
+             <item row="1" column="0">
               <widget class="QRadioButton" name="NLVM_BP">
                <property name="text">
                 <string>НТМ ОРК</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
+             <item row="1" column="1">
               <widget class="QRadioButton" name="EFM_TP">
                <property name="text">
                 <string>ВММ УРК</string>
                </property>
               </widget>
              </item>
-             <item row="6" column="0">
+             <item row="2" column="0">
               <widget class="QRadioButton" name="EVM_BP">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -460,14 +457,14 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="1">
+             <item row="2" column="1">
               <widget class="QRadioButton" name="ACU">
                <property name="text">
                 <string>АВО</string>
                </property>
               </widget>
              </item>
-             <item row="7" column="0">
+             <item row="3" column="0">
               <widget class="QRadioButton" name="EFM_BP">
                <property name="maximumSize">
                 <size>
@@ -480,10 +477,69 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="1">
+             <item row="3" column="1">
               <widget class="QRadioButton" name="EVAP">
                <property name="text">
                 <string>Испаритель</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QRadioButton" name="BP_EVAP">
+               <property name="text">
+                <string>ОРК + Испаритель</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QRadioButton" name="TP_ACU">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>55</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>22</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <italic>false</italic>
+                 <underline>false</underline>
+                 <kerning>true</kerning>
+                </font>
+               </property>
+               <property name="text">
+                <string>УРК + АВО</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <property name="autoRepeat">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QRadioButton" name="TP_BP">
+               <property name="text">
+                <string>УРК + ОРК</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QRadioButton" name="FULL_RC">
+               <property name="text">
+                <string>Полная РК</string>
                </property>
               </widget>
              </item>
@@ -828,11 +884,11 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tabCustomize">
+    <widget class="QWidget" name="tabCustomize1">
      <attribute name="title">
-      <string>Настройка н.у. и границ</string>
+      <string>Настройка н.у. и границ ОРК</string>
      </attribute>
-     <widget class="QTableWidget" name="tableBordersAndInitialConditions_1">
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_BP_1">
       <property name="geometry">
        <rect>
         <x>90</x>
@@ -885,7 +941,7 @@
        </property>
       </item>
      </widget>
-     <widget class="QTableWidget" name="tableBordersAndInitialConditions_2">
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_BP_2">
       <property name="geometry">
        <rect>
         <x>90</x>
@@ -933,7 +989,7 @@
        </property>
       </column>
      </widget>
-     <widget class="QTableWidget" name="tableBordersAndInitialConditions_3">
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_BP_3">
       <property name="geometry">
        <rect>
         <x>90</x>
@@ -981,7 +1037,7 @@
        </property>
       </column>
      </widget>
-     <widget class="QTableWidget" name="tableBordersAndInitialConditions_4">
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_BP_4">
       <property name="geometry">
        <rect>
         <x>90</x>
@@ -1028,6 +1084,612 @@
         <string>Правая граница</string>
        </property>
       </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tabCustomize2">
+     <attribute name="title">
+      <string>Настройка н.у. и границ УРК</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_TP_1">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>30</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+      <item row="1" column="1">
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_TP_2">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>140</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_TP_4">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>360</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_TP_3">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>250</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tabCustomize3">
+     <attribute name="title">
+      <string>Настройка н.у. и границ АВО</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_ACU_4">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>360</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_ACU_1">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>30</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+      <item row="1" column="1">
+       <property name="text">
+        <string/>
+       </property>
+      </item>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_ACU_2">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>140</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_ACU_3">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>250</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tabCustomize4">
+     <attribute name="title">
+      <string>Настройка н.у. и границ Испарителя</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_EVAP_2">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>140</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_EVAP_4">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>360</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_EVAP_3">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>250</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="tableBordersAndInitialConditions_EVAP_1">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>30</y>
+        <width>751</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <row>
+       <property name="text">
+        <string> 0-ый момент времени</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string> i-ый момент времени</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Левая граница</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Правая граница</string>
+       </property>
+      </column>
+      <item row="1" column="1">
+       <property name="text">
+        <string/>
+       </property>
+      </item>
      </widget>
     </widget>
    </widget>

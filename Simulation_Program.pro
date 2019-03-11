@@ -29,13 +29,15 @@ SOURCES += \
         mainwindow.cpp \
     qcustomplot.cpp \
     checkwindow.cpp \
-    logger.cpp
+    logger.cpp \
+    models.cpp
 
 HEADERS += \
         mainwindow.h \
     qcustomplot.h \
     checkwindow.h \
-    logger.h
+    logger.h \
+    models.h
 
 FORMS += \
         mainwindow.ui \
