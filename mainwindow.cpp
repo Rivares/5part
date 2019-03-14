@@ -25,9 +25,10 @@ using std::endl;
 
 static bool okey = false;
 
-static double dRC = 0.0;
+static double dRC = 0.0;    // Hieght nozzles
 static double dh = 0.0000;
 static double dt = 0.0000;
+static unsigned int endPoint = 0;
 static unsigned int spaceParametrBP = 0;
 static unsigned int spaceParametrTP = 0;
 static unsigned int spaceParametrACU = 0;
@@ -84,9 +85,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), uiMain(new Ui::Ma
         uiMain->inputLeftX->setReadOnly(true);
 
         selectN = 1000;
-        dRC = uiMain->selectDRC->text().toDouble(&okey);
-
-        dh = 0;
+        dRC = 0.0;
+        dh = 0.0;
 
         uiMain->inputLeftY->clear();
         uiMain->inputRightY->clear();
@@ -112,7 +112,7 @@ void MainWindow::getData()
     rightY = uiMain->inputRightY->text().toDouble();
     selectN = uiMain->inputRightX->text().toULongLong(&okey, 10);
 
-    if(uiMain->LVM_BP->isChecked())
+    if(uiMain->LVM_BP->isChecked() || uiMain->NLVM_BP->isChecked())
     {
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
 
@@ -130,29 +130,12 @@ void MainWindow::getData()
             initLayerTV[j-1] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerTF[j-1] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
         }
+
+        dh = static_cast <double> (dRC / (spaceParametrBP-2));
+        qDebug() << "dh = " <<  dh;
     }
 
-    if(uiMain->NLVM_BP->isChecked())
-    {
-        spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
-
-        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
-
-        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
-
-        initLayerTV.assign((spaceParametrBP-2), 0.0);
-        initLayerTF.assign((spaceParametrBP-2), 0.0);
-
-        for(uint j = 1; j <= (spaceParametrBP-2); ++j)
-        {
-            initLayerTV[j-1] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTF[j-1] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
-        }
-    }
-
-    if( (uiMain->EVM_BP->isChecked()) | (uiMain->EFM_BP->isChecked()) )
+    if( uiMain->EVM_BP->isChecked() || uiMain->EFM_BP->isChecked() )
     {
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
 
@@ -180,9 +163,11 @@ void MainWindow::getData()
             initLayerCV[j-1] = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerCF[j-1] = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, static_cast <int>(j))->text()).toDouble();
         }
+
+        dh = static_cast <double> (dRC / (spaceParametrBP-2));
     }
 
-    if( (uiMain->EVM_TP->isChecked()) | (uiMain->EFM_TP->isChecked()) )
+    if( uiMain->EVM_TP->isChecked() || uiMain->EFM_TP->isChecked() )
     {
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
 
@@ -210,6 +195,8 @@ void MainWindow::getData()
             initLayerCV[j-1] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerCF[j-1] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, static_cast <int>(j))->text()).toDouble();
         }
+
+        dh = static_cast <double> (dRC/spaceParametrTP);
     }
 
     if(uiMain->ACU->isChecked())
@@ -230,6 +217,8 @@ void MainWindow::getData()
             initLayerTV[j-1] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerTB[j-1] = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
         }
+
+        dh = static_cast <double> (dRC / (spaceParametrACU-2));
     }
 
     if(uiMain->EVAP->isChecked())
@@ -255,6 +244,8 @@ void MainWindow::getData()
             initLayerTB[j-1]  = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerTFG[j-1] = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, static_cast <int>(j))->text()).toDouble();
         }
+
+        dh = static_cast <double> (dRC / (spaceParametrEVAP-2));
     }
 
     if( (uiMain->TP_ACU->isChecked()) )
@@ -297,10 +288,11 @@ void MainWindow::getData()
         {
             initLayerTB[j-1] = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
         }
+
+        dh = static_cast <double> (dRC / (spaceParametrTP + spaceParametrACU - 4));  // dRC = dRC_TP + dRC_ACU; spaceParametr = spaceParametrTP + spaceParametrACU
     }
 
     dt = (uiMain->selectStepT->text().toDouble() <= 0.0)? 0.01 : abs(uiMain->selectStepT->text().toDouble());
-    dh = dRC/(spaceParametrTP-2);
 }
 
 void MainWindow::drawGraph()
@@ -623,7 +615,7 @@ void MainWindow::drawModel(int choiceModel)
                 tmpVectorM2.push_back(TFG[j][i]);
             }
 
-            t[static_cast <int>(j)] = j;
+            t[static_cast <size_t>(j)] = j;
         }
 
         if( (choiceModel == 0) || (choiceModel == 1) || (choiceModel == 2) )
@@ -2217,7 +2209,7 @@ void MainWindow::on_TP_ACU_clicked()
     uiMain->inputRightX->clear();
 
     uiMain->inputLeftY->insert("0");
-    uiMain->inputRightY->insert("100");
+    uiMain->inputRightY->insert("300");
     uiMain->inputRightX->insert("5000");
 
     leftY = uiMain->inputLeftY->text().toDouble();
@@ -2427,8 +2419,10 @@ bool TMTPL_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
         TF.push_back(bmp);
     }
 
-    std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
-    std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
+    endPoint = spaceParametrBP;
+    qDebug() << endPoint;
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV));
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF));
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2509,6 +2503,7 @@ bool TMTPN_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
         TF.push_back(bmp);
     }
 
+    endPoint = spaceParametrBP;
     std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
     std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
 
@@ -2601,6 +2596,7 @@ bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CF.push_back(bmp);
     }
 
+    endPoint = spaceParametrBP;
     std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
     std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
     std::thread threadInitialLayerCV(initialLayerCV, ref(CV));
@@ -2784,6 +2780,7 @@ bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CF.push_back(bmp);
     }
 
+    endPoint = spaceParametrTP;
     std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
     std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
     std::thread threadInitialLayerCV(initialLayerCV, ref(CV));
@@ -2916,6 +2913,7 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
         TB.push_back(bmp);
     }
 
+    endPoint = spaceParametrACU;
     std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
     std::thread threadInitialLayerTB(initialLayerTB, ref(TB));
 
@@ -3001,6 +2999,7 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
         TFG.push_back(bmp);
     }
 
+    endPoint = spaceParametrEVAP;
     std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
     std::thread threadInitialLayerTB(initialLayerTB, ref(TB));
     std::thread threadInitialLayerTFG(initialLayerTFG, ref(TFG));
@@ -3120,6 +3119,10 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     //--------------------------------------------------------
 
+    qDebug() << dt;
+    qDebug() << dh;
+    qDebug() << spaceParametrTP;
+    qDebug() << spaceParametrACU;
     vector <double> countSpacePoints_1, countSpacePoints_2;
     countSpacePoints_1.assign(spaceParametrTP*2, 0.0);
     countSpacePoints_2.assign(spaceParametrTP, 0.0);
@@ -3146,7 +3149,7 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     //--------------------------------------------------------
 
-    cout << endl << "Sizes:" << TV.capacity() << ", " << TF.capacity() << ", " << TB.capacity() << ", " << CV.capacity() << ", " << CF.capacity() << ", " << endl;
+    endPoint = spaceParametrTP;  // ???
     std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
     std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
     std::thread threadInitialLayerCV(initialLayerCV, ref(CV));
@@ -3161,6 +3164,11 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     threadInitialLayerCF.join();
 
     threadInitialLayerTB.join();
+
+    //--------------------------------------------------------
+
+    endPoint = spaceParametrACU;
+    initialLayerTV(TV);
 
     //--------------------------------------------------------
 
@@ -3283,11 +3291,11 @@ void initialLayerTV(vector <vector <double> > &TV)
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV[i][0] = initLayerTV_0;
-        TV[i][spaceParametrTP-1] = initLayerTV_1;
+        TV[i][endPoint-1] = initLayerTV_1;
     }
 
     // Initial values
-    for(j = 1; j <= (spaceParametrTP-2); ++j)
+    for(j = 1; j <= (endPoint-2); ++j)
     {
         TV[0][j] = initLayerTV[j-1];
     }
@@ -3301,11 +3309,11 @@ void initialLayerTF(vector <vector <double> > &TF)
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TF[i][0] = initLayerTF_0;
-        TF[i][spaceParametrTP-1] = initLayerTF_1;
+        TF[i][endPoint-1] = initLayerTF_1;
     }
 
     // Initial values
-    for(j = 1; j <= (spaceParametrTP-2); ++j)
+    for(j = 1; j <= (endPoint-2); ++j)
     {
         TF[0][j] = initLayerTF[j-1];
     }
@@ -3319,11 +3327,11 @@ void initialLayerCV(vector <vector <double> > &CV)
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         CV[i][0] = initLayerCV_0;
-        CV[i][spaceParametrTP-1] = initLayerCV_1;
+        CV[i][endPoint-1] = initLayerCV_1;
     }
 
     // Initial values
-    for(j = 1; j <= (spaceParametrTP-2); ++j)
+    for(j = 1; j <= (endPoint-2); ++j)
     {
         CV[0][j] = initLayerCV[j-1];
     }
@@ -3337,11 +3345,11 @@ void initialLayerCF(vector <vector <double> > &CF)
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         CF[i][0] = initLayerCF_0;
-        CF[i][spaceParametrTP-1] = initLayerCF_1;
+        CF[i][endPoint-1] = initLayerCF_1;
     }
 
     // Initial values
-    for(j = 1; j <= (spaceParametrTP-2); ++j)
+    for(j = 1; j <= (endPoint-2); ++j)
     {
         CF[0][j] = initLayerCF[j-1];
     }
@@ -3404,7 +3412,37 @@ void MainWindow::on_selectDRC_textChanged(QString dRCNew)
 {
     dRC = dRCNew.toDouble(&okey);
 
-    dh = dRC/( static_cast <double> (spaceParametrTP-2) );
+    if(uiMain->LVM_BP->isChecked() || uiMain->NLVM_BP->isChecked() || uiMain->EVM_BP->isChecked() || uiMain->EFM_BP->isChecked())
+    {
+        spaceParametrBP = static_cast <uint> (uiMain->spaceParametrBP->value());
+        dh = dRC / ( static_cast <double> (spaceParametrBP) );
+    }
+
+    if(uiMain->EVM_TP->isChecked() || uiMain->EFM_TP->isChecked())
+    {
+        spaceParametrTP = static_cast <uint> (uiMain->spaceParametrTP->value());
+        dh = dRC / ( static_cast <double> (spaceParametrTP) );
+    }
+
+    if(uiMain->ACU->isChecked())
+    {
+        spaceParametrACU = static_cast <uint> (uiMain->spaceParametrACU->value());
+        dh = dRC / ( static_cast <double> (spaceParametrACU) );
+    }
+
+    if(uiMain->EVAP->isChecked())
+    {
+        spaceParametrEVAP = static_cast <uint> (uiMain->spaceParametrEVAP->value());
+        dh = dRC / ( static_cast <double> (spaceParametrEVAP) );
+    }
+
+    if(uiMain->TP_ACU->isChecked())
+    {
+        spaceParametrTP = static_cast <uint> (uiMain->spaceParametrTP->value());
+        spaceParametrACU = static_cast <uint> (uiMain->spaceParametrACU->value());
+        dh = dRC / ( static_cast <double> (spaceParametrTP + spaceParametrACU) );
+    }
+
     uiMain->selectStepH->setText(QString::number(dh));
 }
 
@@ -3496,10 +3534,10 @@ void MainWindow::on_spaceParametrBP_valueChanged(int countSpacePoints)
             uiMain->tableBordersAndInitialConditions_BP_4->setCurrentCell(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1);
             uiMain->tableBordersAndInitialConditions_BP_4->removeColumn(uiMain->tableBordersAndInitialConditions_BP_4->currentColumn()-1);
         }
-    }
 
-    dh = dRC/( static_cast <double> (countSpacePoints) );
-    uiMain->selectStepH->setText(QString::number(dh));
+        dh = dRC/( static_cast <double> (countSpacePoints) );
+        uiMain->selectStepH->setText(QString::number(dh));
+    }
 }
 
 void MainWindow::on_spaceParametrTP_valueChanged(int countSpacePoints)
@@ -3527,10 +3565,10 @@ void MainWindow::on_spaceParametrTP_valueChanged(int countSpacePoints)
             uiMain->tableBordersAndInitialConditions_TP_4->setCurrentCell(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1);
             uiMain->tableBordersAndInitialConditions_TP_4->removeColumn(uiMain->tableBordersAndInitialConditions_TP_4->currentColumn()-1);
         }
-    }
 
-    dh = dRC/( static_cast <double> (countSpacePoints) );
-    uiMain->selectStepH->setText(QString::number(dh));
+        dh = dRC/( static_cast <double> (countSpacePoints) );
+        uiMain->selectStepH->setText(QString::number(dh));
+    }
 }
 
 void MainWindow::on_spaceParametrACU_valueChanged(int countSpacePoints)
@@ -3558,10 +3596,10 @@ void MainWindow::on_spaceParametrACU_valueChanged(int countSpacePoints)
             uiMain->tableBordersAndInitialConditions_ACU_4->setCurrentCell(0, uiMain->tableBordersAndInitialConditions_ACU_4->columnCount()-1);
             uiMain->tableBordersAndInitialConditions_ACU_4->removeColumn(uiMain->tableBordersAndInitialConditions_ACU_4->currentColumn()-1);
         }
-    }
 
-    dh = dRC/( static_cast <double> (countSpacePoints) );
-    uiMain->selectStepH->setText(QString::number(dh));
+        dh = dRC/( static_cast <double> (countSpacePoints) );
+        uiMain->selectStepH->setText(QString::number(dh));
+    }
 }
 
 void MainWindow::on_spaceParametrEVAP_valueChanged(int countSpacePoints)
@@ -3589,8 +3627,8 @@ void MainWindow::on_spaceParametrEVAP_valueChanged(int countSpacePoints)
             uiMain->tableBordersAndInitialConditions_EVAP_4->setCurrentCell(0, uiMain->tableBordersAndInitialConditions_EVAP_4->columnCount()-1);
             uiMain->tableBordersAndInitialConditions_EVAP_4->removeColumn(uiMain->tableBordersAndInitialConditions_EVAP_4->currentColumn()-1);
         }
-    }
 
-    dh = dRC/( static_cast <double> (countSpacePoints) );
-    uiMain->selectStepH->setText(QString::number(dh));
+        dh = dRC/( static_cast <double> (countSpacePoints) );
+        uiMain->selectStepH->setText(QString::number(dh));
+    }
 }
