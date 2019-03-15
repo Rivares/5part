@@ -534,7 +534,7 @@ void MainWindow::drawGraph()
 
     if((uiMain->TP_ACU->isChecked()))
     {
-        if(!TOP_ACU_MM(TV, TF, CV, CV, TB))
+        if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
         {
             QMessageBox msgBox;
             msgBox.setText("Sampling error! Change dt!");
@@ -3158,10 +3158,6 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     //--------------------------------------------------------
 
-    qDebug() << dt;
-    qDebug() << dh;
-    qDebug() << spaceParametrTP;
-    qDebug() << spaceParametrACU;
     vector <double> countSpacePoints_1, countSpacePoints_2;
     countSpacePoints_1.assign(spaceParametrTP*2, 0.0);
     countSpacePoints_2.assign(spaceParametrTP, 0.0);
@@ -3190,6 +3186,8 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     beginPoint = 0;
     endPoint = spaceParametrTP;
+
+
     std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
     std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
     std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), 0);
@@ -3354,7 +3352,7 @@ void initialLayerTF(vector <vector <double> > &TF, uint8_t it)
     }
 
     // Initial values
-    for(j = 1; j <= (endPoint-2); ++j)
+    for(j = beginPoint + 1; j <= (endPoint-2); ++j)
     {
         TF[0][j] = initLayerTF[j-1];
     }
@@ -3367,34 +3365,12 @@ void initialLayerCV(vector <vector <double> > &CV, uint8_t it)
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        CV[i][beginPoint] = 100;//initLayerCV_0[it];
-        CV[i][endPoint-1] = 100;//initLayerCV_1[it];
+        CV[i][beginPoint] = initLayerCV_0[it];
+        CV[i][endPoint-1] = initLayerCV_1[it];
     }
-
-
-    cout << "Test1:" << endl;
-    for(size_t i = 0; i < initLayerCV.capacity(); ++i)
-    {
-        cout << initLayerCV[i] << "; ";
-    }cout << endl;
-
-    cout << "Test2:" << endl;
-    for(i = 0; i < 20; ++i)
-    {
-        for(j = 0; j < (endPoint); ++j)
-        {
-            cout << CV[i][j] << "; ";
-        }cout << endl;
-    }
-
-    cout << "Test3:" << endl;
-    cout << CV[0][beginPoint] << " - " << initLayerCV_0[it] << "; " << endl;
-    cout << CV[0][endPoint-1] << " - " << initLayerCV_1[it] << "; " << endl;
-
-
 
     // Initial values
-    for(j = 1; j <= (endPoint-2); ++j)
+    for(j = beginPoint + 1; j <= (endPoint-2); ++j)
     {
         CV[0][j] = initLayerCV[j-1];
     }
@@ -3412,7 +3388,7 @@ void initialLayerCF(vector <vector <double> > &CF, uint8_t it)
     }
 
     // Initial values
-    for(j = 1; j <= (endPoint-2); ++j)
+    for(j = beginPoint + 1; j <= (endPoint-2); ++j)
     {
         CF[0][j] = initLayerCF[j-1];
     }
