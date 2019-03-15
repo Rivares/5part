@@ -28,6 +28,7 @@ static bool okey = false;
 static double dRC = 0.0;    // Hieght nozzles
 static double dh = 0.0000;
 static double dt = 0.0000;
+static unsigned int beginPoint = 0;
 static unsigned int endPoint = 0;
 static unsigned int spaceParametrBP = 0;
 static unsigned int spaceParametrTP = 0;
@@ -44,10 +45,10 @@ vector <double> initLayerTB;
 vector <double> initLayerTFG;
 
 //---------------Borders--------------//
-static double initLayerTV_0 = 0.0, initLayerTV_1 = 0.0;
-static double initLayerTF_0 = 0.0, initLayerTF_1 = 0.0;
-static double initLayerCV_0 = 0.0, initLayerCV_1 = 0.0;
-static double initLayerCF_0 = 0.0, initLayerCF_1 = 0.0;
+static vector <double> initLayerTV_0, initLayerTV_1;
+static vector <double>  initLayerTF_0, initLayerTF_1;
+static vector <double>  initLayerCV_0, initLayerCV_1;
+static vector <double>  initLayerCF_0, initLayerCF_1;
 static double initLayerTB_0 = 0.0, initLayerTB_1 = 0.0;
 static double initLayerTFG_0 = 0.0, initLayerTFG_1 = 0.0;
 
@@ -67,10 +68,10 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector<vector<double> > &TB);
 
 
-void initialLayerTV(vector <vector <double> > &TV);         // Would be relize as template
-void initialLayerTF(vector <vector <double> > &TF);
-void initialLayerCV(vector <vector <double> > &CV);
-void initialLayerCF(vector <vector <double> > &CF);
+void initialLayerTV(vector <vector <double> > &TV, uint8_t it);         // Would be relize as template
+void initialLayerTF(vector <vector <double> > &TF, uint8_t it);
+void initialLayerCV(vector <vector <double> > &CV, uint8_t it);
+void initialLayerCF(vector <vector <double> > &CF, uint8_t it);
 void initialLayerTB(vector <vector <double> > &TB);
 void initialLayerTFG(vector <vector <double> > &TFG);
 
@@ -116,11 +117,14 @@ void MainWindow::getData()
     {
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
 
-        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
+        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
 
-        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
+        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrBP-2), 0.0);
         initLayerTF.assign((spaceParametrBP-2), 0.0);
@@ -139,17 +143,22 @@ void MainWindow::getData()
     {
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
 
-        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
+        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
+        initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
+        initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
 
-        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
+        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1)->text()).toDouble();
+        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1)->text()).toDouble();
+        initLayerCV_0[0] = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1[0] = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1)->text()).toDouble();
+
+        initLayerCF_0[0] = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1[0] = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrBP-2), 0.0);
         initLayerTF.assign((spaceParametrBP-2), 0.0);
@@ -171,17 +180,22 @@ void MainWindow::getData()
     {
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
 
-        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
+        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
+        initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
+        initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
 
-        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
+        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+        initLayerCV_0[0] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1[0] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+
+        initLayerCF_0[0] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1[0] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrTP-2), 0.0);
         initLayerTF.assign((spaceParametrTP-2), 0.0);
@@ -203,8 +217,11 @@ void MainWindow::getData()
     {
         spaceParametrACU = static_cast <uint>(uiMain->tableBordersAndInitialConditions_ACU_1->columnCount());
 
-        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.assign(1, 0.0);
+        initLayerTV_1.assign(1, 0.0);
+
+        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
@@ -225,8 +242,11 @@ void MainWindow::getData()
     {
         spaceParametrEVAP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount());
 
-        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, 0)->text()).toDouble();
-        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
+        initLayerTF_0.assign(1, 0.0);
+        initLayerTF_1.assign(1, 0.0);
+
+        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, 0)->text()).toDouble();
+        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
@@ -253,23 +273,32 @@ void MainWindow::getData()
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
         spaceParametrACU = static_cast <uint>(uiMain->tableBordersAndInitialConditions_ACU_1->columnCount());
 
-        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.assign(2, 0.0); initLayerTV_1.assign(2, 0.0);
+        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
+        initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
+        initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
 
-        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
+        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+        initLayerCV_0[0] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1[0] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+
+        initLayerCF_0[0] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1[0] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+
+
+        initLayerTV_0[1] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1[1] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
 
 
-        initLayerTV.assign((spaceParametrTP-2), 0.0);
+        initLayerTV.assign((spaceParametrTP + spaceParametrACU - 4), 0.0);
         initLayerTF.assign((spaceParametrTP-2), 0.0);
         initLayerCV.assign((spaceParametrTP-2), 0.0);
         initLayerCF.assign((spaceParametrTP-2), 0.0);
@@ -282,6 +311,11 @@ void MainWindow::getData()
             initLayerTF[j-1] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerCV[j-1] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerCF[j-1] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, static_cast <int>(j))->text()).toDouble();
+        }
+
+        for(uint j = (spaceParametrTP-2); j < (spaceParametrTP + spaceParametrACU - 4); ++j)
+        {
+            initLayerTV[j] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, static_cast <int>(j-(spaceParametrTP-2)+1))->text()).toDouble();
         }
 
         for(uint j = 1; j <= (spaceParametrACU-2); ++j)
@@ -742,8 +776,8 @@ void MainWindow::on_save_clicked()
 {
     if(uiMain->LVM_BP->isChecked())
     {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_BP");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_BP");
+        std::thread threadToFileTVMM(toFileMM,std::ref(TV), "TV_BP");
+        std::thread threadToFileTFMM(toFileMM,std::ref(TF), "TF_BP");
 
         threadToFileTVMM.join();
         threadToFileTFMM.join();
@@ -751,8 +785,8 @@ void MainWindow::on_save_clicked()
 
     if(uiMain->NLVM_BP->isChecked())
     {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "NTV_BP");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "NTF_BP");
+        std::thread threadToFileTVMM(toFileMM,std::ref(TV), "NTV_BP");
+        std::thread threadToFileTFMM(toFileMM, std::ref(TF), "NTF_BP");
 
         threadToFileTVMM.join();
         threadToFileTFMM.join();
@@ -760,10 +794,10 @@ void MainWindow::on_save_clicked()
 
     if(uiMain->EVM_BP->isChecked() || uiMain->EFM_BP->isChecked())
     {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_BP");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_BP");
-        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV_BP");
-        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF_BP");
+        std::thread threadToFileTVMM(toFileMM, std::ref(TV), "TV_BP");
+        std::thread threadToFileTFMM(toFileMM, std::ref(TF), "TF_BP");
+        std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_BP");
+        std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_BP");
 
         threadToFileTVMM.join();
         threadToFileTFMM.join();
@@ -773,10 +807,10 @@ void MainWindow::on_save_clicked()
 
     if(uiMain->EVM_TP->isChecked() || uiMain->EFM_TP->isChecked())
     {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_TP");
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_TP");
-        std::thread threadToFileCVMM(toFileMM, ref(CV), "CV_TP");
-        std::thread threadToFileCFMM(toFileMM, ref(CF), "CF_TP");
+        std::thread threadToFileTVMM(toFileMM, std::ref(TV), "TV_TP");
+        std::thread threadToFileTFMM(toFileMM, std::ref(TF), "TF_TP");
+        std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_TP");
+        std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_TP");
 
         threadToFileTVMM.join();
         threadToFileTFMM.join();
@@ -786,8 +820,8 @@ void MainWindow::on_save_clicked()
 
     if(uiMain->ACU->isChecked())
     {
-        std::thread threadToFileTVMM(toFileMM, ref(TV), "TV_ACU");
-        std::thread threadToFileTBMM(toFileMM, ref(TB), "TB_ACU");
+        std::thread threadToFileTVMM(toFileMM, std::ref(TV), "TV_ACU");
+        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_ACU");
 
         threadToFileTVMM.join();
         threadToFileTBMM.join();
@@ -795,9 +829,9 @@ void MainWindow::on_save_clicked()
 
     if(uiMain->EVAP->isChecked())
     {
-        std::thread threadToFileTFMM(toFileMM, ref(TF), "TF_EVAP");
-        std::thread threadToFileTBMM(toFileMM, ref(TB), "TB_EVAP");
-        std::thread threadToFileTFGMM(toFileMM, ref(TFG), "TFG_EVAP");
+        std::thread threadToFileTFMM(toFileMM, std::ref(TF), "TF_EVAP");
+        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_EVAP");
+        std::thread threadToFileTFGMM(toFileMM, std::ref(TFG), "TFG_EVAP");
 
         threadToFileTFMM.join();
         threadToFileTBMM.join();
@@ -2419,10 +2453,10 @@ bool TMTPL_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
         TF.push_back(bmp);
     }
 
+    beginPoint = 0;
     endPoint = spaceParametrBP;
-    qDebug() << endPoint;
-    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV));
-    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF));
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2503,9 +2537,10 @@ bool TMTPN_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
         TF.push_back(bmp);
     }
 
+    beginPoint = 0;
     endPoint = spaceParametrBP;
-    std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
-    std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2596,11 +2631,12 @@ bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CF.push_back(bmp);
     }
 
+    beginPoint = 0;
     endPoint = spaceParametrBP;
-    std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
-    std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
-    std::thread threadInitialLayerCV(initialLayerCV, ref(CV));
-    std::thread threadInitialLayerCF(initialLayerCF, ref(CF));
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
+    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), 0);
+    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), 0);
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2780,11 +2816,12 @@ bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CF.push_back(bmp);
     }
 
+    beginPoint = 0;
     endPoint = spaceParametrTP;
-    std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
-    std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
-    std::thread threadInitialLayerCV(initialLayerCV, ref(CV));
-    std::thread threadInitialLayerCF(initialLayerCF, ref(CF));
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
+    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), 0);
+    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), 0);
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2913,9 +2950,10 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
         TB.push_back(bmp);
     }
 
+    beginPoint = 0;
     endPoint = spaceParametrACU;
-    std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
-    std::thread threadInitialLayerTB(initialLayerTB, ref(TB));
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
+    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB));
 
     threadInitialLayerTV.join();
     threadInitialLayerTB.join();
@@ -2999,10 +3037,11 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
         TFG.push_back(bmp);
     }
 
+    beginPoint = 0;
     endPoint = spaceParametrEVAP;
-    std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
-    std::thread threadInitialLayerTB(initialLayerTB, ref(TB));
-    std::thread threadInitialLayerTFG(initialLayerTFG, ref(TFG));
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
+    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB));
+    std::thread threadInitialLayerTFG(initialLayerTFG, std::ref(TFG));
 
     threadInitialLayerTF.join();
     threadInitialLayerTB.join();
@@ -3149,13 +3188,14 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     //--------------------------------------------------------
 
-    endPoint = spaceParametrTP;  // ???
-    std::thread threadInitialLayerTV(initialLayerTV, ref(TV));
-    std::thread threadInitialLayerTF(initialLayerTF, ref(TF));
-    std::thread threadInitialLayerCV(initialLayerCV, ref(CV));
-    std::thread threadInitialLayerCF(initialLayerCF, ref(CF));
+    beginPoint = 0;
+    endPoint = spaceParametrTP;
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
+    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), 0);
+    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), 0);
 
-    std::thread threadInitialLayerTB(initialLayerTB, ref(TB));
+    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB));
 
 
     threadInitialLayerTV.join();
@@ -3167,15 +3207,16 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     //--------------------------------------------------------
 
-    endPoint = spaceParametrACU;
-    initialLayerTV(TV);
+    beginPoint = spaceParametrTP;
+    endPoint = spaceParametrTP + spaceParametrACU;
+    initialLayerTV(TV, 1);
 
     //--------------------------------------------------------
 
     cout << endl << "Initial values RC_TOP:" << endl;
     std::cout.precision(8);
 
-    for(size_t j = 0; j < spaceParametrTP; ++j)
+    for(size_t j = 0; j < spaceParametrTP + spaceParametrACU; ++j)
     {
         cout << TV[0][j] << std::fixed << " | ";
     }   cout << endl;
@@ -3281,35 +3322,35 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     return true;
 }
 
-
-
-void initialLayerTV(vector <vector <double> > &TV)
+void initialLayerTV(vector <vector <double> > &TV, uint8_t it)
 {
-    size_t i = 0, j = 0;
+    size_t i = 0, j = 0, k = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TV[i][0] = initLayerTV_0;
-        TV[i][endPoint-1] = initLayerTV_1;
+        TV[i][beginPoint] = initLayerTV_0[it];
+        TV[i][endPoint-1] = initLayerTV_1[it];
     }
 
+    (it == 0)? k = 1: k = 3;
+
     // Initial values
-    for(j = 1; j <= (endPoint-2); ++j)
+    for(j = beginPoint + 1; j <= (endPoint-2); ++j)
     {
-        TV[0][j] = initLayerTV[j-1];
+        TV[0][j] = initLayerTV[j - k];
     }
 }
 
-void initialLayerTF(vector <vector <double> > &TF)
+void initialLayerTF(vector <vector <double> > &TF, uint8_t it)
 {
     size_t i = 0, j = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TF[i][0] = initLayerTF_0;
-        TF[i][endPoint-1] = initLayerTF_1;
+        TF[i][beginPoint] = initLayerTF_0[it];
+        TF[i][endPoint-1] = initLayerTF_1[it];
     }
 
     // Initial values
@@ -3319,16 +3360,38 @@ void initialLayerTF(vector <vector <double> > &TF)
     }
 }
 
-void initialLayerCV(vector <vector <double> > &CV)
+void initialLayerCV(vector <vector <double> > &CV, uint8_t it)
 {
     size_t i = 0, j = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        CV[i][0] = initLayerCV_0;
-        CV[i][endPoint-1] = initLayerCV_1;
+        CV[i][beginPoint] = 100;//initLayerCV_0[it];
+        CV[i][endPoint-1] = 100;//initLayerCV_1[it];
     }
+
+
+    cout << "Test1:" << endl;
+    for(size_t i = 0; i < initLayerCV.capacity(); ++i)
+    {
+        cout << initLayerCV[i] << "; ";
+    }cout << endl;
+
+    cout << "Test2:" << endl;
+    for(i = 0; i < 20; ++i)
+    {
+        for(j = 0; j < (endPoint); ++j)
+        {
+            cout << CV[i][j] << "; ";
+        }cout << endl;
+    }
+
+    cout << "Test3:" << endl;
+    cout << CV[0][beginPoint] << " - " << initLayerCV_0[it] << "; " << endl;
+    cout << CV[0][endPoint-1] << " - " << initLayerCV_1[it] << "; " << endl;
+
+
 
     // Initial values
     for(j = 1; j <= (endPoint-2); ++j)
@@ -3337,15 +3400,15 @@ void initialLayerCV(vector <vector <double> > &CV)
     }
 }
 
-void initialLayerCF(vector <vector <double> > &CF)
+void initialLayerCF(vector <vector <double> > &CF, uint8_t it)
 {
     size_t i = 0, j = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        CF[i][0] = initLayerCF_0;
-        CF[i][endPoint-1] = initLayerCF_1;
+        CF[i][beginPoint] = initLayerCF_0[it];
+        CF[i][endPoint-1] = initLayerCF_1[it];
     }
 
     // Initial values
