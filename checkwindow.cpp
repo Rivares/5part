@@ -3,10 +3,12 @@
 #include "logger.h"
 
 #include <iostream>
+#include <QString>
 
 using std::cout;
 using std::endl;
 
+void toCheck(uint count, double passError, std::vector<double> listMeasurementState, std::vector<double> listTrueState, uint8_t id);
 
 CheckWindow::CheckWindow(QWidget *parent) :
     QDialog(parent),
@@ -48,24 +50,36 @@ void CheckWindow::on_toCheckButton_clicked()
     {
         listFirstTrueState = {157.000, 153.900, 150.600};
         listSecondTrueState = {124.800, 129.000, 133.000};
+
+        toCheck(static_cast <uint> (firstState->count()), passError, listFirstMeasurementState, listFirstTrueState, 0);
+        toCheck(static_cast <uint> (secondState->count()), passError, listSecondMeasurementState, listSecondTrueState, 1);
     }
 
     if ( EFM_BP->isChecked() )
     {
         listFirstTrueState = {77.000, 74.000, 71.140};
         listSecondTrueState = {4.497, 2.524, 0.626};
+
+        toCheck(static_cast <uint> (firstState->count()), passError, listFirstMeasurementState, listFirstTrueState, 0);
+        toCheck(static_cast <uint> (secondState->count()), passError, listSecondMeasurementState, listSecondTrueState, 1);
     }
 
     if ( EVM_TP->isChecked() )
     {
         listFirstTrueState = {122, 97.4, 69.59};
         listSecondTrueState = {58.28, 86.23, 111.8};
+
+        toCheck(static_cast <uint> (firstState->count()), passError, listFirstMeasurementState, listFirstTrueState, 0);
+        toCheck(static_cast <uint> (secondState->count()), passError, listSecondMeasurementState, listSecondTrueState, 1);
     }
 
     if ( EFM_TP->isChecked() )
     {
         listFirstTrueState = {0.6646, 0.8024, 0.9853};
         listSecondTrueState = {0.8271, 0.6863, 0.5696};
+
+        toCheck(static_cast <uint> (firstState->count()), passError, listFirstMeasurementState, listFirstTrueState, 0);
+        toCheck(static_cast <uint> (secondState->count()), passError, listSecondMeasurementState, listSecondTrueState, 1);
     }
 
     if ( EVAP->isChecked() )
@@ -73,51 +87,31 @@ void CheckWindow::on_toCheckButton_clicked()
         listFirstTrueState = {160.161, 154.220, 148.736, 143.673};
         listSecondTrueState = {164.482, 158.209, 152.418, 147.072};
         listThirdTrueState = {283.306, 267.896, 253.671, 240.540};
+
+        toCheck(static_cast <uint> (firstState->count()), passError, listFirstMeasurementState, listFirstTrueState, 0);
+        toCheck(static_cast <uint> (secondState->count()), passError, listSecondMeasurementState, listSecondTrueState, 1);
+        toCheck(static_cast <uint> (thirdState->count()), passError, listThirdMeasurementState, listThirdTrueState, 2);
     }
 
     if ( ACU->isChecked() )
     {
         listFirstTrueState = {53.364, 39.552, 30.001};
         listSecondTrueState = {26.846, 21.992, 18.635};
+
+        toCheck(static_cast <uint> (firstState->count()), passError, listFirstMeasurementState, listFirstTrueState, 0);
+        toCheck(static_cast <uint> (secondState->count()), passError, listSecondMeasurementState, listSecondTrueState, 1);
     }
 
-    // Checking
-    std::vector<double> listFirstErrorState, listSecondErrorState, listThirdErrorState;
-
-    for(uint i = 0; i < uint(firstState->count()); ++i)
+    if ( TP_ACU->isChecked() )
     {
-        listFirstErrorState.push_back(listFirstTrueState[i] * passError);
-        listSecondErrorState.push_back(listSecondTrueState[i] * passError);
+        listFirstTrueState = {122, 97, 69, 67.000, 66.000, 52, 39, 30};
+        listSecondTrueState = {58, 86, 112};
+        listThirdTrueState = {27, 23, 20};
 
-
-        if(listFirstErrorState[i] < abs(listFirstTrueState[i] - listFirstMeasurementState[i]))
-        {
-            QString message(QString(tr("Attention! Error has very big value - listFirstErrorState[%1] = %2\n")).arg(i).arg(listFirstErrorState[i]));
-            cout << message.toStdString() << endl;
-            Logger::log(message, LOG_LEVEL_INFO);
-        }
-
-        if(listSecondErrorState[i] < abs(listSecondTrueState[i] - listSecondMeasurementState[i]))
-        {
-            QString message(QString(tr("Attention! Error has very big value - listSecondErrorState[%1] = %2\n")).arg(i).arg(listSecondErrorState[i]));
-            cout << message.toStdString() << endl;
-            Logger::log(message, LOG_LEVEL_INFO);
-        }
-
-        if(thirdState->count() > 0)
-        {
-            listThirdErrorState.push_back(listThirdTrueState[i] * passError);
-
-            if(listThirdErrorState[i] < abs(listThirdTrueState[i] - listThirdMeasurementState[i]))
-            {
-                QString message(QString(tr("Attention! Error has very big value - listThirdErrorState[%1] = %2\n")).arg(i).arg(listThirdErrorState[i]));
-                cout << message.toStdString() << endl;
-                Logger::log(message, LOG_LEVEL_INFO);
-            }
-        }
-
+        toCheck(static_cast <uint> (firstState->count()), passError, listFirstMeasurementState, listFirstTrueState, 0);
+        toCheck(static_cast <uint> (secondState->count()), passError, listSecondMeasurementState, listSecondTrueState, 1);
+        toCheck(static_cast <uint> (thirdState->count()), passError, listThirdMeasurementState, listThirdTrueState, 2);
     }
-
 }
 
 void CheckWindow::on_toCancelButton_clicked()
@@ -139,4 +133,24 @@ void CheckWindow::setParentToCheck(MainWindow *parentWindow)
     EFM_TP = parentWindow->findChild<QRadioButton *>("EFM_TP");
     EVAP = parentWindow->findChild<QRadioButton *>("EVAP");
     ACU = parentWindow->findChild<QRadioButton *>("ACU");
+    TP_ACU = parentWindow->findChild<QRadioButton *>("TP_ACU");
+    BP_EVAP = parentWindow->findChild<QRadioButton *>("BP_EVAP");
+    TP_BP = parentWindow->findChild<QRadioButton *>("TP_BP");
+}
+
+void toCheck(uint count, double passError, std::vector<double> listMeasurementState, std::vector<double> listTrueState, uint8_t id)
+{
+     std::vector<double> listErrorState;
+
+    for(uint i = 0; i < count; ++i)
+    {
+        listErrorState.push_back(listTrueState[i] * passError);
+
+        if(listErrorState[i] < abs(listTrueState[i] - listMeasurementState[i]))
+        {
+            QString message(QString("Attention! Error has very big value - list(%1)_[%2] = %3\n").arg(id).arg(i).arg(listErrorState[i]));
+            cout << message.toStdString() << endl;
+            Logger::log(message, LOG_LEVEL_INFO);
+        }
+    }
 }

@@ -37,6 +37,9 @@ private:
     QRadioButton *EFM_TP;
     QRadioButton *EVAP;
     QRadioButton *ACU;
+    QRadioButton *TP_ACU;
+    QRadioButton *BP_EVAP;
+    QRadioButton *TP_BP;
 
     double passError;    // Default passing error = 5%; 5% / 100% = 0.05
 };
