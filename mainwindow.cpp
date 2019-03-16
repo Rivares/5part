@@ -544,12 +544,23 @@ void MainWindow::drawGraph()
         {
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-            //drawModel(3);
+            drawModel(4);
+            //drawModel(5); // Not work
 
-            // Out to display steady-state value temperature (EVAP)
+            // Out to display steady-state value temperature
+            for(uint j = 1; j < (spaceParametrTP + spaceParametrACU - 1); ++j)
+            {
+                listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            }
+
             for(uint j = 1; j < spaceParametrTP-1; ++j)
             {
+                listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+            }
 
+            for(uint j = 1; j < spaceParametrACU-1; ++j)
+            {
+                listStatesThird.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
             }
         }
     }
@@ -602,19 +613,21 @@ void MainWindow::drawModel(int choiceModel)
     QVector <QVector <double>> M_mat0, M_mat1, M_mat2;
 
     // Dommy........!
-    if( (choiceModel == 0) || (choiceModel == 1) )    // Heat exchange part
+    switch(choiceModel)
     {
-        selectZ = spaceParametrBP;
-    }
-
-    if(choiceModel == 2)    // Condensation part
-    {
-        selectZ = spaceParametrACU;
-    }
-
-    if(choiceModel == 3)    // Evaporation part
-    {
-        selectZ = spaceParametrEVAP;
+        // Bug - case 0, 1; selectZ != spaceParametrBP for RC_TOP
+        case 0: selectZ = spaceParametrBP; break;                       // Heat exchange part
+        case 1: selectZ = spaceParametrBP; break;                       // Heat exchange part
+        case 2: selectZ = spaceParametrACU; break;                      // Condensation part
+        case 3: selectZ = spaceParametrEVAP; break;                     // Evaporation part
+        case 4: selectZ = spaceParametrTP + spaceParametrACU; break;    // RC_TOP_ACU part
+        case 5: selectZ = spaceParametrACU; break;    // RC_TOP_ACU part
+        default:
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Driwing error! Unknow type choiceModel!");
+            msgBox.exec();
+        }
     }
 
     // Convert from std::vector <std::vector <double>> to QVector <QVector <double>>    
@@ -649,6 +662,19 @@ void MainWindow::drawModel(int choiceModel)
                 tmpVectorM2.push_back(TFG[j][i]);
             }
 
+            if(choiceModel == 4)    // RC_TOP_ACU part
+            {
+                tmpVectorM0.push_back(TV[j][i]);
+                //tmpVectorM1.push_back(TF[j][i]);
+                //tmpVectorM2.push_back(TB[j][i]);
+            }
+
+            if(choiceModel == 5)    // RC_TOP_ACU part
+            {
+                tmpVectorM0.push_back(TF[j][i]);
+                tmpVectorM1.push_back(TB[j][i]);
+            }
+
             t[static_cast <size_t>(j)] = j;
         }
 
@@ -664,6 +690,19 @@ void MainWindow::drawModel(int choiceModel)
             M_mat1.push_back(tmpVectorM1);
             M_mat2.push_back(tmpVectorM2);
         }
+
+        if(choiceModel == 4)
+        {
+            M_mat0.push_back(tmpVectorM0);
+            //M_mat1.push_back(tmpVectorM1);
+            //M_mat2.push_back(tmpVectorM2);
+        }
+
+        if(choiceModel == 5)
+        {
+            M_mat0.push_back(tmpVectorM0);
+            M_mat1.push_back(tmpVectorM1);
+        }
     }
 
 
@@ -677,6 +716,8 @@ void MainWindow::drawModel(int choiceModel)
         drawingProcces_0 = M_mat0;
         drawingProcces_1 = M_mat1;
         countModels = 2;
+
+        uiMain->customPlot->clearGraphs();
     }
 
     if(choiceModel == 3)
@@ -685,12 +726,28 @@ void MainWindow::drawModel(int choiceModel)
         drawingProcces_1 = M_mat1;
         drawingProcces_2 = M_mat2;
         countModels = 3;
+
+        uiMain->customPlot->clearGraphs();
+    }
+
+    if(choiceModel == 4)
+    {
+        drawingProcces_0 = M_mat0;
+        countModels = 1;
+
+        uiMain->customPlot->clearGraphs();
+    }
+
+    if(choiceModel == 5)
+    {
+        drawingProcces_0 = M_mat0;
+        drawingProcces_1 = M_mat1;
+        countModels = 1;
     }
 
 
     /*-------------Rendering graphics------------------*/
 
-    uiMain->customPlot->clearGraphs();
     uiMain->customPlot->legend->setVisible(true);
 
     srand(static_cast <uint>(time(nullptr)));
@@ -2243,13 +2300,13 @@ void MainWindow::on_TP_ACU_clicked()
     uiMain->inputRightX->clear();
 
     uiMain->inputLeftY->insert("0");
-    uiMain->inputRightY->insert("300");
-    uiMain->inputRightX->insert("5000");
+    uiMain->inputRightY->insert("150");
+    uiMain->inputRightX->insert("200");
 
     leftY = uiMain->inputLeftY->text().toDouble();
     rightY = uiMain->inputRightY->text().toDouble();
 
-    uiMain->selectDRC->setText(QString::number(3.510));
+    uiMain->selectDRC->setText(QString::number(7.510)); // (RC_TOP)3.51 + (ACU)4
     uiMain->spaceParametrTP->setValue(3);
     uiMain->spaceParametrACU->setValue(3);
 
@@ -2258,8 +2315,8 @@ void MainWindow::on_TP_ACU_clicked()
     uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 0, new QTableWidgetItem(tr("142.500")));
     uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, 0, new QTableWidgetItem(tr("142.500")));
 
-    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("45.300")));
-    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("45.300")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("67.000")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("67.000")));
 
     uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 1, new QTableWidgetItem(tr("118.200000")));
     uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 2, new QTableWidgetItem(tr("93.9000000")));
@@ -2306,8 +2363,8 @@ void MainWindow::on_TP_ACU_clicked()
 
     // ACU:
     //---------------Temperature part------------//
-    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 0, new QTableWidgetItem(tr("72.500")));
-    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, 0, new QTableWidgetItem(tr("72.500")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 0, new QTableWidgetItem(tr("66.000")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, 0, new QTableWidgetItem(tr("66.000")));
 
     uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("42.49400")));
     uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("42.49400")));
@@ -2972,9 +3029,9 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)    // time
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        for(size_t j = 1; j < (spaceParametrACU-1); ++j)         // place
+        for(size_t j = 1; j < (spaceParametrACU-1); ++j)
         {
             // -----Calculate layer heat exchenger model------
             TV[i][j] = (dt * RvT * TB[i-1][(spaceParametrACU-1)-j])
@@ -2982,7 +3039,7 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
                     + (dt * PTV_L * TV[i-1][j-1])
                     + TV[i-1][j];
 
-            TB[i][j] = (dt * RB2 * TV[i-1][j])
+            TB[i][j] = (dt * RB2 * TV[i-1][j])              // TV[i-1][j] ??? j - ????
                     + (CP*dt*RB1*TE)                        // ? TE - const or function?
                     - TB[i-1][j] * (CP*dt*RB1 + dt*RB2)
                     + TB[i-1][j];
@@ -3066,9 +3123,9 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
     }   cout << endl;
 
     // Calculate model
-    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)    // time
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        for(size_t j = 1; j < (spaceParametrEVAP-1); ++j)         // place
+        for(size_t j = 1; j < (spaceParametrEVAP-1); ++j)
         {
             TF[i][j] = (dt * RF * TB[i-1][j+1]) // ?
                     + (dt * PTF * TF[i-1][j+1])
@@ -3272,30 +3329,35 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                     - (RC_TOP_PTV_N * CV[i-1][j-1])
                     - (dt * RC_TOP_RvM * RC_TOP_E * CF[i-1][(spaceParametrTP-1)-j]);
 
+            if (j == spaceParametrTP-2)
+                TV[i-1][beginPoint+1] = TV[i][j];   // Connection between RC_TOP(TV) -> ACU(TV)
         }
 
-        for(size_t j = 1; j < (spaceParametrACU-1); ++j)         // place
+
+        for(size_t j = beginPoint + 1; j < endPoint - 1; ++j)
         {
             // -----Calculate layer heat exchenger model------
-            TV[i][j] = (dt * ACU_RvT * TB[i-1][(spaceParametrACU-1)-j])
+            TV[i][j] = (dt * ACU_RvT * TB[i-1][(endPoint - 1)-j])
                     - TV[i-1][j] * ((dt*ACU_RvT) + (dt*ACU_PTV_L))
-                    + (dt * ACU_PTV_L * TV[i-1][j-1])
+                    + (dt * ACU_PTV_L * TV[i-1][j+1])
                     + TV[i-1][j];
 
-            TB[i][j] = (dt * ACU_RB2 * TV[i-1][j])
-                    + (ACU_CP*dt*ACU_RB1*ACU_TE)                        // ? TE - const or function?
-                    - TB[i-1][j] * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
-                    + TB[i-1][j];
+            TB[i][j-beginPoint] = (dt * ACU_RB2 * TV[i-1][beginPoint + endPoint - j])
+                    + (ACU_CP*dt*ACU_RB1*ACU_TE)                            // ? TE - const or function?
+                    - TB[i-1][j-beginPoint] * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
+                    + TB[i-1][j-beginPoint];
         }
+
+        TF[i][0] = TV[i][endPoint-2];   // Connection between ACU(TV) -> RC_TOP(TF)
     }
 
     cout << endl << "Steady-state values:" << endl;
-    for(uint j = 1; j < (spaceParametrTP-1); ++j)
+    for(uint j = 0; j < (endPoint); ++j)
     {
         cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;
 
-    for(uint j = 1; j < (spaceParametrTP-1); ++j)
+    for(uint j = 0; j < (spaceParametrTP); ++j)
     {
         cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
     }cout << endl;

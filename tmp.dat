@@ -1,0 +1,154 @@
+            RC_TOP_PTV_N = (RC_TOP_a0 * TV[i-1][j] * dt) / dh;
+
+            TV[i][j] = (dt * RC_TOP_RvT * TF[i-1][(spaceParametrTP-1)-j])
+                    - (RC_TOP_PTV_N * TV[i-1][j+1])
+                    - TV[i-1][j] * (dt*RC_TOP_RvT + RC_TOP_PTV_L - RC_TOP_PTV_N)
+                    + (RC_TOP_PTV_L * TV[i-1][j-1])
+                    + TV[i-1][j];
+
+            TF[i][j] = (dt * RC_TOP_RfT * TV[i-1][(spaceParametrTP-1)-j])
+                    + (RC_TOP_PTF * TF[i-1][j-1])
+                    - TF[i-1][j] * (dt*RC_TOP_RfT + RC_TOP_PTF)
+                    + TF[i-1][j];
+
+
+            CF[i][j] = - (dt * RC_TOP_RfM * CV[i-1][(spaceParametrTP-1)-j])
+                    + (RC_TOP_PTF * CF[i-1][j-1])
+                    - CF[i-1][j] * (-(dt*RC_TOP_RfM*RC_TOP_E) + RC_TOP_PTF)
+                    + CF[i-1][j];
+
+
+            CV[i][j] = -CV[i-1][j] * (RC_TOP_PTV_L - 1 - RC_TOP_PTV_N + dt*RC_TOP_RvM)
+                    + (RC_TOP_PTV_L * CV[i-1][j-1])
+                    - (RC_TOP_PTV_N * CV[i-1][j-1])
+                    - (dt * RC_TOP_RvM * RC_TOP_E * CF[i-1][(spaceParametrTP-1)-j]);
+
+            if (j == spaceParametrTP-2)
+                TV[i-1][beginPoint+1] = TV[i][j];   // Connection between RC_TOP(TV) -> ACU(TV)
+
+
+
+        for(size_t j = beginPoint + 1; j < endPoint - 1; ++j)
+        {
+            // -----Calculate layer heat exchenger model------
+            TV[i][j] = (dt * ACU_RvT * TB[i-1][(endPoint - 1)-j])
+                    - TV[i-1][j] * ((dt*ACU_RvT) + (dt*ACU_PTV_L))
+                    + (dt * ACU_PTV_L * TV[i-1][j+1])
+                    + TV[i-1][j];
+
+            TB[i][j-beginPoint] = (dt * ACU_RB2 * TV[i-1][endPoint - j])    // TV[i-1][endPoint - j] - 1 error;
+                    + (ACU_CP*dt*ACU_RB1*ACU_TE)                            // ? TE - const or function?
+                    - TB[i-1][j-beginPoint] * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
+                    + TB[i-1][j-beginPoint];
+        }
+
+        TF[i][0] = TV[i][endPoint-2];   // Connection between ACU(TV) -> RC_TOP(TF)
+
+
+Initial values RC_TOP:
+142.5 | 118.20000000 | 93.90000000 | 69.60000000 | 67.00000000 | 66.00000000 | 64.99850000 | 57.49700000 | 49.99550000 | 42.49400000 | 
+30.00000000 | 57.25000000 | 84.50000000 | 111.75000000 | 139.00000000 | 
+0.53000000 | 0.68200000 | 0.83400000 | 0.98600000 | 1.13800000 | 
+1.00000000 | 0.88825000 | 0.77650000 | 0.66475000 | 0.55300000 | 
+
+Initial values TB:
+30.75000000 | 28.88500000 | 27.02000000 | 25.15500000 | 23.29000000 | 
+
+Steady-state values:
+142.50000000 | 126.65774584 | 105.17071505 | 78.80806488 | 67.00000000 | 66.00000000 | 78.80806671 | 38.99553315 | 39.97567038 | 42.49400000 | 
+39.97567038 | 59.42117259 | 84.56722691 | 109.85208619 | 139.00000000 | 
+0.45452039 | 0.39702266 | 0.35285353 | 
+0.91163565 | 0.80253725 | 0.68956389 | 
+
+Steady-state values TB:
+31.57662600 | 35.72661568 | 44.99204817 | 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            RC_TOP_PTV_N = (RC_TOP_a0 * TV[i-1][j] * dt) / dh;
+
+            TV[i][j] = (dt * RC_TOP_RvT * TF[i-1][(spaceParametrTP-1)-j])
+                    - (RC_TOP_PTV_N * TV[i-1][j+1])
+                    - TV[i-1][j] * (dt*RC_TOP_RvT + RC_TOP_PTV_L - RC_TOP_PTV_N)
+                    + (RC_TOP_PTV_L * TV[i-1][j-1])
+                    + TV[i-1][j];
+
+            TF[i][j] = (dt * RC_TOP_RfT * TV[i-1][(spaceParametrTP-1)-j])
+                    + (RC_TOP_PTF * TF[i-1][j-1])
+                    - TF[i-1][j] * (dt*RC_TOP_RfT + RC_TOP_PTF)
+                    + TF[i-1][j];
+
+
+            CF[i][j] = - (dt * RC_TOP_RfM * CV[i-1][(spaceParametrTP-1)-j])
+                    + (RC_TOP_PTF * CF[i-1][j-1])
+                    - CF[i-1][j] * (-(dt*RC_TOP_RfM*RC_TOP_E) + RC_TOP_PTF)
+                    + CF[i-1][j];
+
+
+            CV[i][j] = -CV[i-1][j] * (RC_TOP_PTV_L - 1 - RC_TOP_PTV_N + dt*RC_TOP_RvM)
+                    + (RC_TOP_PTV_L * CV[i-1][j-1])
+                    - (RC_TOP_PTV_N * CV[i-1][j-1])
+                    - (dt * RC_TOP_RvM * RC_TOP_E * CF[i-1][(spaceParametrTP-1)-j]);
+
+
+
+
+            if (j == spaceParametrTP-2)
+                TV[i-1][beginPoint+1] = TV[i][j];   // Connection between RC_TOP(TV) -> ACU(TV)
+
+
+
+        for(size_t j = beginPoint + 1; j < endPoint - 1; ++j)
+        {
+            // -----Calculate layer heat exchenger model------
+            TV[i][j] = (dt * ACU_RvT * TB[i-1][(endPoint - 1)-j])
+                    - TV[i-1][j] * ((dt*ACU_RvT) + (dt*ACU_PTV_L))
+                    + (dt * ACU_PTV_L * TV[i-1][j+1])
+                    + TV[i-1][j];
+
+            TB[i][j-beginPoint] = (dt * ACU_RB2 * TV[i-1][beginPoint + endPoint - j])    // TV[i-1][endPoint - j] - 1 error;
+                    + (ACU_CP*dt*ACU_RB1*ACU_TE)                            // ? TE - const or function?
+                    - TB[i-1][j-beginPoint] * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
+                    + TB[i-1][j-beginPoint];
+        }
+
+        TF[i][0] = TV[i][endPoint-2];   // Connection between ACU(TV) -> RC_TOP(TF)
+
+
+Initial values RC_TOP:
+142.5 | 118.20000000 | 93.90000000 | 69.60000000 | 67.00000000 | 66.00000000 | 64.99850000 | 57.49700000 | 49.99550000 | 42.49400000 | 
+30.00000000 | 57.25000000 | 84.50000000 | 111.75000000 | 139.00000000 | 
+0.53000000 | 0.68200000 | 0.83400000 | 0.98600000 | 1.13800000 | 
+1.00000000 | 0.88825000 | 0.77650000 | 0.66475000 | 0.55300000 | 
+
+Initial values TB:
+30.75000000 | 28.88500000 | 27.02000000 | 25.15500000 | 23.29000000 | 
+
+Steady-state values:
+142.50000000 | 126.64823127 | 105.18104330 | 78.43748991 | 67.00000000 | 66.00000000 | 78.43749112 | 34.15782935 | 37.98893502 | 42.49400000 | 
+37.98893502 | 58.88224773 | 84.49430632 | 109.84285373 | 139.00000000 | 
+0.45452459 | 0.39702324 | 0.35292876 | 
+0.91163465 | 0.80253720 | 0.68956383 | 
+
+Steady-state values TB:
+22.96380072 | 21.38046042 | 20.03398838 | 
