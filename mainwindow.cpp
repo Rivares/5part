@@ -8,15 +8,16 @@
 #include <Qt3DExtras>
 #include <QString>
 #include <QDebug>
-#include <vector>
-#include <cmath>
 #include <QUrl>
+#include <cmath>
 #include <array>
+#include <vector>
 #include <vector>
 #include <thread>
 #include <time.h>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 #include <functional>   //ref()
 
 using std::vector;
@@ -389,7 +390,7 @@ void MainWindow::drawGraph()
     }
 
     if (uiMain->NLVM_BP->isChecked())
-    {       
+    {
         if(!TMTPN_MM(TV, TF))
         {
             QMessageBox msgBox;
@@ -411,7 +412,7 @@ void MainWindow::drawGraph()
     }
 
     if((uiMain->EVM_BP->isChecked()) || (uiMain->EFM_BP->isChecked()))
-    {       
+    {
         if(!ETMBP_MM(TV, TF, CV, CF))
         {
             QMessageBox msgBox;
@@ -447,7 +448,7 @@ void MainWindow::drawGraph()
     }
 
     if((uiMain->EVM_TP->isChecked()) || (uiMain->EFM_TP->isChecked()))
-    {       
+    {
         if(!ETMTP_MM(TV, TF, CV, CF))
         {
             QMessageBox msgBox;
@@ -485,7 +486,7 @@ void MainWindow::drawGraph()
     }
 
     if((uiMain->ACU->isChecked()))
-    {       
+    {
         if(!ACU_MM(TV, TB))
         {
             QMessageBox msgBox;
@@ -614,26 +615,31 @@ void MainWindow::drawModel(int choiceModel)
     // Define selectZ
     switch(choiceModel)
     {
-        case 0:                                                             // H_L_BP
-        case 1:                                                             // H_N_BP
-        case 2:                                                             // H_BP
-        case 3:  selectZ = spaceParametrBP-2;                       break;  // M_BP
-        case 4:                                                             // H_TP
-        case 5:  selectZ = spaceParametrTP-2;                       break;  // M_TP
-        case 6:  selectZ = spaceParametrACU-2;                      break;  // ACU
-        case 7:  selectZ = spaceParametrEVAP-2;                     break;  // EVAP
-        case 8:                                                             // H_TP_ACU
-        case 9:  selectZ = spaceParametrTP + spaceParametrACU-4;    break;  // M_TP_ACU
-        case 10:                                                            // H_BP_EVAP
-        case 11: selectZ =  spaceParametrBP + spaceParametrEVAP-4;  break;  // M_BP_EVAP
-        case 12:                                                            // H_TP_BP
-        case 13: selectZ =  spaceParametrTP + spaceParametrBP-4;    break;  // M_TP_BP
-        case 14:                                                            // H_FULL_RC
-        case 15: selectZ =  spaceParametrTP
+        case 0:                                                               // H_L_BP
+        case 1:                                                               // H_N_BP
+        case 2:                                                               // H_BP
+        case 3:  selectZ = spaceParametrBP-2;                         break;  // M_BP
+        case 4:                                                               // H_TP
+        case 5:  selectZ = spaceParametrTP-2;                         break;  // M_TP
+        case 6:  selectZ = spaceParametrACU-2;                        break;  // ACU
+        case 7:  selectZ = spaceParametrEVAP-2;                       break;  // EVAP
+        case 8:  selectZ = spaceParametrTP-2;                         break;  // H_TP_ACU_
+        case 9:  selectZ = spaceParametrACU-2;                        break;  // H_TP_ACU
+        case 10: selectZ = spaceParametrTP-2;                         break;  // M_TP_ACU
+        case 11: selectZ =  spaceParametrBP + spaceParametrEVAP-4;    break;
+        case 12: selectZ =  spaceParametrEVAP-2;                      break;  // H_BP_EVAP
+        case 13: selectZ =  spaceParametrEVAP-4;                      break;  // M_BP_EVAP
+        case 14:
+        case 15:                                                              // H_TP_BP
+        case 16:
+        case 17: selectZ =  spaceParametrTP + spaceParametrBP-4;      break;  // M_TP_BP
+        case 18:                                                              // H_FULL_RC
+        case 19:
+        case 20: selectZ =  spaceParametrTP
                             + spaceParametrACU
                             + spaceParametrBP
                             + spaceParametrEVAP
-                            - 16;                                   break;  // M_FULL_RC
+                            - 16;                                     break;  // M_FULL_RC
         default:
         {
             QMessageBox msgBox;
@@ -642,37 +648,36 @@ void MainWindow::drawModel(int choiceModel)
         }
     }
 
-    // Convert from std::vector <std::vector <double>> to QVector <QVector <double>>    
+    // Convert from std::vector <std::vector <double>> to QVector <QVector <double>>
     for(uint i = 1; i <= selectZ; ++i)
     {
-        QVector <double> tmpVectorM0, tmpVectorM1, tmpVectorM2, tmpVectorM3;
+        QVector <double> tmpVectorM0, tmpVectorM1, tmpVectorM2;
 
         for(uint j = 0; j < (static_cast <size_t>((selectN / dt))); ++j)
         {
             switch(choiceModel)
             {
-                case 0:                                                                                             // H_L_BP
-                case 1:                                                                                             // H_N_BP
-                case 2:  tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); break;   // H_BP
-                case 3:  tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;   // M_BP
-                case 4:  tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); break;   // H_TP
-                case 5:  tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;   // M_TP
-                case 6:  tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TB.at(j).at(i-1)); break;   // ACU
-                case 7:  tmpVectorM0.push_back(TF.at(j).at(i-1)); tmpVectorM1.push_back(TB.at(j).at(i-1)); tmpVectorM2.push_back(TFG.at(j).at(i-1)); break; // EVAP
-                case 8:  tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); tmpVectorM2.push_back(TB.at(j).at(i-1)); break;  // H_TP_ACU
-                case 9:  tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;  // M_TP_ACU
-                case 10: tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); tmpVectorM2.push_back(TB.at(j).at(i-1)); tmpVectorM3.push_back(TFG.at(j).at(i-1)); break; // H_BP_EVAP
-                case 11: tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;  // M_BP_EVAP
-                case 12: tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); break;  // H_TP_BP
-                case 13: tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;  // M_TP_BP
-                case 14: /*Problem! Need two TB[][]! */ break;                                                     // H_FULL_RC
-                case 15: tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;  // M_FULL_RC
-                default:
-                {
-                    QMessageBox msgBox;
-                    msgBox.setText("Driwing error! Unknow type choiceModel!");
-                    msgBox.exec();
-                }
+                case 0:                                                                                         // H_L_BP
+                case 1:                                                                                         // H_N_BP
+                case 2:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_BP
+                case 3:  tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_BP
+                case 4:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_TP
+                case 5:  tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_TP
+                case 6:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TB.at(j).at(i)); break;   // ACU
+                case 7:  tmpVectorM0.push_back(TF.at(j).at(i)); tmpVectorM1.push_back(TB.at(j).at(i)); tmpVectorM2.push_back(TFG.at(j).at(i)); break; // EVAP
+                case 8:  tmpVectorM0.push_back(TF.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_TP_ACU: TV; TF
+                case 9:  tmpVectorM0.push_back(TB.at(j).at(i)); break;                                          // H_TP_ACU: TB
+                case 10: tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_TP_ACU
+                case 11: tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_BP_EVAP: TV; TF
+                case 12: tmpVectorM0.push_back(TB.at(j).at(i)); tmpVectorM1.push_back(TFG.at(j).at(i));break;   // H_BP_EVAP: TB; TFG
+                case 13: tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_BP_EVAP
+                case 14: tmpVectorM0.push_back(TV.at(j).at(i)); break;  // H_TP_BP: TV
+                case 15: tmpVectorM0.push_back(TF.at(j).at(i)); break;  // H_TP_BP: TF
+                case 16: tmpVectorM0.push_back(CV.at(j).at(i)); break;  // M_TP_BP: CV
+                case 17: tmpVectorM0.push_back(CF.at(j).at(i)); break;  // M_TP_BP: CF
+                case 18: /*Problem! Need two TB[][]! */ break;            // H_FULL_RC
+                case 19: tmpVectorM0.push_back(CV.at(j).at(i)); break;  // M_FULL_RC: CV
+                case 20: tmpVectorM0.push_back(CF.at(j).at(i)); break;  // M_FULL_RC: CF
             }
 
             t[static_cast <size_t>(j)] = j;
@@ -680,42 +685,60 @@ void MainWindow::drawModel(int choiceModel)
 
         switch(choiceModel)
         {
-
-            case 0:                                                                                             // H_L_BP
-            case 1:                                                                                             // H_N_BP
-            case 2:                                                                                             // H_BP
-            case 3:                                                                                             // M_BP
-            case 4:                                                                                             // H_TP
-            case 5:                                                                                             // M_TP
-            case 6:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                       // ACU
-            case 7:                                                                                             // EVAP
-            case 8:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); M_mat2.push_back(tmpVectorM2); break;  // H_TP_ACU
-            case 9:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                       // M_TP_ACU
-            case 10: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); M_mat2.push_back(tmpVectorM2); M_mat3.push_back(tmpVectorM3); break; // H_BP_EVAP
-            case 11:                                                                                            // M_BP_EVAP
-            case 12:                                                                                            // H_TP_BP
-            case 13: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                       // M_TP_BP
-            case 14: /*Problem! Need two TB[][]! */ break;                                                      // H_FULL_RC
-            case 15: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                       // M_FULL_RC
-            default:
-            {
-                QMessageBox msgBox;
-                msgBox.setText("Driwing error! Unknow type choiceModel!");
-                msgBox.exec();
-            }
+            case 0:                                                                         // H_L_BP
+            case 1:                                                                         // H_N_BP
+            case 2:                                                                         // H_BP
+            case 3:                                                                         // M_BP
+            case 4:                                                                         // H_TP
+            case 5:                                                                         // M_TP
+            case 6:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // ACU
+            case 7:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); M_mat2.push_back(tmpVectorM2); break;  // EVAP
+            case 8:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                                  // H_TP_ACU: TV; TF
+            case 9:  M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_ACU: TB
+            case 10: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // M_TP_ACU
+            case 11: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // H_BP_EVAP: TV; TF
+            case 12: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // H_BP_EVAP: TB; TFG
+            case 13: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // M_BP_EVAP
+            case 14: M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_BP: TV
+            case 15: M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_BP: FV
+            case 16: M_mat0.push_back(tmpVectorM0); break;                                  // M_TP_BP: CV
+            case 17: M_mat0.push_back(tmpVectorM0); break;                                  // M_TP_BP: CF
+            case 18: /*Problem! Need two TB[][]! */ break;                                  // H_FULL_RC
+            case 19: M_mat0.push_back(tmpVectorM0); break;                                  // M_FULL_RC: CV
+            case 20: M_mat0.push_back(tmpVectorM0); break;                                  // M_FULL_RC: CF
         }
 
+    }
+
+    switch(choiceModel)
+    {
+        case 8:
+
+        for(uint i = static_cast <uint> (selectZ+1.0); i <= static_cast <uint> (selectZ + spaceParametrTP-2); ++i)
+        {
+            QVector <double> tmpVectorM0;
+
+            for(uint j = 0; j < (static_cast <size_t>((selectN / dt))); ++j)
+            {
+                tmpVectorM0.push_back(TV.at(j).at(i));   // H_TP_ACU: TV
+            }
+
+            M_mat0.push_back(tmpVectorM0);   // H_TP_ACU: TV
+        }
+        selectZ = spaceParametrTP - 2 + spaceParametrACU - 2 + spaceParametrACU - 2;
+        break;
+
+        case 11: break;
     }
 
 
     /*-------------Choice drawing processes------------------*/
 
     uint countModels = 0;
-    QVector <QVector <double>> drawingProcces_0, drawingProcces_1, drawingProcces_2, drawingProcces_3;
+    QVector <QVector <double>> drawingProcces_0, drawingProcces_1, drawingProcces_2;
 
     switch(choiceModel)
     {
-
         case 0:                                                                                                 // H_L_BP: TV; TF
         case 1:                                                                                                 // H_N_BP: TV; TF
         case 2:                                                                                                 // H_BP: TV; TF
@@ -723,28 +746,34 @@ void MainWindow::drawModel(int choiceModel)
         case 4:                                                                                                 // H_TP: TV; TF
         case 5:                                                                                                 // M_TP: CV; CF
         case 6:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // ACU: TV; TB
-        case 7:                                                                                                 // EVAP: TF; TB; TFG
-        case 8:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; drawingProcces_2 = M_mat2; countModels = 3; break;  // H_TP_ACU: TV; TF; TB
-        case 9:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_TP_ACU: CV; CF
-        case 10: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; drawingProcces_2 = M_mat2; drawingProcces_3 = M_mat3; countModels = 4; break; // H_BP_EVAP: TV; TF; TB; TFG
-        case 11:                                                                                                // M_BP_EVAP: CV; CF
-        case 12:                                                                                                // H_TP_BP: TV; TF
-        case 13: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_TP_BP: CV; CF
-        case 14: /*Problem! Need two TB[][]! */ break;                                                          // H_FULL_RC
-        case 15: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_FULL_RC: CV; CF
-
-        default:
-        {
-            QMessageBox msgBox;
-            msgBox.setText("Driwing error! Unknow type choiceModel!");
-            msgBox.exec();
-        }
+        case 7:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; drawingProcces_2 = M_mat2; countModels = 3; break;  // EVAP: TF; TB; TFG
+        case 8:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_TP_ACU: TV; TF;
+        case 9:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_TP_ACU: TB
+        case 10: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_TP_ACU: CV; CF
+        case 11: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_BP_EVAP: TV; TF;
+        case 12: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_BP_EVAP: TB; TFG
+        case 13: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_BP_EVAP: CV; CF
+        case 14: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: TV
+        case 15: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: TF
+        case 16: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: CV
+        case 17: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: CF
+        case 18: /*Problem! Need two TB[][]! */ break;                                                          // H_FULL_RC
+        case 19: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // M_FULL_RC: CV
+        case 20: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // M_FULL_RC: CF
     }
 
 
     uiMain->customPlot->clearGraphs();
     uiMain->customPlot->clearItems();
 
+    uint countTrends = 0;
+
+    switch(choiceModel)
+    {
+        case 8:  countTrends = static_cast <uint> (spaceParametrTP + spaceParametrACU + spaceParametrACU - 6); selectZ = spaceParametrTP + spaceParametrACU - 4; break;
+        case 11: countTrends = static_cast <uint> (spaceParametrBP + spaceParametrEVAP + spaceParametrEVAP - 6); selectZ = spaceParametrBP + spaceParametrEVAP - 4; break;
+        default: { countTrends = static_cast <uint> (selectZ * countModels); }
+    }
 
     /*-------------Rendering graphics------------------*/
 
@@ -757,7 +786,7 @@ void MainWindow::drawModel(int choiceModel)
     qreal widthPen = 2.2;
     int translucent = 35;
 
-    for(uint i = 0, j = 0, k = 0, counter = 1; i < selectZ * countModels; ++i, ++counter)
+    for(uint i = 0, j = 0, k = 0, counter = 1; i < countTrends; ++i, ++counter)
     {
         uiMain->customPlot->addGraph();
 
@@ -802,24 +831,32 @@ void MainWindow::drawModel(int choiceModel)
     clock_t timeMW_Cust = clock();
     int msec = 0;
 
-    for(uint i = 0, j = 0, k = 0, counter = 1; i < selectZ * countModels; ++i, ++counter)
+    switch(choiceModel)
+    {
+        case 8:  countTrends = static_cast <uint> (spaceParametrTP + spaceParametrACU + spaceParametrACU - 6); selectZ = spaceParametrTP + spaceParametrACU - 4; break;
+        case 11: countTrends = static_cast <uint> (spaceParametrBP + spaceParametrEVAP + spaceParametrEVAP - 6); selectZ = spaceParametrBP + spaceParametrEVAP - 4; break;
+        default: { countTrends = static_cast <uint> (selectZ * countModels); }
+    }
+
+    for(uint i = 0, j = 0, k = 0, counter = 1; i < countTrends; ++i, ++counter)
     {
         if(counter <= selectZ)
         {
-            uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_0[static_cast <int>(i)]);
+            uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_0.at(static_cast <int>(i)));
         }
         else
             if(counter <= selectZ * (countModels-1))
             {
-                uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_2[static_cast <int>(k)]);
+                uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_2.at(static_cast <int>(k)));
                 ++k;
             }
             else
             {
-                uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_1[static_cast <int>(j)]);
+                uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_1.at(static_cast <int>(j)));
                 ++j;
             }
     }
+
 
     uiMain->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     uiMain->customPlot->replot();
@@ -3323,14 +3360,11 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                     + (RC_TOP_PTV_L * TV.at(i-1).at(j-1))
                     + TV.at(i-1).at(j);
 
-            cout << TV[i][j] << "; ";
-
             TF.at(i).at(j) =
                     (dt * RC_TOP_RfT * TV.at(i-1).at((spaceParametrTP-1)-j))
                     + (RC_TOP_PTF * TF.at(i-1).at(j-1))
                     - TF.at(i-1).at(j) * (dt*RC_TOP_RfT + RC_TOP_PTF)
                     + TF.at(i-1).at(j);
-
 
             CF.at(i).at(j) =
                     - (dt * RC_TOP_RfM * CV.at(i-1).at((spaceParametrTP-1)-j))
@@ -3355,15 +3389,12 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                     + (dt * ACU_PTV_L * TV.at(i-1).at(j-1))
                     + TV.at(i-1).at(j);
 
-            cout << TV[i][j] << "; ";
-
             TB.at(i).at(j-beginPoint + 1) =
                     (dt * ACU_RB2 * TV.at(i-1).at(endPoint + 2 - j))
                     + (ACU_CP*dt*ACU_RB1*ACU_TE)
                     - TB.at(i-1).at(j-beginPoint) * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
                     + TB.at(i-1).at(j-beginPoint);
         }
-        cout << endl;
 
         TF.at(i).at(0) = TV.at(i).at(endPoint-2);   // Connection between ACU(TV) -> RC_TOP(TF)
     }
@@ -3379,12 +3410,12 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
-    for(uint j = 1; j < (spaceParametrTP-1); ++j)
+    for(uint j = 0; j < (spaceParametrTP); ++j)
     {
         cout << CV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
-    for(uint j = 1; j < (spaceParametrTP-1); ++j)
+    for(uint j = 0; j < (spaceParametrTP); ++j)
     {
         cout << CF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
