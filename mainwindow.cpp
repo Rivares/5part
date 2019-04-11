@@ -37,12 +37,12 @@ static unsigned int spaceParametrEVAP = 0;
 static unsigned long long selectN = 0;
 
 
-vector <double> initLayerTV;
-vector <double> initLayerTF;
-vector <double> initLayerCV;
-vector <double> initLayerCF;
-vector <double> initLayerTB;
-vector <double> initLayerTFG;
+static vector <double> initLayerTV;
+static vector <double> initLayerTF;
+static vector <double> initLayerCV;
+static vector <double> initLayerCF;
+static vector <double> initLayerTB;
+static vector <double> initLayerTFG;
 
 //---------------Borders--------------//
 static vector <double> initLayerTV_0, initLayerTV_1;
@@ -68,11 +68,11 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector<vector<double> > &TB);
 
 
-void initialLayerTV(vector <vector <double> > &TV, uint8_t it);         // Would be relize as template
-void initialLayerTF(vector <vector <double> > &TF, uint8_t it);
-void initialLayerCV(vector <vector <double> > &CV, uint8_t it);
-void initialLayerCF(vector <vector <double> > &CF, uint8_t it);
-void initialLayerTB(vector <vector <double> > &TB);
+void initialLayerTV(vector <vector <double> > &TV, unsigned int it);         // Would be relize as template
+void initialLayerTF(vector <vector <double> > &TF, unsigned int it);
+void initialLayerCV(vector <vector <double> > &CV, unsigned int it);
+void initialLayerCF(vector <vector <double> > &CF, unsigned int it);
+void initialLayerTB(vector <vector <double> > &TB, unsigned int it);
 void initialLayerTFG(vector <vector <double> > &TFG);
 
 void toFileMM(vector <vector <double> > MMM, string nameModel);
@@ -120,19 +120,19 @@ void MainWindow::getData()
         initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
         initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
 
-        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrBP-2), 0.0);
         initLayerTF.assign((spaceParametrBP-2), 0.0);
 
         for(uint j = 1; j < (spaceParametrBP-1); ++j)
         {
-            initLayerTV[j-1] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTF[j-1] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         dh = static_cast <double> (dRC / (spaceParametrBP-2));
@@ -148,17 +148,17 @@ void MainWindow::getData()
         initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
         initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
 
-        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0[0] = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1[0] = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1)->text()).toDouble();
+        initLayerCV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0[0] = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1[0] = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1)->text()).toDouble();
+        initLayerCF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrBP-2), 0.0);
         initLayerTF.assign((spaceParametrBP-2), 0.0);
@@ -167,10 +167,10 @@ void MainWindow::getData()
 
         for(uint j = 1; j <= (spaceParametrBP-2); ++j)
         {
-            initLayerTV[j-1] = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTF[j-1] = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerCV[j-1] = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerCF[j-1] = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         dh = static_cast <double> (dRC / (spaceParametrBP-2));
@@ -185,17 +185,17 @@ void MainWindow::getData()
         initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
         initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
 
-        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0[0] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1[0] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+        initLayerCV_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0[0] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1[0] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+        initLayerCF_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrTP-2), 0.0);
         initLayerTF.assign((spaceParametrTP-2), 0.0);
@@ -204,10 +204,10 @@ void MainWindow::getData()
 
         for(uint j = 1; j <= (spaceParametrTP-2); ++j)
         {
-            initLayerTV[j-1] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTF[j-1] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerCV[j-1] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerCF[j-1] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTF.at(j-1) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCV.at(j-1) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCF.at(j-1) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         dh = static_cast <double> (dRC/spaceParametrTP);
@@ -220,8 +220,8 @@ void MainWindow::getData()
         initLayerTV_0.assign(1, 0.0);
         initLayerTV_1.assign(1, 0.0);
 
-        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
@@ -231,8 +231,8 @@ void MainWindow::getData()
 
         for(uint j = 1; j <= (spaceParametrACU-2); ++j)
         {
-            initLayerTV[j-1] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTB[j-1] = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTB.at(j-1) = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         dh = static_cast <double> (dRC / (spaceParametrACU-2));
@@ -245,8 +245,8 @@ void MainWindow::getData()
         initLayerTF_0.assign(1, 0.0);
         initLayerTF_1.assign(1, 0.0);
 
-        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, 0)->text()).toDouble();
-        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
+        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, 0)->text()).toDouble();
+        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
@@ -260,9 +260,9 @@ void MainWindow::getData()
 
         for(uint j = 1; j <= (spaceParametrEVAP-2); ++j)
         {
-            initLayerTF[j-1]  = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTB[j-1]  = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTFG[j-1] = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTF.at(j-1)  = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTB.at(j-1)  = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTFG.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         dh = static_cast <double> (dRC / (spaceParametrEVAP-2));
@@ -273,26 +273,23 @@ void MainWindow::getData()
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
         spaceParametrACU = static_cast <uint>(uiMain->tableBordersAndInitialConditions_ACU_1->columnCount());
 
-        initLayerTV_0.assign(2, 0.0); initLayerTV_1.assign(2, 0.0);
+        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
         initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
         initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
         initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
 
-        initLayerTV_0[0] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1[0] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
 
-        initLayerTF_0[0] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1[0] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0[0] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1[0] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+        initLayerCV_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0[0] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1[0] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+        initLayerCF_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
 
-
-        initLayerTV_0[1] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1[1] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
@@ -307,20 +304,20 @@ void MainWindow::getData()
 
         for(uint j = 1; j <= (spaceParametrTP-2); ++j)
         {
-            initLayerTV[j-1] = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTF[j-1] = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerCV[j-1] = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerCF[j-1] = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTF.at(j-1) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCV.at(j-1) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCF.at(j-1) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         for(uint j = (spaceParametrTP-2); j < (spaceParametrTP + spaceParametrACU - 4); ++j)
         {
-            initLayerTV[j] = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, static_cast <int>(j-(spaceParametrTP-2)+1))->text()).toDouble();
+            initLayerTV.at(j) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, static_cast <int>(j-(spaceParametrTP-2)+1))->text()).toDouble();
         }
 
         for(uint j = 1; j <= (spaceParametrACU-2); ++j)
         {
-            initLayerTB[j-1] = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTB.at(j-1) = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         dh = static_cast <double> (dRC / (spaceParametrTP + spaceParametrACU - 4));  // dRC = dRC_TP + dRC_ACU; spaceParametr = spaceParametrTP + spaceParametrACU
@@ -385,8 +382,8 @@ void MainWindow::drawGraph()
 
             for(uint j = 1; j < spaceParametrBP-1; ++j)
             {
-                listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
         }
     }
@@ -403,12 +400,12 @@ void MainWindow::drawGraph()
         {
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-            drawModel(0);
+            drawModel(1);
 
             for(uint j = 1; j < spaceParametrBP-1; ++j)
             {
-                listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
         }
     }
@@ -425,23 +422,23 @@ void MainWindow::drawGraph()
         {
             if((uiMain->EVM_BP->isChecked()))
             {
-                drawModel(0);
+                drawModel(2);
 
                 for(uint j = 1; j < spaceParametrBP-1; ++j)
                 {
-                    listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                    listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                    listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                    listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
                 }
             }
             else
             {
-                drawModel(1);
+                drawModel(3);
 
                 // Out to display steady-state concentration of absorbent
                 for(uint j = 1; j < spaceParametrBP-1; ++j)
                 {
-                    listStatesFirst.append(QString::number(CV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                    listStatesSecond.append(QString::number(CF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                    listStatesFirst.append(QString::number(CV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                    listStatesSecond.append(QString::number(CF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
                 }
             }
 
@@ -461,23 +458,25 @@ void MainWindow::drawGraph()
         {
             if((uiMain->EVM_TP->isChecked()))
             {
-                drawModel(0);
+                // Heat part
+                drawModel(4);
 
                 for(uint j = 1; j < spaceParametrTP-1; ++j)
                 {
-                    listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                    listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                    listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                    listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
                 }
             }
             else
             {
-                drawModel(1);
+                // Concentration part
+                drawModel(5);
 
                 // Out to display steady-state concentration of absorbent
                 for(uint j = 1; j < spaceParametrTP-1; ++j)
                 {
-                    listStatesFirst.append(QString::number(CV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                    listStatesSecond.append(QString::number(CF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                    listStatesFirst.append(QString::number(CV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                    listStatesSecond.append(QString::number(CF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
                 }
             }
 
@@ -497,13 +496,13 @@ void MainWindow::drawGraph()
         {
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-            drawModel(2);
+            drawModel(6);
 
             // Out to display steady-state value temperature (ACU)
             for(uint j = 1; j < spaceParametrACU-1; ++j)
             {
-                listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                listStatesSecond.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
         }
     }
@@ -520,14 +519,14 @@ void MainWindow::drawGraph()
         {
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-            drawModel(3);
+            drawModel(7);
 
             // Out to display steady-state value temperature (EVAP)
             for(uint j = 1; j < spaceParametrEVAP-1; ++j)
             {
-                listStatesFirst.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                listStatesSecond.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
-                listStatesThird.append(QString::number(TFG[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesFirst.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                listStatesSecond.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                listStatesThird.append(QString::number(TFG.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
         }
     }
@@ -544,23 +543,23 @@ void MainWindow::drawGraph()
         {
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-            drawModel(4);
-            //drawModel(5); // Not work
+            drawModel(8);
+            //drawModel(9); // Not work
 
             // Out to display steady-state value temperature
-            for(uint j = 1; j < (spaceParametrTP + spaceParametrACU - 1); ++j)
+            for(uint j = 1; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
             {
-                listStatesFirst.append(QString::number(TV[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
 
             for(uint j = 1; j < spaceParametrTP-1; ++j)
             {
-                listStatesSecond.append(QString::number(TF[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
 
             for(uint j = 1; j < spaceParametrACU-1; ++j)
             {
-                listStatesThird.append(QString::number(TB[ static_cast <size_t> ((selectN / dt) - 1) ][j]));
+                listStatesThird.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
         }
     }
@@ -610,18 +609,31 @@ void MainWindow::drawModel(int choiceModel)
     double selectZ = 0.0;
     QVector <double> t(static_cast <size_t>(selectN / dt));
 
-    QVector <QVector <double>> M_mat0, M_mat1, M_mat2;
+    QVector <QVector <double>> M_mat0, M_mat1, M_mat2, M_mat3;
 
-    // Dommy........!
+    // Define selectZ
     switch(choiceModel)
     {
-        // Bug - case 0, 1; selectZ != spaceParametrBP for RC_TOP
-        case 0: selectZ = spaceParametrBP; break;                       // Heat exchange part
-        case 1: selectZ = spaceParametrBP; break;                       // Heat exchange part
-        case 2: selectZ = spaceParametrACU; break;                      // Condensation part
-        case 3: selectZ = spaceParametrEVAP; break;                     // Evaporation part
-        case 4: selectZ = spaceParametrTP + spaceParametrACU; break;    // RC_TOP_ACU part
-        case 5: selectZ = spaceParametrACU; break;    // RC_TOP_ACU part
+        case 0:                                                             // H_L_BP
+        case 1:                                                             // H_N_BP
+        case 2:                                                             // H_BP
+        case 3:  selectZ = spaceParametrBP-2;                       break;  // M_BP
+        case 4:                                                             // H_TP
+        case 5:  selectZ = spaceParametrTP-2;                       break;  // M_TP
+        case 6:  selectZ = spaceParametrACU-2;                      break;  // ACU
+        case 7:  selectZ = spaceParametrEVAP-2;                     break;  // EVAP
+        case 8:                                                             // H_TP_ACU
+        case 9:  selectZ = spaceParametrTP + spaceParametrACU-4;    break;  // M_TP_ACU
+        case 10:                                                            // H_BP_EVAP
+        case 11: selectZ =  spaceParametrBP + spaceParametrEVAP-4;  break;  // M_BP_EVAP
+        case 12:                                                            // H_TP_BP
+        case 13: selectZ =  spaceParametrTP + spaceParametrBP-4;    break;  // M_TP_BP
+        case 14:                                                            // H_FULL_RC
+        case 15: selectZ =  spaceParametrTP
+                            + spaceParametrACU
+                            + spaceParametrBP
+                            + spaceParametrEVAP
+                            - 16;                                   break;  // M_FULL_RC
         default:
         {
             QMessageBox msgBox;
@@ -631,119 +643,107 @@ void MainWindow::drawModel(int choiceModel)
     }
 
     // Convert from std::vector <std::vector <double>> to QVector <QVector <double>>    
-    for(uint i = 0; i < selectZ; ++i)
+    for(uint i = 1; i <= selectZ; ++i)
     {
-        QVector <double> tmpVectorM0, tmpVectorM1, tmpVectorM2;
+        QVector <double> tmpVectorM0, tmpVectorM1, tmpVectorM2, tmpVectorM3;
 
         for(uint j = 0; j < (static_cast <size_t>((selectN / dt))); ++j)
         {
-            if(choiceModel == 0)    // Heat exchange part
+            switch(choiceModel)
             {
-                tmpVectorM0.push_back(TV[j][i]);
-                tmpVectorM1.push_back(TF[j][i]);
-            }
-
-            if(choiceModel == 1)    // Mass transfer part
-            {
-                tmpVectorM0.push_back(CV[j][i]);
-                tmpVectorM1.push_back(CF[j][i]);
-            }
-
-            if(choiceModel == 2)    // Condensation part
-            {
-                tmpVectorM0.push_back(TV[j][i]);
-                tmpVectorM1.push_back(TB[j][i]);
-            }
-
-            if(choiceModel == 3)    // Evaporation part
-            {
-                tmpVectorM0.push_back(TF[j][i]);
-                tmpVectorM1.push_back(TB[j][i]);
-                tmpVectorM2.push_back(TFG[j][i]);
-            }
-
-            if(choiceModel == 4)    // RC_TOP_ACU part
-            {
-                tmpVectorM0.push_back(TV[j][i]);
-                //tmpVectorM1.push_back(TF[j][i]);
-                //tmpVectorM2.push_back(TB[j][i]);
-            }
-
-            if(choiceModel == 5)    // RC_TOP_ACU part
-            {
-                tmpVectorM0.push_back(TF[j][i]);
-                tmpVectorM1.push_back(TB[j][i]);
+                case 0:                                                                                             // H_L_BP
+                case 1:                                                                                             // H_N_BP
+                case 2:  tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); break;   // H_BP
+                case 3:  tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;   // M_BP
+                case 4:  tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); break;   // H_TP
+                case 5:  tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;   // M_TP
+                case 6:  tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TB.at(j).at(i-1)); break;   // ACU
+                case 7:  tmpVectorM0.push_back(TF.at(j).at(i-1)); tmpVectorM1.push_back(TB.at(j).at(i-1)); tmpVectorM2.push_back(TFG.at(j).at(i-1)); break; // EVAP
+                case 8:  tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); tmpVectorM2.push_back(TB.at(j).at(i-1)); break;  // H_TP_ACU
+                case 9:  tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;  // M_TP_ACU
+                case 10: tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); tmpVectorM2.push_back(TB.at(j).at(i-1)); tmpVectorM3.push_back(TFG.at(j).at(i-1)); break; // H_BP_EVAP
+                case 11: tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;  // M_BP_EVAP
+                case 12: tmpVectorM0.push_back(TV.at(j).at(i-1)); tmpVectorM1.push_back(TF.at(j).at(i-1)); break;  // H_TP_BP
+                case 13: tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;  // M_TP_BP
+                case 14: /*Problem! Need two TB[][]! */ break;                                                     // H_FULL_RC
+                case 15: tmpVectorM0.push_back(CV.at(j).at(i-1)); tmpVectorM1.push_back(CF.at(j).at(i-1)); break;  // M_FULL_RC
+                default:
+                {
+                    QMessageBox msgBox;
+                    msgBox.setText("Driwing error! Unknow type choiceModel!");
+                    msgBox.exec();
+                }
             }
 
             t[static_cast <size_t>(j)] = j;
         }
 
-        if( (choiceModel == 0) || (choiceModel == 1) || (choiceModel == 2) )
+        switch(choiceModel)
         {
-            M_mat0.push_back(tmpVectorM0);
-            M_mat1.push_back(tmpVectorM1);
+
+            case 0:                                                                                             // H_L_BP
+            case 1:                                                                                             // H_N_BP
+            case 2:                                                                                             // H_BP
+            case 3:                                                                                             // M_BP
+            case 4:                                                                                             // H_TP
+            case 5:                                                                                             // M_TP
+            case 6:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                       // ACU
+            case 7:                                                                                             // EVAP
+            case 8:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); M_mat2.push_back(tmpVectorM2); break;  // H_TP_ACU
+            case 9:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                       // M_TP_ACU
+            case 10: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); M_mat2.push_back(tmpVectorM2); M_mat3.push_back(tmpVectorM3); break; // H_BP_EVAP
+            case 11:                                                                                            // M_BP_EVAP
+            case 12:                                                                                            // H_TP_BP
+            case 13: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                       // M_TP_BP
+            case 14: /*Problem! Need two TB[][]! */ break;                                                      // H_FULL_RC
+            case 15: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                       // M_FULL_RC
+            default:
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Driwing error! Unknow type choiceModel!");
+                msgBox.exec();
+            }
         }
 
-        if(choiceModel == 3)
-        {
-            M_mat0.push_back(tmpVectorM0);
-            M_mat1.push_back(tmpVectorM1);
-            M_mat2.push_back(tmpVectorM2);
-        }
-
-        if(choiceModel == 4)
-        {
-            M_mat0.push_back(tmpVectorM0);
-            //M_mat1.push_back(tmpVectorM1);
-            //M_mat2.push_back(tmpVectorM2);
-        }
-
-        if(choiceModel == 5)
-        {
-            M_mat0.push_back(tmpVectorM0);
-            M_mat1.push_back(tmpVectorM1);
-        }
     }
 
 
     /*-------------Choice drawing processes------------------*/
 
     uint countModels = 0;
-    QVector <QVector <double>> drawingProcces_0, drawingProcces_1, drawingProcces_2;
+    QVector <QVector <double>> drawingProcces_0, drawingProcces_1, drawingProcces_2, drawingProcces_3;
 
-    if( (choiceModel == 0) || (choiceModel == 1) || (choiceModel == 2) )
+    switch(choiceModel)
     {
-        drawingProcces_0 = M_mat0;
-        drawingProcces_1 = M_mat1;
-        countModels = 2;
 
-        uiMain->customPlot->clearGraphs();
+        case 0:                                                                                                 // H_L_BP: TV; TF
+        case 1:                                                                                                 // H_N_BP: TV; TF
+        case 2:                                                                                                 // H_BP: TV; TF
+        case 3:                                                                                                 // M_BP: CV; CF
+        case 4:                                                                                                 // H_TP: TV; TF
+        case 5:                                                                                                 // M_TP: CV; CF
+        case 6:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // ACU: TV; TB
+        case 7:                                                                                                 // EVAP: TF; TB; TFG
+        case 8:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; drawingProcces_2 = M_mat2; countModels = 3; break;  // H_TP_ACU: TV; TF; TB
+        case 9:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_TP_ACU: CV; CF
+        case 10: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; drawingProcces_2 = M_mat2; drawingProcces_3 = M_mat3; countModels = 4; break; // H_BP_EVAP: TV; TF; TB; TFG
+        case 11:                                                                                                // M_BP_EVAP: CV; CF
+        case 12:                                                                                                // H_TP_BP: TV; TF
+        case 13: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_TP_BP: CV; CF
+        case 14: /*Problem! Need two TB[][]! */ break;                                                          // H_FULL_RC
+        case 15: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_FULL_RC: CV; CF
+
+        default:
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Driwing error! Unknow type choiceModel!");
+            msgBox.exec();
+        }
     }
 
-    if(choiceModel == 3)
-    {
-        drawingProcces_0 = M_mat0;
-        drawingProcces_1 = M_mat1;
-        drawingProcces_2 = M_mat2;
-        countModels = 3;
 
-        uiMain->customPlot->clearGraphs();
-    }
-
-    if(choiceModel == 4)
-    {
-        drawingProcces_0 = M_mat0;
-        countModels = 1;
-
-        uiMain->customPlot->clearGraphs();
-    }
-
-    if(choiceModel == 5)
-    {
-        drawingProcces_0 = M_mat0;
-        drawingProcces_1 = M_mat1;
-        countModels = 1;
-    }
+    uiMain->customPlot->clearGraphs();
+    uiMain->customPlot->clearItems();
 
 
     /*-------------Rendering graphics------------------*/
@@ -757,7 +757,7 @@ void MainWindow::drawModel(int choiceModel)
     qreal widthPen = 2.2;
     int translucent = 35;
 
-    for(uint i = 0, j = 0, k = 0, counter = 1; i < (selectZ-2) * countModels; ++i, ++counter)
+    for(uint i = 0, j = 0, k = 0, counter = 1; i < selectZ * countModels; ++i, ++counter)
     {
         uiMain->customPlot->addGraph();
 
@@ -767,7 +767,7 @@ void MainWindow::drawModel(int choiceModel)
 
         pen.setColor(QColor(randColorR, randColorG, randColorB));
 
-        if(counter <= (selectZ-2))
+        if(counter <= selectZ)
         {
             /*-------------Customize of pen to drawing first model------------------*/
 
@@ -775,7 +775,7 @@ void MainWindow::drawModel(int choiceModel)
             uiMain->customPlot->graph(static_cast <int>(i))->setName(QString(tr("First phase_%1")).arg(i));
         }
         else
-            if(counter <= (selectZ-2) * (countModels-1))
+            if(counter <= selectZ * (countModels-1))
             {
                 /*-------------Customize of pen to drawing second model------------------*/
 
@@ -802,14 +802,14 @@ void MainWindow::drawModel(int choiceModel)
     clock_t timeMW_Cust = clock();
     int msec = 0;
 
-    for(uint i = 0, j = 1, k = 1, counter = 1; i < (selectZ-2) * countModels; ++i, ++counter)
+    for(uint i = 0, j = 0, k = 0, counter = 1; i < selectZ * countModels; ++i, ++counter)
     {
-        if(counter <= (selectZ-2))
+        if(counter <= selectZ)
         {
-            uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_0[static_cast <int>(i+1)]);
+            uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_0[static_cast <int>(i)]);
         }
         else
-            if(counter <= (selectZ-2) * (countModels-1))
+            if(counter <= selectZ * (countModels-1))
             {
                 uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_2[static_cast <int>(k)]);
                 ++k;
@@ -893,6 +893,24 @@ void MainWindow::on_save_clicked()
         threadToFileTFMM.join();
         threadToFileTBMM.join();
         threadToFileTFGMM.join();
+    }
+
+    if(uiMain->TP_ACU->isChecked())
+    {
+        std::thread threadToFileTVMM(toFileMM, std::ref(TV), "TV_TP_ACU");
+        std::thread threadToFileTFMM(toFileMM, std::ref(TF), "TF_TP_ACU");
+        std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_TP_ACU");
+        std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_TP_ACU");
+
+        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_TP_ACU");
+
+        threadToFileTVMM.join();
+        threadToFileTFMM.join();
+        threadToFileCVMM.join();
+        threadToFileCFMM.join();
+
+        threadToFileTVMM.join();
+        threadToFileTBMM.join();
     }
 
     QTime time = QTime::currentTime();
@@ -2315,8 +2333,7 @@ void MainWindow::on_TP_ACU_clicked()
     uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 0, new QTableWidgetItem(tr("142.500")));
     uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, 0, new QTableWidgetItem(tr("142.500")));
 
-    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("67.000")));
-    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("67.000")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("...")));
 
     uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 1, new QTableWidgetItem(tr("118.200000")));
     uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 2, new QTableWidgetItem(tr("93.9000000")));
@@ -2363,8 +2380,7 @@ void MainWindow::on_TP_ACU_clicked()
 
     // ACU:
     //---------------Temperature part------------//
-    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 0, new QTableWidgetItem(tr("66.000")));
-    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, 0, new QTableWidgetItem(tr("66.000")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 0, new QTableWidgetItem(tr("...")));
 
     uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("42.49400")));
     uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("42.49400")));
@@ -2511,9 +2527,9 @@ bool TMTPL_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     }
 
     beginPoint = 0;
-    endPoint = spaceParametrBP;
-    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
-    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
+
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrBP);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), spaceParametrBP);
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2523,12 +2539,12 @@ bool TMTPL_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 
     for(size_t j = 0; j < spaceParametrBP; ++j)
     {
-        cout << TV[0][j] << std::fixed << " | ";
+        cout << TV.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrBP; ++j)
     {
-        cout << TF[0][j] << std::fixed << " | ";
+        cout << TF.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     // Calculate model
@@ -2536,33 +2552,35 @@ bool TMTPL_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     {
        for(uint j = 1; j < (spaceParametrBP-1); ++j)        // place
        {
-           TV[i][j] = (dt * RvT * TF[i-1][(spaceParametrBP-1)-j])
-                    + (PTV * TV[i-1][j-1])
-                    + TV[i-1][j] * (-(dt * RvT) - PTV)
-                    + TV[i-1][j];
+           TV.at(i).at(j) =
+                   (dt * RvT * TF.at(i-1).at((spaceParametrBP-1)-j))
+                   + (PTV * TV.at(i-1).at(j-1))
+                   + TV.at(i-1).at(j) * (-(dt * RvT) - PTV)
+                   + TV.at(i-1).at(j);
 
-           TF[i][j] = (dt * RfT * TV[i-1][(spaceParametrBP-1)-j])
-                    + (PTF * TF[i-1][j-1])
-                    + TF[i-1][j] * (-PTF - (dt * RfT))
-                    + TF[i-1][j];
+           TF.at(i).at(j) =
+                   (dt * RfT * TV.at(i-1).at((spaceParametrBP-1)-j))
+                   + (PTF * TF.at(i-1).at(j-1))
+                   + TF.at(i-1).at(j) * (-PTF - (dt * RfT))
+                   + TF.at(i-1).at(j);
        }
     }
 
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (spaceParametrBP-1); ++j)
     {
-        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrBP-1); ++j)
     {
-        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     return true;
 }
 
-//--------------------------NON-LINER MODEL-----------------------------------
+//------------------------NON-LINER MODEL---------------------------------
 bool TMTPN_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 {
     //double a0 = 0.0001152735759 or 0.00016966, What is TRUE?????????
@@ -2595,9 +2613,9 @@ bool TMTPN_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     }
 
     beginPoint = 0;
-    endPoint = spaceParametrBP;
-    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
-    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
+
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrBP);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), spaceParametrBP);
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2607,12 +2625,12 @@ bool TMTPN_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
 
     for(size_t j = 0; j < spaceParametrBP; ++j)
     {
-        cout << TV[0][j] << std::fixed << " | ";
+        cout << TV.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrBP; ++j)
     {
-        cout << TF[0][j] << std::fixed << " | ";
+        cout << TF.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     // Calculate model
@@ -2620,36 +2638,38 @@ bool TMTPN_MM(vector <vector <double> > &TV, vector <vector <double> > &TF)
     {
        for(uint j = 1; j < (spaceParametrBP-1); ++j)
        {
-           PTV_N = (a0 * TV[i-1][j] * dt) / dh;
+           PTV_N = (a0 * TV.at(i-1).at(j) * dt) / dh;
 
-           TV[i][j] = (dt * RvT * TF[i-1][(spaceParametrBP-1)-j])
-                    - (PTV_N * TV[i-1][j+1])
-                    - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
-                    + (PTV_L * TV[i-1][j-1])
-                    + TV[i-1][j];
+           TV.at(i).at(j) =
+                   (dt * RvT * TF.at(i-1).at((spaceParametrBP-1)-j))
+                   - (PTV_N * TV.at(i-1).at(j+1))
+                   - TV.at(i-1).at(j) * (dt*RvT + PTV_L - PTV_N)
+                   + (PTV_L * TV.at(i-1).at(j-1))
+                   + TV.at(i-1).at(j);
 
-           TF[i][j] = (dt * RfT * TV[i-1][(spaceParametrBP-1)-j])
-                    + (PTF * TF[i-1][j-1])
-                    - TF[i-1][j] * (dt*RfT + PTF)
-                    + TF[i-1][j];
+           TF.at(i).at(j) =
+                   (dt * RfT * TV.at(i-1).at((spaceParametrBP-1)-j))
+                   + (PTF * TF.at(i-1).at(j-1))
+                   - TF.at(i-1).at(j) * (dt*RfT + PTF)
+                   + TF.at(i-1).at(j);
         }
     }
 
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (spaceParametrBP-1); ++j)
     {
-        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrBP-1); ++j)
     {
-        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     return true;
 }
 
-//---------------------------INTERCONNECTED MODEL(BOTTOM PART)------------------------------
+//----------------INTERCONNECTED MODEL(BOTTOM PART)-----------------------
 bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF)
 {
@@ -2689,11 +2709,11 @@ bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     }
 
     beginPoint = 0;
-    endPoint = spaceParametrBP;
-    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
-    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
-    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), 0);
-    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), 0);
+
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrBP);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), spaceParametrBP);
+    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), spaceParametrBP);
+    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), spaceParametrBP);
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2705,22 +2725,22 @@ bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     for(size_t j = 0; j < spaceParametrBP; ++j)
     {
-        cout << TV[0][j] << std::fixed << " | ";
+        cout << TV.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrBP; ++j)
     {
-        cout << TF[0][j] << " | ";
+        cout << TF.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrBP; ++j)
     {
-        cout << CV[0][j] << " | ";
+        cout << CV.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrBP; ++j)
     {
-        cout << CF[0][j] << " | ";
+        cout << CF.at(0).at(j) << " | ";
     }   cout << endl;
 
     // Calculate model
@@ -2729,18 +2749,20 @@ bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         for(size_t j = 1; j < (spaceParametrBP-1); ++j)      // place
         {
             // -----Calculate layer heat exchenger model------
-            PTV_N = (a0 * TV[i-1][j] * dt) / dh;
+            PTV_N = (a0 * TV.at(i-1).at(j) * dt) / dh;
 
-            TV[i][j] = (dt * RvT * TF[i-1][(spaceParametrBP-1)-j])
-                    - (PTV_N * TV[i-1][j+1])
-                    - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
-                    + (PTV_L * TV[i-1][j-1])
-                    + TV[i-1][j];
+            TV.at(i).at(j) =
+                    (dt * RvT * TF.at(i-1).at((spaceParametrBP-1)-j))
+                    - (PTV_N * TV.at(i-1).at(j+1))
+                    - TV.at(i-1).at(j) * (dt*RvT + PTV_L - PTV_N)
+                    + (PTV_L * TV.at(i-1).at(j-1))
+                    + TV.at(i-1).at(j);
 
-            TF[i][j] = (dt * RfT * TV[i-1][(spaceParametrBP-1)-j])
-                    + (PTF * TF[i-1][j-1])
-                    - TF[i-1][j] * (dt*RfT + PTF)
-                    + TF[i-1][j];
+            TF.at(i).at(j) =
+                    (dt * RfT * TV.at(i-1).at((spaceParametrBP-1)-j))
+                    + (PTF * TF.at(i-1).at(j-1))
+                    - TF.at(i-1).at(j) * (dt*RfT + PTF)
+                    + TF.at(i-1).at(j);
 
             // -----Calculate layer mass exchenger model------
 
@@ -2779,9 +2801,10 @@ bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                         - CV[i-1][j+1] * PTV_L;*/
 
             /* 4 A+*/
-            CV[i][j] =  - (dt * RvM * E * CF[i-1][(spaceParametrBP-1)-j])
-                        + CV[i-1][j] * (dt*RvM - PTV_L - PTV_N + 1)
-                        + CV[i-1][j+1] * (PTV_L + PTV_N);
+            CV.at(i).at(j) =
+                    - (dt * RvM * E * CF.at(i-1).at((spaceParametrBP-1)-j))
+                    + CV.at(i-1).at(j) * (dt*RvM - PTV_L - PTV_N + 1)
+                    + CV.at(i-1).at(j+1) * (PTV_L + PTV_N);
 
             /* 4 B-
             CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
@@ -2794,9 +2817,10 @@ bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                         - (PTF * CF[i-1][j-1]);*/
 
             /* 1 B+*/
-            CF[i][j] =  - (dt * RfM * CV[i-1][j])
-                        + CF[i-1][j] * (dt*RfM*E - PTF + 1)
-                        + (PTF * CF[i-1][j-1]);
+            CF.at(i).at(j) =
+                    - (dt * RfM * CV.at(i-1).at(j))
+                    + CF.at(i-1).at(j) * (dt*RfM*E - PTF + 1)
+                    + (PTF * CF.at(i-1).at(j-1));
 
             /* 2 A-
             CF[i][j] =  - (dt * RfM * CV[i-1][(selectZ-1)-j])
@@ -2814,28 +2838,28 @@ bool ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (spaceParametrBP-1); ++j)
     {
-        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrBP-1); ++j)
     {
-        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrBP-1); ++j)
     {
-        cout << CV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << CV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrBP-1); ++j)
     {
-        cout << CF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << CF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     return true;
 }
 
-//---------------------------INTERCONNECTED MODEL(TOP PART)------------------------------
+//-----------------INTERCONNECTED MODEL(TOP PART)-------------------------
 bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF)
 {
@@ -2874,11 +2898,11 @@ bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     }
 
     beginPoint = 0;
-    endPoint = spaceParametrTP;
-    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
-    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
-    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), 0);
-    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), 0);
+
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrTP);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), spaceParametrTP);
+    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), spaceParametrTP);
+    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), spaceParametrTP);
 
     threadInitialLayerTV.join();
     threadInitialLayerTF.join();
@@ -2890,22 +2914,22 @@ bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     for(size_t j = 0; j < spaceParametrTP; ++j)
     {
-        cout << TV[0][j] << std::fixed << " | ";
+        cout << TV.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrTP; ++j)
     {
-        cout << TF[0][j] << " | ";
+        cout << TF.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrTP; ++j)
     {
-        cout << CV[0][j] << " | ";
+        cout << CV.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrTP; ++j)
     {
-        cout << CF[0][j] << " | ";
+        cout << CF.at(0).at(j) << " | ";
     }   cout << endl;
 
     // Calculate model
@@ -2914,18 +2938,20 @@ bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         for(size_t j = 1; j < (spaceParametrTP-1); ++j)      // place
         {
             // -----Calculate layer heat exchenger model------
-            PTV_N = (a0 * TV[i-1][j] * dt) / dh;
+            PTV_N = (a0 * TV.at(i-1).at(j) * dt) / dh;
 
-            TV[i][j] = (dt * RvT * TF[i-1][(spaceParametrTP-1)-j])
-                    - (PTV_N * TV[i-1][j+1])
-                    - TV[i-1][j] * (dt*RvT + PTV_L - PTV_N)
-                    + (PTV_L * TV[i-1][j-1])
-                    + TV[i-1][j];
+            TV.at(i).at(j) =
+                    (dt * RvT * TF.at(i-1).at((spaceParametrTP-1)-j))
+                    - (PTV_N * TV.at(i-1).at(j+1))
+                    - TV.at(i-1).at(j) * (dt*RvT + PTV_L - PTV_N)
+                    + (PTV_L * TV.at(i-1).at(j-1))
+                    + TV.at(i-1).at(j);
 
-            TF[i][j] = (dt * RfT * TV[i-1][(spaceParametrTP-1)-j])
-                    + (PTF * TF[i-1][j-1])
-                    - TF[i-1][j] * (dt*RfT + PTF)
-                    + TF[i-1][j];
+            TF.at(i).at(j) =
+                    (dt * RfT * TV.at(i-1).at((spaceParametrTP-1)-j))
+                    + (PTF * TF.at(i-1).at(j-1))
+                    - TF.at(i-1).at(j) * (dt*RfT + PTF)
+                    + TF.at(i-1).at(j);
 
             // -----Calculate layer mass exchenger model------
 
@@ -2935,17 +2961,20 @@ bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                     - CV[i-1][j] * (- dt*RvM + PTV_L + PTV_N)
                     + CV[i-1][j];*/
 
-            CF[i][j] = - (dt * RfM * CV[i-1][(spaceParametrTP-1)-j])
-                    + (PTF * CF[i-1][j-1])
-                    - CF[i-1][j] * (-(dt*RfM*E) + PTF)
-                    + CF[i-1][j];
+            CF.at(i).at(j) =
+                    - (dt * RfM * CV.at(i-1).at((spaceParametrTP-1)-j))
+                    + (PTF * CF.at(i-1).at(j-1))
+                    - CF.at(i-1).at(j) * (-(dt*RfM*E) + PTF)
+                    + CF.at(i-1).at(j);
 
             /* Old schema: CV(i,i-1); CV(i+1,i)*/
 
-            CV[i][j] = -CV[i-1][j] * (PTV_L - 1 - PTV_N + dt*RvM)
-                    + (PTV_L * CV[i-1][j-1])
-                    - (PTV_N * CV[i-1][j-1])
-                    - (dt * RvM * E * CF[i-1][(spaceParametrTP-1)-j]);
+            CV.at(i).at(j) =
+                    - (dt * RvM * E * CF.at(i-1).at((spaceParametrTP-1)-j))
+                    - CV.at(i-1).at(j) * (PTV_L - PTV_N + dt*RvM)
+                    + (PTV_L * CV.at(i-1).at(j-1))
+                    - (PTV_N * CV.at(i-1).at(j-1))
+                    + CV.at(i-1).at(j);
 
         }
     }
@@ -2953,28 +2982,28 @@ bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (spaceParametrTP-1); ++j)
     {
-        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrTP-1); ++j)
     {
-        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrTP-1); ++j)
     {
-        cout << CV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << CV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrTP-1); ++j)
     {
-        cout << CF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << CF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     return true;
 }
 
-//---------------------------AIR-COOLING UNIT MODEL(ACU)------------------------------
+//------------------AIR-COOLING UNIT MODEL(ACU)---------------------------
 bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 {
     // -----Model's heat parameters------
@@ -3008,9 +3037,9 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     }
 
     beginPoint = 0;
-    endPoint = spaceParametrACU;
-    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
-    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB));
+
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrACU);
+    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB), spaceParametrACU);
 
     threadInitialLayerTV.join();
     threadInitialLayerTB.join();
@@ -3020,12 +3049,12 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 
     for(size_t j = 0; j < spaceParametrACU; ++j)
     {
-        cout << TV[0][j] << std::fixed << " | ";
+        cout << TV.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrACU; ++j)
     {
-        cout << TB[0][j] << " | ";
+        cout << TB.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     // Calculate model
@@ -3034,27 +3063,29 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
         for(size_t j = 1; j < (spaceParametrACU-1); ++j)
         {
             // -----Calculate layer heat exchenger model------
-            TV[i][j] = (dt * RvT * TB[i-1][(spaceParametrACU-1)-j])
-                    - TV[i-1][j] * ((dt*RvT) + (dt*PTV_L))
-                    + (dt * PTV_L * TV[i-1][j-1])
-                    + TV[i-1][j];
+            TV.at(i).at(j) =
+                    (dt * RvT * TB.at(i-1).at((spaceParametrACU-1)-j))
+                    - TV.at(i-1).at(j) * ((dt*RvT) + (dt*PTV_L))
+                    + (dt * PTV_L * TV.at(i-1).at(j-1))
+                    + TV.at(i-1).at(j);
 
-            TB[i][j] = (dt * RB2 * TV[i-1][j])              // TV[i-1][j] ??? j - ????
+            TB.at(i).at(j) =
+                    (dt * RB2 * TV.at(i-1).at(j))              // TV[i-1][j] ??? j - ????
                     + (CP*dt*RB1*TE)                        // ? TE - const or function?
-                    - TB[i-1][j] * (CP*dt*RB1 + dt*RB2)
-                    + TB[i-1][j];
+                    - TB.at(i-1).at(j) * (CP*dt*RB1 + dt*RB2)
+                    + TB.at(i-1).at(j);
         }
     }
 
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (spaceParametrACU-1); ++j)
     {
-        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrACU-1); ++j)
     {
-        cout << TB[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     return true;
@@ -3095,9 +3126,9 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
     }
 
     beginPoint = 0;
-    endPoint = spaceParametrEVAP;
-    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
-    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB));
+
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), spaceParametrEVAP);
+    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB), spaceParametrEVAP);
     std::thread threadInitialLayerTFG(initialLayerTFG, std::ref(TFG));
 
     threadInitialLayerTF.join();
@@ -3109,17 +3140,17 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
 
     for(size_t j = 0; j < spaceParametrEVAP; ++j)
     {
-        cout << TF[0][j] << " | ";
+        cout << TF.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrEVAP; ++j)
     {
-        cout << TB[0][j] << " | ";
+        cout << TB.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrEVAP; ++j)
     {
-        cout << TFG[0][j] << " | ";
+        cout << TFG.at(0).at(j) << " | ";
     }   cout << endl;
 
     // Calculate model
@@ -3127,50 +3158,42 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
     {
         for(size_t j = 1; j < (spaceParametrEVAP-1); ++j)
         {
-            TF[i][j] = (dt * RF * TB[i-1][j+1]) // ?
-                    + (dt * PTF * TF[i-1][j+1])
-                    - TF[i-1][j] * (dt*RF + dt*PTF)
-                    + TF[i-1][j];
+            TF.at(i).at(j) =
+                    (dt * RF * TB.at(i-1).at(j+1)) // ?
+                    + (dt * PTF * TF.at(i-1).at(j+1))
+                    - TF.at(i-1).at(j) * (dt*RF + dt*PTF)
+                    + TF.at(i-1).at(j);
 
-            TB[i][j] = (dt * RFB * TF[i-1][j]) // ?
-                    + (dt * RFGB * TFG[i-1][(spaceParametrEVAP-1)-j])// ?
-                    - TB[i-1][j] * (dt*RFGB + dt*RFB)
-                    + TB[i-1][j];
+            TB.at(i).at(j) =
+                    (dt * RFB * TF.at(i-1).at(j)) // ?
+                    + (dt * RFGB * TFG.at(i-1).at((spaceParametrEVAP-1)-j))// ?
+                    - TB.at(i-1).at(j) * (dt*RFGB + dt*RFB)
+                    + TB.at(i-1).at(j);
 
-            TFG[i][j] = (dt * RFG * TB[i-1][j+1]) // ?
-                    + (dt * PTFG * TFG[i-1][j-1])
-                    - TFG[i-1][j] * (dt*RFG + dt*PTFG)
-                    + TFG[i-1][j];
+            TFG.at(i).at(j) =
+                    (dt * RFG * TB.at(i-1).at(j+1)) // ?
+                    + (dt * PTFG * TFG.at(i-1).at(j-1))
+                    - TFG.at(i-1).at(j) * (dt*RFG + dt*PTFG)
+                    + TFG.at(i-1).at(j);
         }
     }
 
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 1; j < (spaceParametrEVAP-1); ++j)
     {
-        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrEVAP-1); ++j)
     {
-        cout << TB[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrEVAP-1); ++j)
     {
-        cout << TFG[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TFG.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
-
-
-    string initTF = std::to_string(TF[0][3]);
-    string nameModel = "MM_TF_" + initTF + ".dat";
-
-    ofstream foutMM(nameModel, ios_base::out | ios_base::trunc);
-
-    for(size_t i = 0; i < (selectN / dt); ++i)
-    {
-        foutMM << TF[i][3] << endl;
-    }
 
     return true;
 }
@@ -3182,9 +3205,9 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     // RC_TOP:
     // -----Model's heat exchenger parameters------
     double  RC_TOP_RvT = 2.500, RC_TOP_RfT = 0.000085500, RC_TOP_a0 = 0.0034868520 // (a0 = 0.0034868520) != (a0_Simulink = 0.002702752)
-          , RC_TOP_PTV_L = (RC_TOP_a0 * 273.15 * dt) / dh
+          , RC_TOP_PTV_L = (RC_TOP_a0 * 273.15 * dt) / 1.17 // dh
           , RC_TOP_PTV_N = 0.0
-          , RC_TOP_PTF = (0.0000400 * dt) / dh;
+          , RC_TOP_PTF = (0.0000400 * dt) / 1.17; // dh
 
     // -----Model's mass exchenger parameters------
     double RC_TOP_E = 1.0E-9, RC_TOP_RvM = 0.1450, RC_TOP_RfM = 6.0E-6;
@@ -3200,7 +3223,7 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     // ACU:
     // -----Model's heat parameters------
     double  ACU_RvT = 8.400, ACU_a0 = 0.06     // a0 = 0.06 ?
-          , ACU_PTV_L = (ACU_a0 * 273.150) / dh;
+          , ACU_PTV_L = (ACU_a0 * 273.150) / 1.333; // dh
 
     // -----Model's boarder parameters------
     double ACU_RB1 = 0.00661, ACU_RB2 = 0.480
@@ -3216,7 +3239,7 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     //--------------------------------------------------------
 
     vector <double> countSpacePoints_1, countSpacePoints_2;
-    countSpacePoints_1.assign(spaceParametrTP*2, 0.0);
+    countSpacePoints_1.assign(spaceParametrTP + spaceParametrACU - 2, 0.0);
     countSpacePoints_2.assign(spaceParametrTP, 0.0);
 
     for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
@@ -3242,15 +3265,13 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     //--------------------------------------------------------
 
     beginPoint = 0;
-    endPoint = spaceParametrTP;
 
+    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrTP + spaceParametrACU - 2);
+    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), spaceParametrTP);
+    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), spaceParametrTP);
+    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), spaceParametrTP);
 
-    std::thread threadInitialLayerTV(initialLayerTV, std::ref(TV), 0);
-    std::thread threadInitialLayerTF(initialLayerTF, std::ref(TF), 0);
-    std::thread threadInitialLayerCV(initialLayerCV, std::ref(CV), 0);
-    std::thread threadInitialLayerCF(initialLayerCF, std::ref(CF), 0);
-
-    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB));
+    std::thread threadInitialLayerTB(initialLayerTB, std::ref(TB), spaceParametrACU);
 
 
     threadInitialLayerTV.join();
@@ -3260,217 +3281,211 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     threadInitialLayerTB.join();
 
-    //--------------------------------------------------------
-
-    beginPoint = spaceParametrTP;
-    endPoint = spaceParametrTP + spaceParametrACU;
-    initialLayerTV(TV, 1);
-
-    //--------------------------------------------------------
 
     cout << endl << "Initial values RC_TOP:" << endl;
     std::cout.precision(8);
 
-    for(size_t j = 0; j < spaceParametrTP + spaceParametrACU; ++j)
+    for(size_t j = 0; j < spaceParametrTP + spaceParametrACU - 2; ++j)
     {
-        cout << TV[0][j] << std::fixed << " | ";
+        cout << TV.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrTP; ++j)
     {
-        cout << TF[0][j] << " | ";
+        cout << TF.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrTP; ++j)
     {
-        cout << CV[0][j] << " | ";
+        cout << CV.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrTP; ++j)
     {
-        cout << CF[0][j] << " | ";
+        cout << CF.at(0).at(j) << " | ";
     }   cout << endl;
 
 
-    cout << endl << "Initial values TB:" << endl;
-    for(size_t j = 0; j < spaceParametrACU; ++j)
-    {
-        cout << TB[0][j] << " | ";
-    }   cout << endl;
-
+    beginPoint = spaceParametrTP - 1;
+    endPoint = spaceParametrTP + spaceParametrACU - 2;
     // Calculate model
     for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)// time
     {
         for(size_t j = 1; j < (spaceParametrTP-1); ++j)      // place
         {
             // -----Calculate layer heat exchenger model------
-            RC_TOP_PTV_N = (RC_TOP_a0 * TV[i-1][j] * dt) / dh;
+            RC_TOP_PTV_N = (RC_TOP_a0 * TV.at(i-1).at(j) * dt) / 1.17; //dh;
 
-            TV[i][j] = (dt * RC_TOP_RvT * TF[i-1][(spaceParametrTP-1)-j])
-                    - (RC_TOP_PTV_N * TV[i-1][j+1])
-                    - TV[i-1][j] * (dt*RC_TOP_RvT + RC_TOP_PTV_L - RC_TOP_PTV_N)
-                    + (RC_TOP_PTV_L * TV[i-1][j-1])
-                    + TV[i-1][j];
+            TV.at(i).at(j) =
+                    (dt * RC_TOP_RvT * TF.at(i-1).at((spaceParametrTP-1)-j))
+                    - (RC_TOP_PTV_N * TV.at(i-1).at(j+1))
+                    - TV.at(i-1).at(j) * (dt*RC_TOP_RvT + RC_TOP_PTV_L - RC_TOP_PTV_N)
+                    + (RC_TOP_PTV_L * TV.at(i-1).at(j-1))
+                    + TV.at(i-1).at(j);
 
-            TF[i][j] = (dt * RC_TOP_RfT * TV[i-1][(spaceParametrTP-1)-j])
-                    + (RC_TOP_PTF * TF[i-1][j-1])
-                    - TF[i-1][j] * (dt*RC_TOP_RfT + RC_TOP_PTF)
-                    + TF[i-1][j];
+            cout << TV[i][j] << "; ";
 
-
-            CF[i][j] = - (dt * RC_TOP_RfM * CV[i-1][(spaceParametrTP-1)-j])
-                    + (RC_TOP_PTF * CF[i-1][j-1])
-                    - CF[i-1][j] * (-(dt*RC_TOP_RfM*RC_TOP_E) + RC_TOP_PTF)
-                    + CF[i-1][j];
+            TF.at(i).at(j) =
+                    (dt * RC_TOP_RfT * TV.at(i-1).at((spaceParametrTP-1)-j))
+                    + (RC_TOP_PTF * TF.at(i-1).at(j-1))
+                    - TF.at(i-1).at(j) * (dt*RC_TOP_RfT + RC_TOP_PTF)
+                    + TF.at(i-1).at(j);
 
 
-            CV[i][j] = -CV[i-1][j] * (RC_TOP_PTV_L - 1 - RC_TOP_PTV_N + dt*RC_TOP_RvM)
-                    + (RC_TOP_PTV_L * CV[i-1][j-1])
-                    - (RC_TOP_PTV_N * CV[i-1][j-1])
-                    - (dt * RC_TOP_RvM * RC_TOP_E * CF[i-1][(spaceParametrTP-1)-j]);
+            CF.at(i).at(j) =
+                    - (dt * RC_TOP_RfM * CV.at(i-1).at((spaceParametrTP-1)-j))
+                    + (RC_TOP_PTF * CF.at(i-1).at(j-1))
+                    - CF.at(i-1).at(j) * (-(dt*RC_TOP_RfM*RC_TOP_E) + RC_TOP_PTF)
+                    + CF.at(i-1).at(j);
 
-            if (j == spaceParametrTP-2)
-                TV[i-1][beginPoint+1] = TV[i][j];   // Connection between RC_TOP(TV) -> ACU(TV)
+
+            CV.at(i).at(j) =
+                    - CV.at(i-1).at(j) * (RC_TOP_PTV_L - 1 - RC_TOP_PTV_N + dt*RC_TOP_RvM)
+                    + (RC_TOP_PTV_L * CV.at(i-1).at(j-1))
+                    - (RC_TOP_PTV_N * CV.at(i-1).at(j-1))
+                    - (dt * RC_TOP_RvM * RC_TOP_E * CF.at(i-1).at((spaceParametrTP-1)-j));
         }
 
-
-        for(size_t j = beginPoint + 1; j < endPoint - 1; ++j)
+        for(size_t j = beginPoint; j < endPoint - 1; ++j)
         {
             // -----Calculate layer heat exchenger model------
-            TV[i][j] = (dt * ACU_RvT * TB[i-1][(endPoint - 1)-j])
-                    - TV[i-1][j] * ((dt*ACU_RvT) + (dt*ACU_PTV_L))
-                    + (dt * ACU_PTV_L * TV[i-1][j+1])
-                    + TV[i-1][j];
+            TV.at(i).at(j) =
+                    (dt*ACU_RvT * TB.at(i-1).at((endPoint - 1) - j))
+                    - TV.at(i-1).at(j) * ((dt*ACU_RvT) + (dt*ACU_PTV_L))
+                    + (dt * ACU_PTV_L * TV.at(i-1).at(j-1))
+                    + TV.at(i-1).at(j);
 
-            TB[i][j-beginPoint] = (dt * ACU_RB2 * TV[i-1][beginPoint + endPoint - j])
-                    + (ACU_CP*dt*ACU_RB1*ACU_TE)                            // ? TE - const or function?
-                    - TB[i-1][j-beginPoint] * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
-                    + TB[i-1][j-beginPoint];
+            cout << TV[i][j] << "; ";
+
+            TB.at(i).at(j-beginPoint + 1) =
+                    (dt * ACU_RB2 * TV.at(i-1).at(endPoint + 2 - j))
+                    + (ACU_CP*dt*ACU_RB1*ACU_TE)
+                    - TB.at(i-1).at(j-beginPoint) * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
+                    + TB.at(i-1).at(j-beginPoint);
         }
+        cout << endl;
 
-        TF[i][0] = TV[i][endPoint-2];   // Connection between ACU(TV) -> RC_TOP(TF)
+        TF.at(i).at(0) = TV.at(i).at(endPoint-2);   // Connection between ACU(TV) -> RC_TOP(TF)
     }
 
     cout << endl << "Steady-state values:" << endl;
     for(uint j = 0; j < (endPoint); ++j)
     {
-        cout << TV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 0; j < (spaceParametrTP); ++j)
     {
-        cout << TF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrTP-1); ++j)
     {
-        cout << CV[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << CV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint j = 1; j < (spaceParametrTP-1); ++j)
     {
-        cout << CF[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << CF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
 
     cout << endl << "Steady-state values TB:" << endl;
     for(uint j = 1; j < (spaceParametrACU-1); ++j)
     {
-        cout << TB[ static_cast <size_t>((selectN-2) / dt) ][j] << " | ";
+        cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     return true;
 }
 
-void initialLayerTV(vector <vector <double> > &TV, uint8_t it)
+void initialLayerTV(vector <vector <double> > &TV, unsigned int it)
 {
-    size_t i = 0, j = 0, k = 0;
+    size_t i = 0, j = 0, k = 1;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TV[i][beginPoint] = initLayerTV_0[it];
-        TV[i][endPoint-1] = initLayerTV_1[it];
+        TV.at(i).at(beginPoint) = initLayerTV_0.at(0);
+        TV.at(i).at(it-1) = initLayerTV_1.at(0);
     }
 
-    (it == 0)? k = 1: k = 3;
-
     // Initial values
-    for(j = beginPoint + 1; j <= (endPoint-2); ++j)
+    for(j = beginPoint + 1; j <= (it-2); ++j)
     {
-        TV[0][j] = initLayerTV[j - k];
+        TV.at(0).at(j) = initLayerTV.at(j-k);
     }
 }
 
-void initialLayerTF(vector <vector <double> > &TF, uint8_t it)
+void initialLayerTF(vector <vector <double> > &TF, unsigned int it)
 {
     size_t i = 0, j = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TF[i][beginPoint] = initLayerTF_0[it];
-        TF[i][endPoint-1] = initLayerTF_1[it];
+        TF.at(i).at(beginPoint) = initLayerTF_0.at(0);
+        TF.at(i).at(it-1) = initLayerTF_1.at(0);
     }
 
     // Initial values
-    for(j = beginPoint + 1; j <= (endPoint-2); ++j)
+    for(j = beginPoint + 1; j <= (it-2); ++j)
     {
-        TF[0][j] = initLayerTF[j-1];
+        TF.at(0).at(j) = initLayerTF.at(j-1);
     }
 }
 
-void initialLayerCV(vector <vector <double> > &CV, uint8_t it)
+void initialLayerCV(vector <vector <double> > &CV, unsigned int it)
 {
     size_t i = 0, j = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        CV[i][beginPoint] = initLayerCV_0[it];
-        CV[i][endPoint-1] = initLayerCV_1[it];
+        CV.at(i).at(beginPoint) = initLayerCV_0.at(0);
+        CV.at(i).at(it-1) = initLayerCV_1.at(0);
     }
 
     // Initial values
-    for(j = beginPoint + 1; j <= (endPoint-2); ++j)
+    for(j = beginPoint + 1; j <= (it-2); ++j)
     {
-        CV[0][j] = initLayerCV[j-1];
+        CV.at(0).at(j) = initLayerCV.at(j-1);
     }
 }
 
-void initialLayerCF(vector <vector <double> > &CF, uint8_t it)
+void initialLayerCF(vector <vector <double> > &CF, unsigned int it)
 {
     size_t i = 0, j = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        CF[i][beginPoint] = initLayerCF_0[it];
-        CF[i][endPoint-1] = initLayerCF_1[it];
+        CF.at(i).at(beginPoint) = initLayerCF_0.at(0);
+        CF.at(i).at(it-1) = initLayerCF_1.at(0);
     }
 
     // Initial values
-    for(j = beginPoint + 1; j <= (endPoint-2); ++j)
+    for(j = beginPoint + 1; j <= (it-2); ++j)
     {
-        CF[0][j] = initLayerCF[j-1];
+        CF.at(0).at(j) = initLayerCF.at(j-1);
     }
 }
 
-void initialLayerTB(vector <vector <double> > &TB)
+void initialLayerTB(vector <vector <double> > &TB, unsigned int it)
 {
     size_t i = 0, j = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TB[i][0] = initLayerTB_0;
-        TB[i][spaceParametrACU-1] = initLayerTB_1;
+        TB.at(i).at(0) = initLayerTB_0;
+        TB.at(i).at(it-1) = initLayerTB_1;
     }
 
     // Initial values
-    for(j = 1; j <= (spaceParametrACU-2); ++j)
+    for(j = 1; j <= (it-2); ++j)
     {
-        TB[0][j] = initLayerTB[j-1];
+        TB.at(0).at(j) = initLayerTB.at(j-1);
     }
 }
 
@@ -3481,28 +3496,40 @@ void initialLayerTFG(vector <vector <double> > &TFG)
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TFG[i][0] = initLayerTFG_0;
-        TFG[i][spaceParametrEVAP-1] = initLayerTFG_1;
+        TFG.at(i).at(0) = initLayerTFG_0;
+        TFG.at(i).at(spaceParametrEVAP-1) = initLayerTFG_1;
     }
 
     // Initial values
     for(j = 1; j <= (spaceParametrEVAP-2); ++j)
     {
-        TFG[0][j] = initLayerTFG[j-1];
+        TFG.at(0).at(j) = initLayerTFG.at(j-1);
     }
 }
 
 void toFileMM(vector <vector <double> > MMM, string nameModel)
 {
+    uint sizeModel = 0;
+
+    // In future - RegExp
+    if(nameModel == "TP_ACU_TV")
+    {
+        sizeModel = spaceParametrTP + spaceParametrACU - 2;
+    }
+    else
+    {
+        sizeModel = spaceParametrTP - 1;
+    }
+
     nameModel = "MM_" + nameModel + ".dat";
 
     ofstream foutMM(nameModel, ios_base::out | ios_base::trunc);
 
     for(size_t i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        for(uint j = 1; j < (spaceParametrTP-1); j++)
+        for(uint j = 1; j < (sizeModel); j++)
         {
-            foutMM << MMM[i][j] << " ";
+            foutMM << MMM.at(i).at(j) << " ";
         }
         foutMM << endl;
     }

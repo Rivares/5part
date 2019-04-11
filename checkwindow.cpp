@@ -146,9 +146,9 @@ void toCheck(uint count, double passError, std::vector<double> listMeasurementSt
     {
         listErrorState.push_back(listTrueState[i] * passError);
 
-        if(listErrorState[i] < abs(listTrueState[i] - listMeasurementState[i]))
+        if(listErrorState.at(i) < abs(listTrueState.at(i) - listMeasurementState.at(i)))
         {
-            QString message(QString("Attention! Error has very big value - list(%1)_[%2] = %3\n").arg(id).arg(i).arg(listErrorState[i]));
+            QString message(QString("Attention! Error has very big value - list(%1)_[%2] = %3\n").arg(id).arg(i).arg(listErrorState.at(i)));
             cout << message.toStdString() << endl;
             Logger::log(message, LOG_LEVEL_INFO);
         }
