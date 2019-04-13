@@ -57,10 +57,10 @@
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>720</x>
-        <y>10</y>
-        <width>264</width>
-        <height>496</height>
+        <x>710</x>
+        <y>0</y>
+        <width>271</width>
+        <height>532</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -155,7 +155,7 @@
              <item>
               <widget class="QLabel" name="label_2">
                <property name="text">
-                <string>Временная обл. в секундах: t = [</string>
+                <string>Временная обл. в сек.: t = [</string>
                </property>
               </widget>
              </item>
@@ -1700,7 +1700,7 @@
      <x>0</x>
      <y>0</y>
      <width>1013</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

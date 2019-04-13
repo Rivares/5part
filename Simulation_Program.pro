@@ -30,15 +30,16 @@ SOURCES += \
     qcustomplot.cpp \
     checkwindow.cpp \
     logger.cpp \
-    models.cpp
+    choicetrendswindow.cpp
 
 HEADERS += \
         mainwindow.h \
     qcustomplot.h \
     checkwindow.h \
     logger.h \
-    models.h
+    choicetrendswindow.h
 
 FORMS += \
         mainwindow.ui \
-    checkwindow.ui
+    checkwindow.ui \
+    choicetrendswindow.ui

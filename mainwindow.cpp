@@ -1,8 +1,8 @@
 #include "ui_mainwindow.h"
 #include "qcustomplot.h"
+#include "choicetrendswindow.h"
 #include "checkwindow.h"
 #include "mainwindow.h"
-#include "models.h"
 
 #include <QMessageBox>
 #include <Qt3DExtras>
@@ -542,6 +542,20 @@ void MainWindow::drawGraph()
         }
         else
         {
+            // If you have something to check
+            if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) || ( !(TFG.empty()) ) )
+            {
+                choiceTrendsWindow *choiceTrendWindow = new choiceTrendsWindow;
+
+                choiceTrendWindow->show();
+                choiceTrendWindow->setParent(this);
+                cout << choiceTrendWindow->getTrend() << endl;
+            }
+            else
+            {
+                cout << "Nothing else matter..." << endl;
+            }
+
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
             drawModel(8);
