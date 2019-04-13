@@ -558,8 +558,9 @@ void MainWindow::drawGraph()
 
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-            drawModel(8);
+            //drawModel(8);
             //drawModel(9); // Not work
+            drawModel(10); // Not work
 
             // Out to display steady-state value temperature
             for(uint j = 1; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
@@ -637,9 +638,9 @@ void MainWindow::drawModel(int choiceModel)
         case 5:  selectZ = spaceParametrTP-2;                         break;  // M_TP
         case 6:  selectZ = spaceParametrACU-2;                        break;  // ACU
         case 7:  selectZ = spaceParametrEVAP-2;                       break;  // EVAP
-        case 8:  selectZ = spaceParametrTP-2;                         break;  // H_TP_ACU_
-        case 9:  selectZ = spaceParametrACU-2;                        break;  // H_TP_ACU
-        case 10: selectZ = spaceParametrTP-2;                         break;  // M_TP_ACU
+        case 8:  selectZ = spaceParametrTP-2;                         break;  // H_TP_ACU_TV_TF
+        case 9:  selectZ = spaceParametrACU-2;                        break;  // H_TP_ACU_TB
+        case 10: selectZ = spaceParametrTP-2;                         break;  // M_TP_ACU_CV_CF
         case 11: selectZ =  spaceParametrBP + spaceParametrEVAP-4;    break;
         case 12: selectZ =  spaceParametrEVAP-2;                      break;  // H_BP_EVAP
         case 13: selectZ =  spaceParametrEVAP-4;                      break;  // M_BP_EVAP
@@ -762,7 +763,7 @@ void MainWindow::drawModel(int choiceModel)
         case 6:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // ACU: TV; TB
         case 7:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; drawingProcces_2 = M_mat2; countModels = 3; break;  // EVAP: TF; TB; TFG
         case 8:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_TP_ACU: TV; TF;
-        case 9:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_TP_ACU: TB
+        case 9:  drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_ACU: TB
         case 10: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_TP_ACU: CV; CF
         case 11: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_BP_EVAP: TV; TF;
         case 12: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_BP_EVAP: TB; TFG
