@@ -27,23 +27,23 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    qcustomplot.cpp \
-    checkwindow.cpp \
-    logger.cpp \
-    choicetrendswindow.cpp \
-    initlayer.cpp \
-    models.cpp
+        qcustomplot.cpp \
+        checkwindow.cpp \
+        logger.cpp \
+        choicetrend.cpp \
+        initlayer.cpp \
+        models.cpp
 
 HEADERS += \
         mainwindow.h \
-    qcustomplot.h \
-    checkwindow.h \
-    logger.h \
-    choicetrendswindow.h \
-    initlayer.h \
-    models.h
+        qcustomplot.h \
+        checkwindow.h \
+        logger.h \
+        choicetrend.h \
+        initlayer.h \
+        models.h
 
 FORMS += \
         mainwindow.ui \
     checkwindow.ui \
-    choicetrendswindow.ui
+    choicetrend.ui
