@@ -1,6 +1,6 @@
 #include "ui_mainwindow.h"
 #include "qcustomplot.h"
-#include "choicetrendswindow.h"
+#include "choicetrend.h"
 #include "checkwindow.h"
 #include "initlayer.h"
 #include "models.h"
@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <functional>   //ref()
 
+
 using std::vector;
 using std::cout;
 using std::endl;
@@ -42,7 +43,7 @@ vector <double> initLayerTB;
 vector <double> initLayerTFG;
 
 //---------------Borders--------------//
-vector <double> initLayerTV_0, initLayerTV_1;
+vector <double>  initLayerTV_0, initLayerTV_1;
 vector <double>  initLayerTF_0, initLayerTF_1;
 vector <double>  initLayerCV_0, initLayerCV_1;
 vector <double>  initLayerCF_0, initLayerCF_1;
@@ -94,6 +95,8 @@ void MainWindow::getData()
     rightY = uiMain->inputRightY->text().toDouble();
     selectN = uiMain->inputRightX->text().toULongLong(&okey, 10);
 
+
+    //-------------------LINER MODEL & NON-LINER MODEL------------------------
     if(uiMain->LVM_BP->isChecked() || uiMain->NLVM_BP->isChecked())
     {
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
@@ -119,7 +122,10 @@ void MainWindow::getData()
         dh = static_cast <double> (dRC / (spaceParametrBP-2));
         qDebug() << "dh = " <<  dh;
     }
+    //------------------------------------------------------------------------
 
+
+    //----------------INTERCONNECTED MODEL(BOTTOM PART)-----------------------
     if( uiMain->EVM_BP->isChecked() || uiMain->EFM_BP->isChecked() )
     {
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
@@ -156,7 +162,10 @@ void MainWindow::getData()
 
         dh = static_cast <double> (dRC / (spaceParametrBP-2));
     }
+    //------------------------------------------------------------------------
 
+
+    //-----------------INTERCONNECTED MODEL(TOP PART)-------------------------
     if( uiMain->EVM_TP->isChecked() || uiMain->EFM_TP->isChecked() )
     {
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
@@ -193,7 +202,10 @@ void MainWindow::getData()
 
         dh = static_cast <double> (dRC/spaceParametrTP);
     }
+    //------------------------------------------------------------------------
 
+
+    //------------------AIR-COOLING UNIT MODEL(ACU)---------------------------
     if(uiMain->ACU->isChecked())
     {
         spaceParametrACU = static_cast <uint>(uiMain->tableBordersAndInitialConditions_ACU_1->columnCount());
@@ -218,7 +230,10 @@ void MainWindow::getData()
 
         dh = static_cast <double> (dRC / (spaceParametrACU-2));
     }
+    //------------------------------------------------------------------------
 
+
+    //---------------------EVAPORATOR MODEL(EVAP)-----------------------------
     if(uiMain->EVAP->isChecked())
     {
         spaceParametrEVAP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount());
@@ -248,7 +263,10 @@ void MainWindow::getData()
 
         dh = static_cast <double> (dRC / (spaceParametrEVAP-2));
     }
+    //------------------------------------------------------------------------
 
+
+    //-----INTERCONNECTED MODEL(TOP PART) + AIR-COOLING UNIT MODEL(ACU)-------
     if( (uiMain->TP_ACU->isChecked()) )
     {
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
@@ -303,6 +321,58 @@ void MainWindow::getData()
 
         dh = static_cast <double> (dRC / (spaceParametrTP + spaceParametrACU - 4));  // dRC = dRC_TP + dRC_ACU; spaceParametr = spaceParametrTP + spaceParametrACU
     }
+    //------------------------------------------------------------------------
+
+
+    //---INTERCONNECTED MODEL(TOP PART) + INTERCONNECTED MODEL(BOTTOM PART)---
+    if( (uiMain->TP_BP->isChecked()) )
+    {
+        spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
+        spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
+
+        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
+        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
+        initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
+        initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
+
+        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
+
+        initLayerCV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+
+        initLayerCF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+
+
+        initLayerTV.assign((spaceParametrTP + spaceParametrBP - 4), 0.0);
+        initLayerTF.assign((spaceParametrTP + spaceParametrBP - 4), 0.0);
+        initLayerCV.assign((spaceParametrTP + spaceParametrBP - 4), 0.0);
+        initLayerCF.assign((spaceParametrTP + spaceParametrBP - 4), 0.0);
+
+
+        for(uint j = 1; j <= (spaceParametrBP-2); ++j)
+        {
+            initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, static_cast <int>(j))->text()).toDouble();
+        }
+
+
+        for(uint j = (spaceParametrBP-2); j < (spaceParametrTP + spaceParametrBP - 4); ++j)
+        {
+            initLayerTV.at(j) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, static_cast <int>(j-spaceParametrBP+3))->text()).toDouble();
+            initLayerTF.at(j) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, static_cast <int>(j-spaceParametrBP+3))->text()).toDouble();
+            initLayerCV.at(j) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, static_cast <int>(j-spaceParametrBP+3))->text()).toDouble();
+            initLayerCF.at(j) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, static_cast <int>(j-spaceParametrBP+3))->text()).toDouble();
+        }
+
+        dh = static_cast <double> (dRC / (spaceParametrTP + spaceParametrBP - 4));  // dRC = dRC_TP + dRC_TP; spaceParametr = spaceParametrTP + spaceParametrBP
+    }
 
     dt = (uiMain->selectStepT->text().toDouble() <= 0.0)? 0.01 : abs(uiMain->selectStepT->text().toDouble());
 }
@@ -333,12 +403,18 @@ void MainWindow::drawGraph()
     if(uiMain->EFM_BP->isChecked() || uiMain->EFM_TP->isChecked())
         uiMain->customPlot->yAxis->setLabel("Концентрация, %");
 
-    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+    if( (!uiMain->TP_ACU->isChecked())
+         && (!uiMain->TP_BP->isChecked())
+         && (!uiMain->BP_EVAP->isChecked())
+         && (!uiMain->FULL_RC->isChecked()) )
+    {
+        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
 
-    // make left and bottom axes always transfer their ranges to right and top axes:
-    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+        // make left and bottom axes always transfer their ranges to right and top axes:
+        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+    }
 
     /*----------------------------------------------------------------------*/
 
@@ -346,6 +422,8 @@ void MainWindow::drawGraph()
     QList <QString> listStatesFirst, listStatesSecond, listStatesThird;
 
     uiMain->statusBar->showMessage(QString("(!) Calculating the mathematical model... (!)"));
+
+    //--------------------------LINER MODEL-----------------------------------
 
     if (uiMain->LVM_BP->isChecked())
     {
@@ -368,7 +446,10 @@ void MainWindow::drawGraph()
             }
         }
     }
+    //------------------------------------------------------------------------
 
+
+    //------------------------NON-LINER MODEL---------------------------------
     if (uiMain->NLVM_BP->isChecked())
     {
         if(!TMTPN_MM(TV, TF))
@@ -390,7 +471,10 @@ void MainWindow::drawGraph()
             }
         }
     }
+    //------------------------------------------------------------------------
 
+
+    //----------------INTERCONNECTED MODEL(BOTTOM PART)-----------------------
     if((uiMain->EVM_BP->isChecked()) || (uiMain->EFM_BP->isChecked()))
     {
         if(!ETMBP_MM(TV, TF, CV, CF))
@@ -426,7 +510,10 @@ void MainWindow::drawGraph()
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
         }
     }
+    //------------------------------------------------------------------------
 
+
+    //-----------------INTERCONNECTED MODEL(TOP PART)-------------------------
     if((uiMain->EVM_TP->isChecked()) || (uiMain->EFM_TP->isChecked()))
     {
         if(!ETMTP_MM(TV, TF, CV, CF))
@@ -464,7 +551,10 @@ void MainWindow::drawGraph()
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
         }
     }
+    //------------------------------------------------------------------------
 
+
+    //------------------AIR-COOLING UNIT MODEL(ACU)---------------------------
     if((uiMain->ACU->isChecked()))
     {
         if(!ACU_MM(TV, TB))
@@ -487,7 +577,10 @@ void MainWindow::drawGraph()
             }
         }
     }
+    //------------------------------------------------------------------------
 
+
+    //---------------------EVAPORATOR MODEL(EVAP)-----------------------------
     if((uiMain->EVAP->isChecked()))
     {
         if(!EVAP_MM(TF, TB, TFG))
@@ -511,9 +604,294 @@ void MainWindow::drawGraph()
             }
         }
     }
+    //------------------------------------------------------------------------
 
+
+    //-----INTERCONNECTED MODEL(TOP PART) + AIR-COOLING UNIT MODEL(ACU)-------
     if((uiMain->TP_ACU->isChecked()))
     {
+        QString choicedTrend;
+
+        if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            // If you have something to check
+            if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) )
+            {
+                QList<QString> listTrends;
+                listTrends.append("TV; TF");
+                listTrends.append("TB;");
+                listTrends.append("CV; CF");
+
+                choiceTrend choiceTrendWindow(listTrends, this);
+
+                if (choiceTrendWindow.exec() == QDialog::Accepted)
+                {
+                    choicedTrend = choiceTrendWindow.getTrend();
+
+                    cout << "Your choice! (" << choicedTrend.toStdString()
+                         << ")" << endl;
+                }
+            }
+            else
+            {
+                cout << "Nothing else matter..." << endl;
+            }
+
+            uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+
+            uiMain->inputLeftY->clear();
+            uiMain->inputRightY->clear();
+            uiMain->inputRightX->clear();
+
+            if(choicedTrend == "TV; TF")
+            {
+                // [......somewhere here bug..................
+                uiMain->inputLeftY->insert("35");
+                uiMain->inputRightY->insert("128");
+                uiMain->inputRightX->insert("5");
+
+                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                // make left and bottom axes always transfer their ranges to right and top axes:
+                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                //............................................]
+
+                drawModel(8);
+
+                // Out to display steady-state value temperature
+                for(uint j = 0; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
+                {
+                    listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                }
+
+                for(uint j = 0; j < spaceParametrTP; ++j)
+                {
+                    listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                }
+            }
+            else
+            {
+                if(choicedTrend == "TB;")
+                {
+                    // [-----somewhere here bug..................
+                    uiMain->inputLeftY->insert("24");
+                    uiMain->inputRightY->insert("31");
+                    uiMain->inputRightX->insert("5");
+
+                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                    // make left and bottom axes always transfer their ranges to right and top axes:
+                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                    //............................................]
+
+                    drawModel(9);
+
+                    // Out to display steady-state value temperature
+                    for(uint j = 0; j < spaceParametrACU; ++j)
+                    {
+                        listStatesFirst.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                    }
+                }
+                else
+                {
+                    if(choicedTrend == "CV; CF")
+                    {
+                        // [-----somewhere here bug..................
+                        uiMain->inputLeftY->insert("0");
+                        uiMain->inputRightY->insert("1");
+                        uiMain->inputRightX->insert("50");
+
+                        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                        // make left and bottom axes always transfer their ranges to right and top axes:
+                        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                        //............................................]
+
+                        drawModel(10);
+
+                        // Out to display steady-state value concentration
+                        for(uint j = 0; j < spaceParametrTP; ++j)
+                        {
+                            listStatesFirst.append(QString::number(CV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                        }
+
+                        for(uint j = 0; j < spaceParametrTP; ++j)
+                        {
+                            listStatesSecond.append(QString::number(CF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //------------------------------------------------------------------------
+
+    //---INTERCONNECTED MODEL(TOP PART) + INTERCONNECTED MODEL(BOTTOM PART)---
+    if((uiMain->TP_BP->isChecked()))
+    {
+        QString choicedTrend;
+
+        if(!ETMTP_ETMBP_MM(TV, TF, CV, CF))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            // If you have something to check
+            if ( ( !(TV.empty()) ) || ( !(CV.empty()) )   )
+            {
+                QList<QString> listTrends;
+                listTrends.append("TV;");
+                listTrends.append("TF;");
+                listTrends.append("CV;");
+                listTrends.append("CF;");
+
+                choiceTrend choiceTrendWindow(listTrends, this);
+
+                if (choiceTrendWindow.exec() == QDialog::Accepted)
+                {
+                    choicedTrend = choiceTrendWindow.getTrend();
+
+                    cout << "Your choice! (" << choicedTrend.toStdString()
+                         << ")" << endl;
+                }
+            }
+            else
+            {
+                cout << "Nothing else matter..." << endl;
+            }
+
+            uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+
+            uiMain->inputLeftY->clear();
+            uiMain->inputRightY->clear();
+            uiMain->inputRightX->clear();
+
+            if(choicedTrend == "TV;")
+            {
+                // [-----somewhere here bug..................
+                uiMain->inputLeftY->insert("35");
+                uiMain->inputRightY->insert("160");
+                uiMain->inputRightX->insert("5");
+
+                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                // make left and bottom axes always transfer their ranges to right and top axes:
+                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                //............................................]
+
+                drawModel(14);
+
+                // Out to display steady-state value temperature
+                for(uint j = 0; j < spaceParametrTP; ++j)
+                {
+                    listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                }
+            }
+            else
+            {
+                if(choicedTrend == "TF;")
+                {
+                    // [-----somewhere here bug..................
+                    uiMain->inputLeftY->insert("50");
+                    uiMain->inputRightY->insert("130");
+                    uiMain->inputRightX->insert("5");
+
+                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                    // make left and bottom axes always transfer their ranges to right and top axes:
+                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                    //............................................]
+
+                    drawModel(15);
+
+                    // Out to display steady-state value temperature
+                    for(uint j = 0; j < spaceParametrTP; ++j)
+                    {
+                        listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                    }
+                }
+                else
+                {
+                    if(choicedTrend == "CV;")
+                    {
+                        // [-----somewhere here bug..................
+                        uiMain->inputLeftY->insert("10");
+                        uiMain->inputRightY->insert("65");
+                        uiMain->inputRightX->insert("50");
+
+                        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                        // make left and bottom axes always transfer their ranges to right and top axes:
+                        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                        //............................................]
+
+                        drawModel(16);
+
+                        // Out to display steady-state value concentration
+                        for(uint j = 0; j < spaceParametrTP; ++j)
+                        {
+                            listStatesFirst.append(QString::number(CV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                        }
+                    }
+                    else
+                    {
+                        if(choicedTrend == "CF;")
+                        {
+                            // [-----somewhere here bug..................
+                            uiMain->inputLeftY->insert("0");
+                            uiMain->inputRightY->insert("6");
+                            uiMain->inputRightX->insert("50");
+
+                            uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                            uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                            // make left and bottom axes always transfer their ranges to right and top axes:
+                            connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                            connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                            //............................................]
+
+                            drawModel(17);
+
+                            // Out to display steady-state value concentration
+                            for(uint j = 0; j < spaceParametrTP; ++j)
+                            {
+                                listStatesSecond.append(QString::number(CF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    //------------------------------------------------------------------------
+
+    //-------INTERCONNECTED MODEL(BOTTOM PART) + EVAPORATOR MODEL(EVAP)-------
+    if((uiMain->BP_EVAP->isChecked()))
+    {
+        /*
         if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
         {
             QMessageBox msgBox;
@@ -525,11 +903,22 @@ void MainWindow::drawGraph()
             // If you have something to check
             if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) || ( !(TFG.empty()) ) )
             {
-                choiceTrendsWindow *choiceTrendWindow = new choiceTrendsWindow;
+                QList<QString> listTrends;
+                listTrends.append("TV; TF");
+                listTrends.append("TB;");
+                listTrends.append("CV; CF");
 
-                choiceTrendWindow->show();
-                choiceTrendWindow->setParent(this);
-                cout << choiceTrendWindow->getTrend() << endl;
+                choiceTrend choiceTrendWindow(listTrends, this);
+
+                if (choiceTrendWindow.exec() == QDialog::Accepted)
+                {
+                    QList<QString> choicedTrend = choiceTrendWindow.getTrend();
+
+                    cout << "Your choice! ( " << choicedTrend.at(0).toStdString()
+                                         << " - "
+                                         << choicedTrend.at(1).toStdString()
+                                         << " )" << endl;
+                }
             }
             else
             {
@@ -540,7 +929,7 @@ void MainWindow::drawGraph()
 
             //drawModel(8);
             //drawModel(9); // Not work
-            drawModel(10); // Not work
+            //drawModel(10); // Not work
 
             // Out to display steady-state value temperature
             for(uint j = 1; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
@@ -558,7 +947,74 @@ void MainWindow::drawGraph()
                 listStatesThird.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
         }
+        */
     }
+    //------------------------------------------------------------------------
+
+    //--------------------------------FULL RC---------------------------------
+    if((uiMain->FULL_RC->isChecked()))
+        {
+            /*
+            if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Sampling error! Change dt!");
+                msgBox.exec();
+            }
+            else
+            {
+                // If you have something to check
+                if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) || ( !(TFG.empty()) ) )
+                {
+                    QList<QString> listTrends;
+                    listTrends.append("TV; TF");
+                    listTrends.append("TB;");
+                    listTrends.append("CV; CF");
+
+                    choiceTrend choiceTrendWindow(listTrends, this);
+
+                    if (choiceTrendWindow.exec() == QDialog::Accepted)
+                    {
+                        QList<QString> choicedTrend = choiceTrendWindow.getTrend();
+
+                        cout << "Your choice! ( " << choicedTrend.at(0).toStdString()
+                                             << " - "
+                                             << choicedTrend.at(1).toStdString()
+                                             << " )" << endl;
+                    }
+                }
+                else
+                {
+                    cout << "Nothing else matter..." << endl;
+                }
+
+                uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
+
+                //drawModel(8);
+                //drawModel(9); // Not work
+                //drawModel(10); // Not work
+
+                // Out to display steady-state value temperature
+                for(uint j = 1; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
+                {
+                    listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                }
+
+                for(uint j = 1; j < spaceParametrTP-1; ++j)
+                {
+                    listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                }
+
+                for(uint j = 1; j < spaceParametrACU-1; ++j)
+                {
+                    listStatesThird.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                }
+            }
+            */
+        }
+
+
+
 
     uiMain->statusBar->showMessage(QString("Ready!"));
 
@@ -594,7 +1050,7 @@ void MainWindow::on_clear_clicked()
 
 void MainWindow::on_draw_clicked()
 {
-    getData();
+    getData();        
     drawGraph();
 }
 
@@ -621,9 +1077,9 @@ void MainWindow::drawModel(int choiceModel)
         case 8:  selectZ = spaceParametrTP-2;                         break;  // H_TP_ACU_TV_TF
         case 9:  selectZ = spaceParametrACU-2;                        break;  // H_TP_ACU_TB
         case 10: selectZ = spaceParametrTP-2;                         break;  // M_TP_ACU_CV_CF
-        case 11: selectZ =  spaceParametrBP + spaceParametrEVAP-4;    break;
-        case 12: selectZ =  spaceParametrEVAP-2;                      break;  // H_BP_EVAP
-        case 13: selectZ =  spaceParametrEVAP-4;                      break;  // M_BP_EVAP
+        case 11: selectZ = spaceParametrBP + spaceParametrEVAP-4;     break;
+        case 12: selectZ = spaceParametrEVAP-2;                       break;  // H_BP_EVAP
+        case 13: selectZ = spaceParametrEVAP-4;                       break;  // M_BP_EVAP
         case 14:
         case 15:                                                              // H_TP_BP
         case 16:
@@ -660,7 +1116,7 @@ void MainWindow::drawModel(int choiceModel)
                 case 5:  tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_TP
                 case 6:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TB.at(j).at(i)); break;   // ACU
                 case 7:  tmpVectorM0.push_back(TF.at(j).at(i)); tmpVectorM1.push_back(TB.at(j).at(i)); tmpVectorM2.push_back(TFG.at(j).at(i)); break; // EVAP
-                case 8:  tmpVectorM0.push_back(TF.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_TP_ACU: TV; TF
+                case 8:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_TP_ACU: TV; TF
                 case 9:  tmpVectorM0.push_back(TB.at(j).at(i)); break;                                          // H_TP_ACU: TB
                 case 10: tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_TP_ACU
                 case 11: tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_BP_EVAP: TV; TF
@@ -688,7 +1144,7 @@ void MainWindow::drawModel(int choiceModel)
             case 5:                                                                         // M_TP
             case 6:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // ACU
             case 7:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); M_mat2.push_back(tmpVectorM2); break;  // EVAP
-            case 8:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;                                  // H_TP_ACU: TV; TF
+            case 8:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // H_TP_ACU: TV; TF
             case 9:  M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_ACU: TB
             case 10: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // M_TP_ACU
             case 11: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // H_BP_EVAP: TV; TF
@@ -943,6 +1399,19 @@ void MainWindow::on_save_clicked()
 
         threadToFileTVMM.join();
         threadToFileTBMM.join();
+    }
+
+    if(uiMain->TP_BP->isChecked())
+    {
+        std::thread threadToFileTVMM(toFileMM, std::ref(TV), "TV_TP_BP");
+        std::thread threadToFileTFMM(toFileMM, std::ref(TF), "TF_TP_BP");
+        std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_TP_BP");
+        std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_TP_BP");
+
+        threadToFileTVMM.join();
+        threadToFileTFMM.join();
+        threadToFileCVMM.join();
+        threadToFileCFMM.join();
     }
 
     QTime time = QTime::currentTime();
@@ -2350,7 +2819,7 @@ void MainWindow::on_TP_ACU_clicked()
     uiMain->inputRightX->clear();
 
     uiMain->inputLeftY->insert("0");
-    uiMain->inputRightY->insert("150");
+    uiMain->inputRightY->insert("1");
     uiMain->inputRightX->insert("200");
 
     leftY = uiMain->inputLeftY->text().toDouble();
@@ -2528,7 +2997,192 @@ void MainWindow::on_TP_ACU_clicked()
     uiMain->tableBordersAndInitialConditions_EVAP_4->setDisabled(true);
 }
 
+void MainWindow::on_TP_BP_clicked()
+{
+    uiMain->inputLeftY->clear();
+    uiMain->inputRightY->clear();
+    uiMain->inputRightX->clear();
 
+    uiMain->inputLeftY->insert("0");
+    uiMain->inputRightY->insert("1");
+    uiMain->inputRightX->insert("200");
+
+    leftY = uiMain->inputLeftY->text().toDouble();
+    rightY = uiMain->inputRightY->text().toDouble();
+
+    uiMain->selectDRC->setText(QString::number(4.910)); // (RC_TOP)3.51 + (RC_BOT)1.4
+    uiMain->spaceParametrTP->setValue(3);
+    uiMain->spaceParametrBP->setValue(3);
+
+    // RC_TOP:
+    //---------------Temperature part------------//
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 0, new QTableWidgetItem(tr("142.500")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, 0, new QTableWidgetItem(tr("142.500")));
+
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("45.300")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("45.300")));
+
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 1, new QTableWidgetItem(tr("118.200000")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 2, new QTableWidgetItem(tr("93.9000000")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 3, new QTableWidgetItem(tr("69.6000000")));
+
+
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 0, new QTableWidgetItem(tr("30.0000000")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(1, 0, new QTableWidgetItem(tr("30.0000000")));
+
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1), new QTableWidgetItem(tr("139.000000")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1), new QTableWidgetItem(tr("139.000000")));
+
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 1, new QTableWidgetItem(tr("57.2500000")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 2, new QTableWidgetItem(tr("84.5000000")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 3, new QTableWidgetItem(tr("111.750000")));
+
+    //---------------Concentration part------------//
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 0, new QTableWidgetItem(tr("0.5300000")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(1, 0, new QTableWidgetItem(tr("0.5300000")));
+
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1), new QTableWidgetItem(tr("1.138000")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1), new QTableWidgetItem(tr("1.138000")));
+
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 1, new QTableWidgetItem(tr("0.6820000")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 2, new QTableWidgetItem(tr("0.8340000")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 3, new QTableWidgetItem(tr("0.9860000")));
+
+
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 0, new QTableWidgetItem(tr("1.0000000")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(1, 0, new QTableWidgetItem(tr("1.0000000")));
+
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1), new QTableWidgetItem(tr("0.5530000")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1), new QTableWidgetItem(tr("0.5530000")));
+
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 1, new QTableWidgetItem(tr("0.8882500")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 2, new QTableWidgetItem(tr("0.7765000")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 3, new QTableWidgetItem(tr("0.6647500")));
+
+    uiMain->tableBordersAndInitialConditions_TP_1->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_TP_2->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_TP_3->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_TP_4->setDisabled(false);
+
+
+    // RC_BOT:
+    //---------------Temperature part------------//
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 0, new QTableWidgetItem(tr("160.000")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(1, 0, new QTableWidgetItem(tr("160.000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 1, new QTableWidgetItem(tr("156.999750")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 2, new QTableWidgetItem(tr("153.999500")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 3, new QTableWidgetItem(tr("150.999250")));
+
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 0, new QTableWidgetItem(tr("120.377000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(1, 0, new QTableWidgetItem(tr("120.377000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 1, new QTableWidgetItem(tr("123.382500")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 2, new QTableWidgetItem(tr("126.388000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 3, new QTableWidgetItem(tr("129.393500")));
+
+    //---------------Concentration part------------//
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 0, new QTableWidgetItem(tr("67.9440")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(1, 0, new QTableWidgetItem(tr("67.9440")));
+
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 1, new QTableWidgetItem(tr("68.9690")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 2, new QTableWidgetItem(tr("69.9940")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 3, new QTableWidgetItem(tr("71.0190")));
+
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 0, new QTableWidgetItem(tr("6.550")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(1, 0, new QTableWidgetItem(tr("6.550")));
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 1, new QTableWidgetItem(tr("5.60950")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 2, new QTableWidgetItem(tr("4.66900")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 3, new QTableWidgetItem(tr("3.72850")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_2->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_3->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_4->setDisabled(false);
+
+
+    // Clearing other tabs (ACU, EVAP)
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_2->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_3->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_4->setDisabled(true);
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setDisabled(true);
+}
 
 void MainWindow::on_selectDRC_textChanged(QString dRCNew)
 {
@@ -2565,8 +3219,25 @@ void MainWindow::on_selectDRC_textChanged(QString dRCNew)
         dh = dRC / ( static_cast <double> (spaceParametrTP + spaceParametrACU) );
     }
 
+    if(uiMain->TP_BP->isChecked())
+    {
+        spaceParametrTP = static_cast <uint> (uiMain->spaceParametrTP->value());
+        spaceParametrBP = static_cast <uint> (uiMain->spaceParametrBP->value());
+        dh = dRC / ( static_cast <double> (spaceParametrTP + spaceParametrBP) );
+    }
+
     uiMain->selectStepH->setText(QString::number(dh));
 }
+
+void MainWindow::on_actionAbout_rectification_column_triggered()
+{
+    QString pathToFile = "C:/Devel/5part-newInterface/TZ.pdf";
+    QFile file(pathToFile);
+
+    QUrl url = QUrl::fromLocalFile(QFileInfo(file).canonicalFilePath());
+    QDesktopServices::openUrl(url);
+}
+
 
 void MainWindow::on_action3D_model_triggered()
 {

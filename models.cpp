@@ -626,6 +626,7 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     return true;
 }
 
+//---------------------EVAPORATOR MODEL(EVAP)-----------------------------
 bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vector <vector <double> > &TFG)
 {
     // -----Model's gas parameters------
@@ -643,6 +644,8 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
         return false;
     }
 
+    //--------------------------------------------------------
+
     vector <double> bmp;
     bmp.assign(spaceParametrEVAP, 0.0);
 
@@ -659,6 +662,8 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
         TB.push_back(bmp);
         TFG.push_back(bmp);
     }
+
+    //--------------------------------------------------------
 
     beginPoint = 0;
 
@@ -687,6 +692,8 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
     {
         cout << TFG.at(0).at(j) << " | ";
     }   cout << endl;
+
+    //--------------------------------------------------------
 
     // Calculate model
     for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)
@@ -733,6 +740,7 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB, vecto
     return true;
 }
 
+//-----INTERCONNECTED MODEL(TOP PART) + AIR-COOLING UNIT MODEL(ACU)-------
 bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
              vector <vector <double> > &CV, vector <vector <double> > &CF,
              vector<vector<double> > &TB)
@@ -771,6 +779,14 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         return false;
     }
 
+    //--------------------------------------------------------
+    //------------------TV: [][][]->[][][]--------------------
+    //------------------TF: [][][]-------!--------------------
+    //----------------------^---<---<----!--------------------
+    //------------------CV: [][][]----------------------------
+    //------------------CF: [][][]----------------------------
+    //--------------------------------------------------------
+    //------------------TB: [][][]----------------------------
     //--------------------------------------------------------
 
     vector <double> countSpacePoints_1, countSpacePoints_2;
@@ -924,6 +940,209 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     {
         cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
+
+    return true;
+}
+
+//-----INTERCONNECTED MODEL(TOP PART) + AIR-COOLING UNIT MODEL(ACU)-------
+bool ETMTP_ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+                    vector <vector <double> > &CV, vector <vector <double> > &CF)
+{
+
+    // RC_TOP:
+    // -----Model's heat exchenger parameters------
+    double  TP_RvT = 2.500, TP_RfT = 0.000085500, TP_a0 = 0.0034868520 // (a0 = 0.0034868520) != (a0_Simulink = 0.002702752)
+          , TP_PTV_L = (TP_a0 * 273.15 * dt) / 1.17 // dh
+          , TP_PTV_N = 0.0
+          , TP_PTF = (0.0000400 * dt) / 1.17; // dh
+
+    // -----Model's mass exchenger parameters------
+    double TP_E = 1.0E-9, TP_RvM = 0.1450, TP_RfM = 6.0E-6;
+
+    if( (TP_PTV_L > 0.5) || (TP_PTF > 0.5) )
+    {
+        cout << "The scheme RC_TOP diverges!!!";
+        return false;
+    }
+
+    //--------------------------------------------------------
+
+    // RC_BOT:
+    // -----Model's heat exchenger parameters------
+    double  BP_RvT = 0.0191806, BP_RfT = 0.0000777, BP_a0 = 1.6966E-4,
+            BP_PTV_L = (BP_a0 * 273.15 * dt) / dh,
+            BP_PTV_N = 0.0,
+            BP_PTF = (0.0002291314 * dt) / dh;
+
+    // -----Model's mass exchenger parameters------
+    double BP_E = 1.0E-9, BP_RvM = 0.004302, BP_RfM = 1.222E-5;
+                       //RfM = 0.000010734, RvM = 0.0216487318;
+
+    if( (BP_PTV_L > 0.5) || (BP_PTF > 0.5) )
+    {
+        cout << "The scheme RC_BOT diverges!!!";
+        return false;
+    }
+
+    //--------------------------------------------------------
+    //------------------TV: [][][]->[][][]--------------------
+    //------------------TF: [][][]--[][][]--------------------
+    //------------------CV: [][][]--[][][]--------------------
+    //------------------CF: [][][]--[][][]--------------------
+    //--------------------------------------------------------
+
+    vector <double> countSpacePoints;
+    uint32_t sizeModel = spaceParametrTP + spaceParametrBP - 2;
+    countSpacePoints.assign(sizeModel, 0.0);
+
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
+    {
+        TV.erase(TV.begin(), TV.end());
+        TF.erase(TF.begin(), TF.end());
+        CV.erase(CV.begin(), CV.end());
+        CF.erase(CF.begin(), CF.end());
+    }
+
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
+    {
+        TV.push_back(countSpacePoints);
+        TF.push_back(countSpacePoints);
+        CV.push_back(countSpacePoints);
+        CF.push_back(countSpacePoints);
+    }
+
+    //--------------------------------------------------------
+
+    beginPoint = 0;
+
+    thread threadInitialLayerTV(initialLayerTV, std::ref(TV), sizeModel);
+    thread threadInitialLayerTF(initialLayerTF, std::ref(TF), sizeModel);
+    thread threadInitialLayerCV(initialLayerCV, std::ref(CV), sizeModel);
+    thread threadInitialLayerCF(initialLayerCF, std::ref(CF), sizeModel);
+
+    threadInitialLayerTV.join();
+    threadInitialLayerTF.join();
+    threadInitialLayerCV.join();
+    threadInitialLayerCF.join();
+
+
+    cout << endl << "Initial values RC_TOP:" << endl;
+    std::cout.precision(8);
+
+    for(size_t j = 0; j < sizeModel; ++j)
+    {
+        cout << TV.at(0).at(j) << std::fixed << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < sizeModel; ++j)
+    {
+        cout << TF.at(0).at(j) << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < sizeModel; ++j)
+    {
+        cout << CV.at(0).at(j) << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < sizeModel; ++j)
+    {
+        cout << CF.at(0).at(j) << " | ";
+    }   cout << endl;
+
+
+    beginPoint = spaceParametrBP - 1;
+    endPoint = sizeModel;
+    // Calculate model
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)// time
+    {
+        for(size_t j = 1; j < (spaceParametrBP-1); ++j)      // place
+        {
+            // -----Calculate layer heat exchenger model TOP PART------
+            BP_PTV_N = (BP_a0 * TV.at(i-1).at(j) * dt) / 1.17; //dh;
+
+            TV.at(i).at(j) =
+                    (dt * BP_RvT * TF.at(i-1).at((spaceParametrBP-1)-j))
+                    - (BP_PTV_N * TV.at(i-1).at(j+1))
+                    - TV.at(i-1).at(j) * (dt*BP_RvT + BP_PTV_L - BP_PTV_N)
+                    + (BP_PTV_L * TV.at(i-1).at(j-1))
+                    + TV.at(i-1).at(j);
+
+            TF.at(i).at(j) =
+                    (dt * BP_RfT * TV.at(i-1).at((spaceParametrBP-1)-j))
+                    + (BP_PTF * TF.at(i-1).at(j-1))
+                    - TF.at(i-1).at(j) * (dt*BP_RfT + BP_PTF)
+                    + TF.at(i-1).at(j);
+
+            CF.at(i).at(j) =
+                    - (dt * BP_RfM * CV.at(i-1).at((spaceParametrBP-1)-j))
+                    + (BP_PTF * CF.at(i-1).at(j-1))
+                    - CF.at(i-1).at(j) * (-(dt*BP_RfM*BP_E) + BP_PTF)
+                    + CF.at(i-1).at(j);
+
+            CV.at(i).at(j) =
+                    - CV.at(i-1).at(j) * (BP_PTV_L - 1 - BP_PTV_N + dt*BP_RvM)
+                    + (BP_PTV_L * CV.at(i-1).at(j-1))
+                    - (BP_PTV_N * CV.at(i-1).at(j-1))
+                    - (dt * BP_RvM * BP_E * CF.at(i-1).at((spaceParametrBP-1)-j));
+        }
+
+        for(size_t j = beginPoint; j < endPoint - 1; ++j)
+        {
+            // -----Calculate layer heat exchenger model BOT PART------
+            TP_PTV_N = (TP_a0 * TV.at(i-1).at(j) * dt) / 1.17; //dh;
+
+            TV.at(i).at(j) =
+                    (dt * TP_RvT * TF.at(i-1).at((endPoint-1)-j))
+                    - (TP_PTV_N * TV.at(i-1).at(j+1))
+                    - TV.at(i-1).at(j) * (dt*TP_RvT + TP_PTV_L - TP_PTV_N)
+                    + (TP_PTV_L * TV.at(i-1).at(j-1))
+                    + TV.at(i-1).at(j);
+
+            TF.at(i).at(j) =
+                    (dt * TP_RfT * TV.at(i-1).at((endPoint-1)-j))
+                    + (TP_PTF * TF.at(i-1).at(j-1))
+                    - TF.at(i-1).at(j) * (dt*TP_RfT + TP_PTF)
+                    + TF.at(i-1).at(j);
+
+            CF.at(i).at(j) =
+                    - (dt * TP_RfM * CV.at(i-1).at((endPoint-1)-j))
+                    + (TP_PTF * CF.at(i-1).at(j-1))
+                    - CF.at(i-1).at(j) * (-(dt*TP_RfM*TP_E) + TP_PTF)
+                    + CF.at(i-1).at(j);
+
+            CV.at(i).at(j) =
+                    - CV.at(i-1).at(j) * (TP_PTV_L - 1 - TP_PTV_N + dt*TP_RvM)
+                    + (TP_PTV_L * CV.at(i-1).at(j-1))
+                    - (TP_PTV_N * CV.at(i-1).at(j-1))
+                    - (dt * TP_RvM * TP_E * CF.at(i-1).at((endPoint-1)-j));
+        }
+    }
+
+
+
+    //--------------------------------------------------------
+
+    cout << endl << "Steady-state values:" << endl;
+    for(uint32_t j = 0; j < sizeModel; ++j)
+    {
+        cout << TV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+    for(uint32_t j = 0; j < sizeModel; ++j)
+    {
+        cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+    for(uint32_t j = 0; j < sizeModel; ++j)
+    {
+        cout << CV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+    for(uint32_t j = 0; j < sizeModel; ++j)
+    {
+        cout << CF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
 
     return true;
 }

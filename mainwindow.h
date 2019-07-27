@@ -43,6 +43,8 @@ private slots:
 
     void on_selectDRC_textChanged(QString dRCNew);
 
+    void on_actionAbout_rectification_column_triggered();
+
     void on_action3D_model_triggered();
 
     void on_actionCheck_stat_of_values_triggered();
@@ -51,6 +53,9 @@ private slots:
     void on_spaceParametrTP_valueChanged(int countSpacePoints);
     void on_spaceParametrACU_valueChanged(int countSpacePoints);
     void on_spaceParametrEVAP_valueChanged(int countSpacePoints);
+
+
+    void on_TP_BP_clicked();
 
 private:
     Ui::MainWindow *uiMain;

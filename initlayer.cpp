@@ -148,6 +148,7 @@ void initialLayerTFG(vector <vector <double> > &TFG)
     }
 }
 
+//?????----Why it here?????????
 void toFileMM(vector <vector <double> > MMM, string nameModel)
 {
     uint32_t sizeModel = 0;
