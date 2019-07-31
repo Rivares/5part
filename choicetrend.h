@@ -18,6 +18,7 @@ public:
     ~choiceTrend();
 
     QString getTrend();
+    QList<double> getAxesOfTrend();
 
 private slots:
     void on_widgetListTrends_itemSelectionChanged();
@@ -25,9 +26,14 @@ private slots:
     void on_cancelButton_clicked();
     void on_doneButton_clicked();
 
+    void on_inputRightXOfTrend_textChanged(const QString &value);
+    void on_inputLeftYOfTrend_textChanged(const QString &value);
+    void on_inputRightYOfTrend_textChanged(const QString &value);
+
 private:
     QList<QString> gottenTrends;
     QString currentTrend;
+    QList<double> axesOfTrend; /*rightXOfTrend, leftYOfTrend, rightYOfTrend;*/
 
     Ui::choiceTrend *uiTrend;
 };

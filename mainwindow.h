@@ -59,6 +59,8 @@ private slots:
 
     void on_BP_EVAP_clicked();
 
+    void on_FULL_RC_clicked();
+
 private:
     Ui::MainWindow *uiMain;
 

@@ -465,7 +465,9 @@ void MainWindow::drawGraph()
 
     uiMain->customPlot->yAxis->setLabel("Магия, dB");
 
-    if(uiMain->LVM_BP->isChecked() || uiMain->NLVM_BP->isChecked() || uiMain->EVM_BP->isChecked() || uiMain->EVM_TP->isChecked())
+    if(uiMain->LVM_BP->isChecked() || uiMain->NLVM_BP->isChecked() ||
+       uiMain->EVM_BP->isChecked() || uiMain->EVM_TP->isChecked() ||
+       uiMain->ACU->isChecked() || uiMain->EVAP->isChecked())
         uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
 
     if(uiMain->EFM_BP->isChecked() || uiMain->EFM_TP->isChecked())
@@ -673,512 +675,6 @@ void MainWindow::drawGraph()
         }
     }
     //------------------------------------------------------------------------
-
-
-    //-----INTERCONNECTED MODEL(TOP PART) + AIR-COOLING UNIT MODEL(ACU)-------
-    if((uiMain->TP_ACU->isChecked()))
-    {
-        QString choicedTrend;
-
-        if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
-        {
-            QMessageBox msgBox;
-            msgBox.setText("Sampling error! Change dt!");
-            msgBox.exec();
-        }
-        else
-        {
-            // If you have something to check
-            if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) )
-            {
-                QList<QString> listTrends;
-                listTrends.append("TV; TF");
-                listTrends.append("TB;");
-                listTrends.append("CV; CF");
-
-                choiceTrend choiceTrendWindow(listTrends, this);
-
-                if (choiceTrendWindow.exec() == QDialog::Accepted)
-                {
-                    choicedTrend = choiceTrendWindow.getTrend();
-
-                    cout << "Your choice! (" << choicedTrend.toStdString()
-                         << ")" << endl;
-                }
-            }
-            else
-            {
-                cout << "Nothing else matter..." << endl;
-            }
-
-            uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
-
-            uiMain->inputLeftY->clear();
-            uiMain->inputRightY->clear();
-            uiMain->inputRightX->clear();
-
-            if(choicedTrend == "TV; TF")
-            {
-                // [......somewhere here bug..................
-                uiMain->inputLeftY->insert("35");
-                uiMain->inputRightY->insert("128");
-                uiMain->inputRightX->insert("5");
-
-                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                // make left and bottom axes always transfer their ranges to right and top axes:
-                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                //............................................]
-
-                drawModel(8);
-
-                // Out to display steady-state value temperature
-                for(uint j = 0; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
-                {
-                    listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                }
-
-                for(uint j = 0; j < spaceParametrTP; ++j)
-                {
-                    listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                }
-            }
-            else
-            {
-                if(choicedTrend == "TB;")
-                {
-                    // [-----somewhere here bug..................
-                    uiMain->inputLeftY->insert("24");
-                    uiMain->inputRightY->insert("31");
-                    uiMain->inputRightX->insert("5");
-
-                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                    // make left and bottom axes always transfer their ranges to right and top axes:
-                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                    //............................................]
-
-                    drawModel(9);
-
-                    // Out to display steady-state value temperature
-                    for(uint j = 0; j < spaceParametrACU; ++j)
-                    {
-                        listStatesFirst.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                    }
-                }
-                else
-                {
-                    if(choicedTrend == "CV; CF")
-                    {
-                        // [-----somewhere here bug..................
-                        uiMain->inputLeftY->insert("0");
-                        uiMain->inputRightY->insert("1");
-                        uiMain->inputRightX->insert("50");
-
-                        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                        // make left and bottom axes always transfer their ranges to right and top axes:
-                        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                        //............................................]
-
-                        drawModel(10);
-
-                        // Out to display steady-state value concentration
-                        for(uint j = 0; j < spaceParametrTP; ++j)
-                        {
-                            listStatesFirst.append(QString::number(CV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                        }
-
-                        for(uint j = 0; j < spaceParametrTP; ++j)
-                        {
-                            listStatesSecond.append(QString::number(CF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                        }
-                    }
-                }
-            }
-        }
-    }
-    //------------------------------------------------------------------------
-
-    //---INTERCONNECTED MODEL(TOP PART) + INTERCONNECTED MODEL(BOTTOM PART)---
-    if((uiMain->TP_BP->isChecked()))
-    {
-        QString choicedTrend;
-
-        if(!TOP_BOT_MM(TV, TF, CV, CF))
-        {
-            QMessageBox msgBox;
-            msgBox.setText("Sampling error! Change dt!");
-            msgBox.exec();
-        }
-        else
-        {
-            // If you have something to check
-            if ( ( !(TV.empty()) ) || ( !(CV.empty()) )   )
-            {
-                QList<QString> listTrends;
-                listTrends.append("TV;");
-                listTrends.append("TF;");
-                listTrends.append("CV;");
-                listTrends.append("CF;");
-
-                choiceTrend choiceTrendWindow(listTrends, this);
-
-                if (choiceTrendWindow.exec() == QDialog::Accepted)
-                {
-                    choicedTrend = choiceTrendWindow.getTrend();
-
-                    cout << "Your choice! (" << choicedTrend.toStdString()
-                         << ")" << endl;
-                }
-            }
-            else
-            {
-                cout << "Nothing else matter..." << endl;
-            }
-
-            uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
-
-            uiMain->inputLeftY->clear();
-            uiMain->inputRightY->clear();
-            uiMain->inputRightX->clear();
-
-            if(choicedTrend == "TV;")
-            {
-                // [-----somewhere here bug..................
-                uiMain->inputLeftY->insert("35");
-                uiMain->inputRightY->insert("160");
-                uiMain->inputRightX->insert("5");
-
-                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                // make left and bottom axes always transfer their ranges to right and top axes:
-                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                //............................................]
-
-                drawModel(15);
-
-                // Out to display steady-state value temperature
-                for(uint j = 0; j < spaceParametrTP; ++j)
-                {
-                    listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                }
-            }
-            else
-            {
-                if(choicedTrend == "TF;")
-                {
-                    // [-----somewhere here bug..................
-                    uiMain->inputLeftY->insert("50");
-                    uiMain->inputRightY->insert("130");
-                    uiMain->inputRightX->insert("5");
-
-                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                    // make left and bottom axes always transfer their ranges to right and top axes:
-                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                    //............................................]
-
-                    drawModel(16);
-
-                    // Out to display steady-state value temperature
-                    for(uint j = 0; j < spaceParametrTP; ++j)
-                    {
-                        listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                    }
-                }
-                else
-                {
-                    if(choicedTrend == "CV;")
-                    {
-                        // [-----somewhere here bug..................
-                        uiMain->inputLeftY->insert("10");
-                        uiMain->inputRightY->insert("65");
-                        uiMain->inputRightX->insert("50");
-
-                        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                        // make left and bottom axes always transfer their ranges to right and top axes:
-                        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                        //............................................]
-
-                        drawModel(17);
-
-                        // Out to display steady-state value concentration
-                        for(uint j = 0; j < spaceParametrTP; ++j)
-                        {
-                            listStatesFirst.append(QString::number(CV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                        }
-                    }
-                    else
-                    {
-                        if(choicedTrend == "CF;")
-                        {
-                            // [-----somewhere here bug..................
-                            uiMain->inputLeftY->insert("0");
-                            uiMain->inputRightY->insert("6");
-                            uiMain->inputRightX->insert("50");
-
-                            uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                            uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                            // make left and bottom axes always transfer their ranges to right and top axes:
-                            connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                            connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                            //............................................]
-
-                            drawModel(18);
-
-                            // Out to display steady-state value concentration
-                            for(uint j = 0; j < spaceParametrTP; ++j)
-                            {
-                                listStatesSecond.append(QString::number(CF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    //------------------------------------------------------------------------
-
-    //-------INTERCONNECTED MODEL(BOTTOM PART) + EVAPORATOR MODEL(EVAP)-------
-    if((uiMain->BP_EVAP->isChecked()))
-    {
-        QString choicedTrend;
-
-        if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
-        {
-            QMessageBox msgBox;
-            msgBox.setText("Sampling error! Change dt!");
-            msgBox.exec();
-        }
-        else
-        {
-            // If you have something to check
-            if ( ( !(TV.empty()) ) || ( !(TB.empty()) )   )
-            {
-                QList<QString> listTrends;
-                listTrends.append("TF;");
-
-                listTrends.append("TV;");
-                listTrends.append("CV; CF");
-
-                listTrends.append("TB; TFG");
-
-                choiceTrend choiceTrendWindow(listTrends, this);
-
-                if (choiceTrendWindow.exec() == QDialog::Accepted)
-                {
-                    choicedTrend = choiceTrendWindow.getTrend();
-
-                    cout << "Your choice! (" << choicedTrend.toStdString()
-                         << ")" << endl;
-                }
-            }
-            else
-            {
-                cout << "Nothing else matter..." << endl;
-            }
-
-            uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
-
-            uiMain->inputLeftY->clear();
-            uiMain->inputRightY->clear();
-            uiMain->inputRightX->clear();
-
-            if(choicedTrend == "TF;")
-            {
-                // [-----somewhere here bug..................
-                uiMain->inputLeftY->insert("110");
-                uiMain->inputRightY->insert("170");
-                uiMain->inputRightX->insert("6000");
-
-                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                // make left and bottom axes always transfer their ranges to right and top axes:
-                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                //............................................]
-
-                drawModel(11);
-
-                // Out to display steady-state value temperature
-                for(uint j = 0; j < (spaceParametrBP + spaceParametrEVAP - 4); ++j)
-                {
-                    listStatesFirst.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                }
-            }
-            else
-            {
-                if(choicedTrend == "TV;")
-                {
-                    // [-----somewhere here bug..................
-                    uiMain->inputLeftY->insert("135");
-                    uiMain->inputRightY->insert("160");
-                    uiMain->inputRightX->insert("6000");
-
-                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                    // make left and bottom axes always transfer their ranges to right and top axes:
-                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                    //............................................]
-
-                    drawModel(12);
-
-                    // Out to display steady-state value temperature
-                    for(uint j = 0; j < spaceParametrBP; ++j)
-                    {
-                        listStatesSecond.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                    }
-                }
-                else
-                {
-                    if(choicedTrend == "CV; CF")
-                    {
-                        // [-----somewhere here bug..................
-                        uiMain->inputLeftY->insert("0");
-                        uiMain->inputRightY->insert("90");
-                        uiMain->inputRightX->insert("6000");
-
-                        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                        // make left and bottom axes always transfer their ranges to right and top axes:
-                        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                        //............................................]
-
-                        drawModel(13);
-
-                        // Out to display steady-state value concentration
-                        for(uint j = 0; j < spaceParametrBP; ++j)
-                        {
-                            listStatesFirst.append(QString::number(CV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                        }
-                        for(uint j = 0; j < spaceParametrBP; ++j)
-                        {
-                            listStatesSecond.append(QString::number(CF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                        }
-                    }
-                    else
-                    {
-                        if(choicedTrend == "TB; TFG")
-                        {
-                            cout << "Crash down here!" << endl;
-                            // [-----somewhere here bug..................
-                            uiMain->inputLeftY->insert("100");
-                            uiMain->inputRightY->insert("300");
-                            uiMain->inputRightX->insert("2000");
-
-                            uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
-                            uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
-
-                            // make left and bottom axes always transfer their ranges to right and top axes:
-                            connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
-                            connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
-                            //............................................]
-
-                            drawModel(14);
-
-                            // Out to display steady-state value concentration
-                            for(uint j = 0; j < spaceParametrEVAP; ++j)
-                            {
-                                listStatesFirst.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                            }
-                            for(uint j = 0; j < spaceParametrEVAP; ++j)
-                            {
-                                listStatesSecond.append(QString::number(TFG.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    //------------------------------------------------------------------------
-
-    //--------------------------------FULL RC---------------------------------
-    if((uiMain->FULL_RC->isChecked()))
-        {
-            /*
-            if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
-            {
-                QMessageBox msgBox;
-                msgBox.setText("Sampling error! Change dt!");
-                msgBox.exec();
-            }
-            else
-            {
-                // If you have something to check
-                if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) || ( !(TFG.empty()) ) )
-                {
-                    QList<QString> listTrends;
-                    listTrends.append("TV; TF");
-                    listTrends.append("TB;");
-                    listTrends.append("CV; CF");
-
-                    choiceTrend choiceTrendWindow(listTrends, this);
-
-                    if (choiceTrendWindow.exec() == QDialog::Accepted)
-                    {
-                        QList<QString> choicedTrend = choiceTrendWindow.getTrend();
-
-                        cout << "Your choice! ( " << choicedTrend.at(0).toStdString()
-                                             << " - "
-                                             << choicedTrend.at(1).toStdString()
-                                             << " )" << endl;
-                    }
-                }
-                else
-                {
-                    cout << "Nothing else matter..." << endl;
-                }
-
-                uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
-
-                //drawModel(8);
-                //drawModel(9); // Not work
-                //drawModel(10); // Not work
-
-                // Out to display steady-state value temperature
-                for(uint j = 1; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
-                {
-                    listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                }
-
-                for(uint j = 1; j < spaceParametrTP-1; ++j)
-                {
-                    listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                }
-
-                for(uint j = 1; j < spaceParametrACU-1; ++j)
-                {
-                    listStatesThird.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                }
-            }
-            */
-        }
-
-
-
 
     uiMain->statusBar->showMessage(QString("Ready!"));
 
@@ -3024,12 +2520,9 @@ void MainWindow::on_TP_ACU_clicked()
     uiMain->inputRightY->clear();
     uiMain->inputRightX->clear();
 
-    uiMain->inputLeftY->insert("0");
-    uiMain->inputRightY->insert("1");
-    uiMain->inputRightX->insert("200");
-
-    leftY = uiMain->inputLeftY->text().toDouble();
-    rightY = uiMain->inputRightY->text().toDouble();
+    uiMain->firstState->clear();
+    uiMain->secondState->clear();
+    uiMain->thirdState->clear();
 
     uiMain->selectDRC->setText(QString::number(7.510)); // (RC_TOP)3.51 + (ACU)4
     uiMain->spaceParametrTP->setValue(3);
@@ -3201,6 +2694,172 @@ void MainWindow::on_TP_ACU_clicked()
     uiMain->tableBordersAndInitialConditions_EVAP_2->setDisabled(true);
     uiMain->tableBordersAndInitialConditions_EVAP_3->setDisabled(true);
     uiMain->tableBordersAndInitialConditions_EVAP_4->setDisabled(true);
+
+    //------------------------------------------------------------------------
+
+    //-----INTERCONNECTED MODEL(TOP PART) + AIR-COOLING UNIT MODEL(ACU)-------
+
+    // Out to display steady-state value temperature
+    QList <QString> listStatesFirst, listStatesSecond;
+
+    QString choicedTrend;
+    QList<double> choicedAxesOfTrend;
+
+    QList<QString> listTrends;
+    listTrends.append("TV; TF");
+    listTrends.append("TB;");
+    listTrends.append("CV; CF");
+
+    choiceTrend choiceTrendWindow(listTrends, this);
+
+    if (choiceTrendWindow.exec() == QDialog::Accepted)
+    {
+        choicedTrend = choiceTrendWindow.getTrend();
+        choicedAxesOfTrend = choiceTrendWindow.getAxesOfTrend();
+
+        cout << "Your choice! (" << choicedTrend.toStdString()
+             << ") Axes: "
+             << choicedAxesOfTrend.at(0) << "; "
+             << choicedAxesOfTrend.at(1) << "; "
+             << choicedAxesOfTrend.at(2) << "; "
+             << endl;
+    }
+
+    uiMain->inputLeftY->clear();
+    uiMain->inputRightY->clear();
+    uiMain->inputRightX->clear();
+
+    if(choicedTrend == "TV; TF")
+    {
+        uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+        uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+        uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+        getData();
+
+        uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+        // make left and bottom axes always transfer their ranges to right and top axes:
+        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+
+        if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            uiMain->statusBar->showMessage(QString("(!) Drawing TV; TF processes on the graph... (!)"));
+            drawModel(8);
+
+            // Out to display steady-state value temperature
+            for(uint j = 0; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
+            {
+                listStatesFirst.append(QString::number(TV.at(TV.size()-1).at(j)));
+            }
+
+            for(uint j = 0; j < spaceParametrTP; ++j)
+            {
+                listStatesSecond.append(QString::number(TF.at(TF.size()-1).at(j)));
+            }
+        }
+    }
+    else
+    {
+        if(choicedTrend == "TB;")
+        {
+            uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+            uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+            uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+            getData();
+
+            uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+            uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+            uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+            // make left and bottom axes always transfer their ranges to right and top axes:
+            connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+            connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+            if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Sampling error! Change dt!");
+                msgBox.exec();
+            }
+            else
+            {
+                uiMain->statusBar->showMessage(QString("(!) Drawing TB on the graph... (!)"));
+                drawModel(9);
+
+                // Out to display steady-state value temperature
+                for(uint j = 0; j < spaceParametrACU; ++j)
+                {
+                    listStatesFirst.append(QString::number(TB.at(TB.size()-1).at(j)));
+                }
+            }
+        }
+        else
+        {
+            if(choicedTrend == "CV; CF")
+            {
+                uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+                uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+                uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+                getData();
+
+                uiMain->customPlot->yAxis->setLabel("Концентрация, %");
+
+                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                // make left and bottom axes always transfer their ranges to right and top axes:
+                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+                if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+                {
+                    QMessageBox msgBox;
+                    msgBox.setText("Sampling error! Change dt!");
+                    msgBox.exec();
+                }
+                else
+                {
+                    uiMain->statusBar->showMessage(QString("(!) Drawing CV; CF on the graph... (!)"));
+                    drawModel(10);
+
+                    // Out to display steady-state value concentration
+                    for(uint j = 0; j < spaceParametrTP; ++j)
+                    {
+                        listStatesFirst.append(QString::number(CV.at(CV.size()-1).at(j)));
+                    }
+
+                    for(uint j = 0; j < spaceParametrTP; ++j)
+                    {
+                        listStatesSecond.append(QString::number(CF.at(CF.size()-1).at(j)));
+                    }
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------------------
+
+    QStringList firstStates(listStatesFirst);
+    QStringList secondStates(listStatesSecond);
+
+    uiMain->firstState->addItems(firstStates);
+    uiMain->secondState->addItems(secondStates);
+
 }
 
 void MainWindow::on_TP_BP_clicked()
@@ -3209,12 +2868,9 @@ void MainWindow::on_TP_BP_clicked()
     uiMain->inputRightY->clear();
     uiMain->inputRightX->clear();
 
-    uiMain->inputLeftY->insert("0");
-    uiMain->inputRightY->insert("1");
-    uiMain->inputRightX->insert("200");
-
-    leftY = uiMain->inputLeftY->text().toDouble();
-    rightY = uiMain->inputRightY->text().toDouble();
+    uiMain->firstState->clear();
+    uiMain->secondState->clear();
+    uiMain->thirdState->clear();
 
     uiMain->selectDRC->setText(QString::number(4.910)); // (RC_TOP)3.51 + (RC_BOT)1.4
     uiMain->spaceParametrTP->setValue(3);
@@ -3388,6 +3044,200 @@ void MainWindow::on_TP_BP_clicked()
     uiMain->tableBordersAndInitialConditions_EVAP_2->setDisabled(true);
     uiMain->tableBordersAndInitialConditions_EVAP_3->setDisabled(true);
     uiMain->tableBordersAndInitialConditions_EVAP_4->setDisabled(true);
+
+
+    //---INTERCONNECTED MODEL(TOP PART) + INTERCONNECTED MODEL(BOTTOM PART)---
+
+    // Out to display steady-state value temperature
+    QList <QString> listStatesFirst;
+
+    QString choicedTrend;
+    QList<double> choicedAxesOfTrend;
+
+    QList<QString> listTrends;
+    listTrends.append("TV;");
+    listTrends.append("TF;");
+    listTrends.append("CV;");
+    listTrends.append("CF;");
+
+    choiceTrend choiceTrendWindow(listTrends, this);
+
+    if (choiceTrendWindow.exec() == QDialog::Accepted)
+    {
+        choicedTrend = choiceTrendWindow.getTrend();
+        choicedAxesOfTrend = choiceTrendWindow.getAxesOfTrend();
+
+        cout << "Your choice! (" << choicedTrend.toStdString()
+             << ") Axes: "
+             << choicedAxesOfTrend.at(0) << "; "
+             << choicedAxesOfTrend.at(1) << "; "
+             << choicedAxesOfTrend.at(2) << "; "
+             << endl;
+    }
+
+    uiMain->inputLeftY->clear();
+    uiMain->inputRightY->clear();
+    uiMain->inputRightX->clear();
+
+    if(choicedTrend == "TV;")
+    {
+        uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+        uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+        uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+        getData();
+
+        uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+        // make left and bottom axes always transfer their ranges to right and top axes:
+        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+        if(!TOP_BOT_MM(TV, TF, CV, CF))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            uiMain->statusBar->showMessage(QString("(!) Drawing TV; processes on the graph... (!)"));
+            drawModel(15);
+
+            // Out to display steady-state value temperature
+            for(uint j = 0; j < spaceParametrTP; ++j)
+            {
+                listStatesFirst.append(QString::number(TV.at(TV.size()-1).at(j)));
+            }
+        }
+
+    }
+    else
+    {
+        if(choicedTrend == "TF;")
+        {
+            uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+            uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+            uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+            getData();
+
+            uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+            uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+            uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+            // make left and bottom axes always transfer their ranges to right and top axes:
+            connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+            connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+            //............................................]
+
+            if(!TOP_BOT_MM(TV, TF, CV, CF))
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Sampling error! Change dt!");
+                msgBox.exec();
+            }
+            else
+            {
+                uiMain->statusBar->showMessage(QString("(!) Drawing TF; processes on the graph... (!)"));
+                drawModel(16);
+
+                // Out to display steady-state value temperature
+                for(uint j = 0; j < spaceParametrTP; ++j)
+                {
+                    listStatesFirst.append(QString::number(TF.at(TF.size()-1).at(j)));
+                }
+            }
+        }
+        else
+        {
+            if(choicedTrend == "CV;")
+            {
+                uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+                uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+                uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+                getData();
+
+                uiMain->customPlot->yAxis->setLabel("Концентрация, %");
+
+                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                // make left and bottom axes always transfer their ranges to right and top axes:
+                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+
+                if(!TOP_BOT_MM(TV, TF, CV, CF))
+                {
+                    QMessageBox msgBox;
+                    msgBox.setText("Sampling error! Change dt!");
+                    msgBox.exec();
+                }
+                else
+                {
+                    uiMain->statusBar->showMessage(QString("(!) Drawing CV; processes on the graph... (!)"));
+                    drawModel(17);
+
+                    // Out to display steady-state value concentration
+                    for(uint j = 0; j < spaceParametrTP; ++j)
+                    {
+                        listStatesFirst.append(QString::number(CV.at(CV.size()-1).at(j)));
+                    }
+                }
+            }
+            else
+            {
+                if(choicedTrend == "CF;")
+                {
+                    uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+                    uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+                    uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+                    getData();
+
+                    uiMain->customPlot->yAxis->setLabel("Концентрация, %");
+
+                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                    // make left and bottom axes always transfer their ranges to right and top axes:
+                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+
+                    if(!TOP_BOT_MM(TV, TF, CV, CF))
+                    {
+                        QMessageBox msgBox;
+                        msgBox.setText("Sampling error! Change dt!");
+                        msgBox.exec();
+                    }
+                    else
+                    {
+                        uiMain->statusBar->showMessage(QString("(!) Drawing CV; processes on the graph... (!)"));
+                        drawModel(18);
+
+                        // Out to display steady-state value concentration
+                        for(uint j = 0; j < spaceParametrTP; ++j)
+                        {
+                            listStatesFirst.append(QString::number(CF.at(CF.size()-1).at(j)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------------------
+
+    QStringList firstStates(listStatesFirst);
+
+    uiMain->firstState->addItems(firstStates);
 }
 
 void MainWindow::on_BP_EVAP_clicked()
@@ -3396,17 +3246,13 @@ void MainWindow::on_BP_EVAP_clicked()
     uiMain->inputRightY->clear();
     uiMain->inputRightX->clear();
 
-    uiMain->inputLeftY->insert("0");
-    uiMain->inputRightY->insert("1");
-    uiMain->inputRightX->insert("200");
-
-    leftY = uiMain->inputLeftY->text().toDouble();
-    rightY = uiMain->inputRightY->text().toDouble();
+    uiMain->firstState->clear();
+    uiMain->secondState->clear();
+    uiMain->thirdState->clear();
 
     uiMain->selectDRC->setText(QString::number(6.90)); // (RC_BOT)1.4 + (EVAP)5.5
     uiMain->spaceParametrBP->setValue(3);
     uiMain->spaceParametrEVAP->setValue(3);
-
 
     // RC_BOT:
     //---------------Temperature part------------//
@@ -3586,7 +3432,613 @@ void MainWindow::on_BP_EVAP_clicked()
     uiMain->tableBordersAndInitialConditions_TP_2->setDisabled(true);
     uiMain->tableBordersAndInitialConditions_TP_3->setDisabled(true);
     uiMain->tableBordersAndInitialConditions_TP_4->setDisabled(true);
+
+
+    //------------------------------------------------------------------------
+
+    //-------INTERCONNECTED MODEL(BOTTOM PART) + EVAPORATOR MODEL(EVAP)-------
+
+    // Out to display steady-state value temperature
+    QList <QString> listStatesFirst, listStatesSecond;
+
+    QString choicedTrend;
+    QList<double> choicedAxesOfTrend;
+
+    QList<QString> listTrends;
+    listTrends.append("TF;");
+
+    listTrends.append("TV;");
+    listTrends.append("CV; CF");
+
+    listTrends.append("TB; TFG");
+
+    choiceTrend choiceTrendWindow(listTrends, this);
+
+    if (choiceTrendWindow.exec() == QDialog::Accepted)
+    {
+        choicedTrend = choiceTrendWindow.getTrend();
+        choicedAxesOfTrend = choiceTrendWindow.getAxesOfTrend();
+
+        cout << "Your choice! (" << choicedTrend.toStdString()
+             << ") Axes: "
+             << choicedAxesOfTrend.at(0) << "; "
+             << choicedAxesOfTrend.at(1) << "; "
+             << choicedAxesOfTrend.at(2) << "; "
+             << endl;
+    }
+
+    uiMain->inputLeftY->clear();
+    uiMain->inputRightY->clear();
+    uiMain->inputRightX->clear();
+
+    if(choicedTrend == "TF;")
+    {
+        uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+        uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+        uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+        getData();
+
+        uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+        // make left and bottom axes always transfer their ranges to right and top axes:
+        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+        if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            uiMain->statusBar->showMessage(QString("(!) Drawing TF; processes on the graph... (!)"));
+            drawModel(11);
+
+            // Out to display steady-state value temperature
+            for(uint j = 0; j < (spaceParametrBP + spaceParametrEVAP - 4); ++j)
+            {
+                listStatesFirst.append(QString::number(TF.at(TF.size() - 1).at(j)));
+            }
+        }
+    }
+    else
+    {
+        if(choicedTrend == "TV;")
+        {
+            uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+            uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+            uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+            getData();
+
+            uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+            uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+            uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+            // make left and bottom axes always transfer their ranges to right and top axes:
+            connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+            connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+            if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Sampling error! Change dt!");
+                msgBox.exec();
+            }
+            else
+            {
+                uiMain->statusBar->showMessage(QString("(!) Drawing TV; processes on the graph... (!)"));
+                drawModel(12);
+
+                // Out to display steady-state value temperature
+                for(uint j = 0; j < spaceParametrBP; ++j)
+                {
+                    listStatesFirst.append(QString::number(TV.at(TV.size()-1).at(j)));
+                }
+            }
+        }
+        else
+        {
+            if(choicedTrend == "CV; CF")
+            {
+                uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+                uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+                uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+                getData();
+
+                uiMain->customPlot->yAxis->setLabel("Концентрация, %");
+
+                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                // make left and bottom axes always transfer their ranges to right and top axes:
+                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+                if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+                {
+                    QMessageBox msgBox;
+                    msgBox.setText("Sampling error! Change dt!");
+                    msgBox.exec();
+                }
+                else
+                {
+                    uiMain->statusBar->showMessage(QString("(!) Drawing CV; CF processes on the graph... (!)"));
+                    drawModel(13);
+
+                    // Out to display steady-state value concentration
+                    for(uint j = 0; j < spaceParametrBP; ++j)
+                    {
+                        listStatesFirst.append(QString::number(CV.at(CV.size()-1).at(j)));
+                    }
+                    for(uint j = 0; j < spaceParametrBP; ++j)
+                    {
+                        listStatesSecond.append(QString::number(CF.at(CF.size()-1).at(j)));
+                    }
+                }
+            }
+            else
+            {
+                if(choicedTrend == "TB; TFG")
+                {
+                    uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+                    uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+                    uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+                    getData();
+
+                    uiMain->customPlot->yAxis->setLabel("Концентрация, %");
+
+                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                    // make left and bottom axes always transfer their ranges to right and top axes:
+                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+                    if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+                    {
+                        QMessageBox msgBox;
+                        msgBox.setText("Sampling error! Change dt!");
+                        msgBox.exec();
+                    }
+                    else
+                    {
+                        uiMain->statusBar->showMessage(QString("(!) Drawing TB; TFG processes on the graph... (!)"));
+                        drawModel(14);
+
+                        // Out to display steady-state value concentration
+                        for(uint j = 0; j < spaceParametrEVAP; ++j)
+                        {
+                            listStatesFirst.append(QString::number(TB.at(TB.size()-1).at(j)));
+                        }
+                        for(uint j = 0; j < spaceParametrEVAP; ++j)
+                        {
+                            listStatesSecond.append(QString::number(TFG.at(TFG.size()-1).at(j)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------------------
+
+    QStringList firstStates(listStatesFirst);
+    QStringList secondStates(listStatesSecond);
+
+    uiMain->firstState->addItems(firstStates);
+    uiMain->secondState->addItems(secondStates);
+
 }
+
+void MainWindow::on_FULL_RC_clicked()
+{
+    uiMain->inputLeftY->clear();
+    uiMain->inputRightY->clear();
+    uiMain->inputRightX->clear();
+
+    uiMain->firstState->clear();
+    uiMain->secondState->clear();
+    uiMain->thirdState->clear();
+/*
+    uiMain->selectDRC->setText(QString::number(6.90)); // (RC_BOT)1.4 + (EVAP)5.5
+    uiMain->spaceParametrBP->setValue(3);
+    uiMain->spaceParametrEVAP->setValue(3);
+
+    // RC_BOT:
+    //---------------Temperature part------------//
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 0, new QTableWidgetItem(tr("160.000")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(1, 0, new QTableWidgetItem(tr("160.000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 1, new QTableWidgetItem(tr("156.999750")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 2, new QTableWidgetItem(tr("153.999500")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 3, new QTableWidgetItem(tr("150.999250")));
+
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 0, new QTableWidgetItem(tr("120.377000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(1, 0, new QTableWidgetItem(tr("120.377000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 1, new QTableWidgetItem(tr("123.382500")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 2, new QTableWidgetItem(tr("126.388000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 3, new QTableWidgetItem(tr("129.393500")));
+
+    //---------------Concentration part------------//
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 0, new QTableWidgetItem(tr("67.9440")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(1, 0, new QTableWidgetItem(tr("67.9440")));
+
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 1, new QTableWidgetItem(tr("68.9690")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 2, new QTableWidgetItem(tr("69.9940")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 3, new QTableWidgetItem(tr("71.0190")));
+
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 0, new QTableWidgetItem(tr("6.550")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(1, 0, new QTableWidgetItem(tr("6.550")));
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 1, new QTableWidgetItem(tr("5.60950")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 2, new QTableWidgetItem(tr("4.66900")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 3, new QTableWidgetItem(tr("3.72850")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_2->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_3->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_4->setDisabled(false);
+
+    // EVAP:
+    if((uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1) == 4)
+    {
+        uiMain->tableBordersAndInitialConditions_EVAP_1->insertColumn(4);
+        uiMain->tableBordersAndInitialConditions_EVAP_2->insertColumn(4);
+        uiMain->tableBordersAndInitialConditions_EVAP_3->insertColumn(4);
+        uiMain->tableBordersAndInitialConditions_EVAP_4->insertColumn(4);
+    }
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 0, new QTableWidgetItem(tr("160.00")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(1, 0, new QTableWidgetItem(tr("160.00")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1), new QTableWidgetItem(tr("139.00")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1), new QTableWidgetItem(tr("139.00")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 1, new QTableWidgetItem(tr("160.161650")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 2, new QTableWidgetItem(tr("154.220450")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 3, new QTableWidgetItem(tr("148.736080")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 4, new QTableWidgetItem(tr("143.673400")));
+
+
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 0, new QTableWidgetItem(tr("160.200")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(1, 0, new QTableWidgetItem(tr("160.200")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1), new QTableWidgetItem(tr("147.07220")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1), new QTableWidgetItem(tr("147.07220")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 1, new QTableWidgetItem(tr("164.48250")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 2, new QTableWidgetItem(tr("158.20900")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 3, new QTableWidgetItem(tr("152.41800")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 4, new QTableWidgetItem(tr("147.07220")));
+
+
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 0, new QTableWidgetItem(tr("300.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(1, 0, new QTableWidgetItem(tr("300.0")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1), new QTableWidgetItem(tr("240.54030")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1), new QTableWidgetItem(tr("240.54030")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 1, new QTableWidgetItem(tr("283.30650")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 2, new QTableWidgetItem(tr("267.89660")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 3, new QTableWidgetItem(tr("253.67150")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 4, new QTableWidgetItem(tr("240.54030")));
+
+
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 4, new QTableWidgetItem(tr("0.0")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setDisabled(true);
+
+
+    // Clearing other tabs (ACU, TP)
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_2->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_3->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_4->setDisabled(true);
+
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_TP_2->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_TP_3->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_TP_4->setDisabled(true);
+
+
+    //------------------------------------------------------------------------
+
+    //-------INTERCONNECTED MODEL(BOTTOM PART) + EVAPORATOR MODEL(EVAP)-------
+
+    // Out to display steady-state value temperature
+    QList <QString> listStatesFirst, listStatesSecond;
+
+    QString choicedTrend;
+    QList<double> choicedAxesOfTrend;
+
+    QList<QString> listTrends;
+    listTrends.append("TF;");
+
+    listTrends.append("TV;");
+    listTrends.append("CV; CF");
+
+    listTrends.append("TB; TFG");
+
+    choiceTrend choiceTrendWindow(listTrends, this);
+
+    if (choiceTrendWindow.exec() == QDialog::Accepted)
+    {
+        choicedTrend = choiceTrendWindow.getTrend();
+        choicedAxesOfTrend = choiceTrendWindow.getAxesOfTrend();
+
+        cout << "Your choice! (" << choicedTrend.toStdString()
+             << ") Axes: "
+             << choicedAxesOfTrend.at(0) << "; "
+             << choicedAxesOfTrend.at(1) << "; "
+             << choicedAxesOfTrend.at(2) << "; "
+             << endl;
+    }
+
+    uiMain->inputLeftY->clear();
+    uiMain->inputRightY->clear();
+    uiMain->inputRightX->clear();
+
+    if(choicedTrend == "TF;")
+    {
+        uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+        uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+        uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+        getData();
+
+        uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+        // make left and bottom axes always transfer their ranges to right and top axes:
+        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+        if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Sampling error! Change dt!");
+            msgBox.exec();
+        }
+        else
+        {
+            uiMain->statusBar->showMessage(QString("(!) Drawing TF; processes on the graph... (!)"));
+            drawModel(11);
+
+            // Out to display steady-state value temperature
+            for(uint j = 0; j < (spaceParametrBP + spaceParametrEVAP - 4); ++j)
+            {
+                listStatesFirst.append(QString::number(TF.at(TF.size() - 1).at(j)));
+            }
+        }
+    }
+    else
+    {
+        if(choicedTrend == "TV;")
+        {
+            uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+            uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+            uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+            getData();
+
+            uiMain->customPlot->yAxis->setLabel("Tемпература, 'C");
+
+            uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+            uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+            // make left and bottom axes always transfer their ranges to right and top axes:
+            connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+            connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+            if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Sampling error! Change dt!");
+                msgBox.exec();
+            }
+            else
+            {
+                uiMain->statusBar->showMessage(QString("(!) Drawing TV; processes on the graph... (!)"));
+                drawModel(12);
+
+                // Out to display steady-state value temperature
+                for(uint j = 0; j < spaceParametrBP; ++j)
+                {
+                    listStatesSecond.append(QString::number(TV.at(TV.size()-1).at(j)));
+                }
+            }
+        }
+        else
+        {
+            if(choicedTrend == "CV; CF")
+            {
+                uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+                uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+                uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+                getData();
+
+                uiMain->customPlot->yAxis->setLabel("Концентрация, %");
+
+                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                // make left and bottom axes always transfer their ranges to right and top axes:
+                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+                if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+                {
+                    QMessageBox msgBox;
+                    msgBox.setText("Sampling error! Change dt!");
+                    msgBox.exec();
+                }
+                else
+                {
+                    uiMain->statusBar->showMessage(QString("(!) Drawing CV; CF processes on the graph... (!)"));
+                    drawModel(13);
+
+                    // Out to display steady-state value concentration
+                    for(uint j = 0; j < spaceParametrBP; ++j)
+                    {
+                        listStatesFirst.append(QString::number(CV.at(CV.size()-1).at(j)));
+                    }
+                    for(uint j = 0; j < spaceParametrBP; ++j)
+                    {
+                        listStatesSecond.append(QString::number(CF.at(CF.size()-1).at(j)));
+                    }
+                }
+            }
+            else
+            {
+                if(choicedTrend == "TB; TFG")
+                {
+                    uiMain->inputRightX->insert(QString::number(choicedAxesOfTrend.at(0)));
+                    uiMain->inputLeftY->insert(QString::number(choicedAxesOfTrend.at(1)));
+                    uiMain->inputRightY->insert(QString::number(choicedAxesOfTrend.at(2)));
+
+                    getData();
+
+                    uiMain->customPlot->yAxis->setLabel("Концентрация, %");
+
+                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                    // make left and bottom axes always transfer their ranges to right and top axes:
+                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+                    if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+                    {
+                        QMessageBox msgBox;
+                        msgBox.setText("Sampling error! Change dt!");
+                        msgBox.exec();
+                    }
+                    else
+                    {
+                        uiMain->statusBar->showMessage(QString("(!) Drawing TB; TFG processes on the graph... (!)"));
+                        drawModel(14);
+
+                        // Out to display steady-state value concentration
+                        for(uint j = 0; j < spaceParametrEVAP; ++j)
+                        {
+                            listStatesFirst.append(QString::number(TB.at(TB.size()-1).at(j)));
+                        }
+                        for(uint j = 0; j < spaceParametrEVAP; ++j)
+                        {
+                            listStatesSecond.append(QString::number(TFG.at(TFG.size()-1).at(j)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------------------
+
+    QStringList firstStates(listStatesFirst);
+    QStringList secondStates(listStatesSecond);
+
+    uiMain->firstState->addItems(firstStates);
+    uiMain->secondState->addItems(secondStates);
+
+*/
+}
+
 
 void MainWindow::on_selectDRC_textChanged(QString dRCNew)
 {

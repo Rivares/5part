@@ -8,6 +8,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
+static double rightXOfTrend, leftYOfTrend, rightYOfTrend;
 
 choiceTrend::choiceTrend(QList<QString> allTrends, QWidget *parent) :
     QDialog(parent),
@@ -21,6 +22,10 @@ choiceTrend::choiceTrend(QList<QString> allTrends, QWidget *parent) :
     {
         uiTrend->widgetListTrends->addItem(gottenTrends.at(i));
     }
+
+    rightXOfTrend = 1000.0;
+    leftYOfTrend = 0.0;
+    rightYOfTrend = 180.0;
 }
 
 choiceTrend::~choiceTrend()
@@ -42,6 +47,15 @@ QString choiceTrend::getTrend()
     return currentTrend;
 }
 
+QList<double> choiceTrend::getAxesOfTrend()
+{
+    axesOfTrend.append(rightXOfTrend);
+    axesOfTrend.append(leftYOfTrend);
+    axesOfTrend.append(rightYOfTrend);
+
+    return axesOfTrend;
+}
+
 // Buttons
 void choiceTrend::on_doneButton_clicked()
 {
@@ -50,10 +64,22 @@ void choiceTrend::on_doneButton_clicked()
 
 void choiceTrend::on_cancelButton_clicked()
 {
-    currentTrend.append("0");
-    currentTrend.append("0");
+    currentTrend = "0";
     choiceTrend::reject();  // Return to MainWindow
 }
 
 
+void choiceTrend::on_inputRightXOfTrend_textChanged(const QString &value)
+{
+    rightXOfTrend = value.toDouble();
+}
 
+void choiceTrend::on_inputLeftYOfTrend_textChanged(const QString &value)
+{
+    leftYOfTrend = value.toDouble();
+}
+
+void choiceTrend::on_inputRightYOfTrend_textChanged(const QString &value)
+{
+    rightYOfTrend = value.toDouble();
+}
