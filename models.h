@@ -26,5 +26,8 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                  vector <vector <double> > &CV, vector <vector <double> > &CF,
                  vector <vector <double> > &TB, vector <vector <double> > &TFG);
 
+bool FULL_RC(vector <vector <double> > &TV, vector <vector <double> > &TF,
+                 vector <vector <double> > &CV, vector <vector <double> > &CF,
+                 vector <vector <double> > &TB, vector <vector <double> > &TFG);
 
 #endif // MODELS_H

@@ -1151,9 +1151,283 @@ bool TOP_BOT_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     return true;
 }
 
-
 //------INTERCONNECTED MODEL(BOTTOM PART) + EVAPORATOR MODEL(EVAP)--------
 bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+                 vector <vector <double> > &CV, vector <vector <double> > &CF,
+                 vector <vector <double> > &TB, vector <vector <double> > &TFG)
+{
+    // RC_BOT:
+    // -----Model's heat exchenger parameters------
+    double  RvT = 0.0191806, RfT = 0.0000777, a0 = 1.6966E-4,
+            PTV_L = (a0 * 273.15 * dt) / dh,
+            PTV_N = 0.0,
+            BP_PTF = (0.0002291314 * dt) / dh;
+
+    // -----Model's mass exchenger parameters------
+    double E = 1.0E-9, RvM = 0.004302, RfM = 1.222E-5;
+                       //RfM = 0.000010734, RvM = 0.0216487318;
+
+    if( (PTV_L > 0.5) || (BP_PTF > 0.5) )
+    {
+        cout << "The scheme of RC_BOT diverges!!!";
+        return false;
+    }
+
+    // EVAP:
+    //--------------------------------------------------------
+
+    // -----Model's gas parameters------
+    double  RFG = 0.470, PTFG = 4.60 / dh;
+
+    // -----Model's fluide parameters------
+    double  RF = 0.0030, EVAP_PTF = 0.0030 / dh;
+
+    // -----Model's boarder parameters------
+    double  RFB = 0.220, RFGB = 0.0080;
+
+    if((dt * PTFG) > 0.5 )
+    {
+        cout << "The scheme of EVAP diverges!!!";
+        return false;
+    }
+
+    //--------------------------------------------------------
+
+    uint32_t sizeModel = spaceParametrBP + spaceParametrEVAP - 2;
+    vector <double> countSpacePoints_1, countSpacePoints_2, countSpacePoints_3;
+    countSpacePoints_1.assign(spaceParametrBP, 0.0);
+    countSpacePoints_2.assign(spaceParametrEVAP, 0.0);
+    countSpacePoints_3.assign(sizeModel, 0.0);
+
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
+    {
+        TV.erase(TV.begin(), TV.end());
+        TF.erase(TF.begin(), TF.end());
+        CV.erase(CV.begin(), CV.end());
+        CF.erase(CF.begin(), CF.end());
+
+        TB.erase(TB.begin(), TB.end());
+        TFG.erase(TFG.begin(), TFG.end());
+    }
+
+    for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
+    {
+        TV.push_back(countSpacePoints_1);
+        TF.push_back(countSpacePoints_3);
+        CV.push_back(countSpacePoints_1);
+        CF.push_back(countSpacePoints_1);
+
+        TB.push_back(countSpacePoints_2);
+        TFG.push_back(countSpacePoints_2);
+    }
+
+    thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrBP);
+    thread threadInitialLayerTF(initialLayerTF, std::ref(TF), sizeModel);
+    thread threadInitialLayerCV(initialLayerCV, std::ref(CV), spaceParametrBP);
+    thread threadInitialLayerCF(initialLayerCF, std::ref(CF), spaceParametrBP);
+
+    thread threadInitialLayerTB(initialLayerTB, std::ref(TB), spaceParametrEVAP);
+    thread threadInitialLayerTFG(initialLayerTFG, std::ref(TFG));
+
+    threadInitialLayerTV.join();
+    threadInitialLayerTF.join();
+    threadInitialLayerCV.join();
+    threadInitialLayerCF.join();
+
+    threadInitialLayerTB.join();
+    threadInitialLayerTFG.join();
+
+
+    beginPoint = 0;
+
+
+    cout << endl << "Initial values:" << endl;
+    std::cout.precision(8);
+
+    for(size_t j = 0; j < spaceParametrBP; ++j)
+    {
+        cout << TV.at(0).at(j) << std::fixed << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < sizeModel; ++j)
+    {
+        cout << TF.at(0).at(j) << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < spaceParametrBP; ++j)
+    {
+        cout << CV.at(0).at(j) << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < spaceParametrBP; ++j)
+    {
+        cout << CF.at(0).at(j) << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < spaceParametrEVAP; ++j)
+    {
+        cout << TB.at(0).at(j) << " | ";
+    }   cout << endl;
+
+    for(size_t j = 0; j < spaceParametrEVAP; ++j)
+    {
+        cout << TFG.at(0).at(j) << " | ";
+    }   cout << endl;
+
+    // Calculate model
+    for(size_t i = 1; i < static_cast <size_t>(selectN / dt); ++i)// time
+    {
+        for(size_t j = 1; j < (spaceParametrBP-1); ++j)      // place
+        {
+            // -----Calculate layer heat exchenger model------
+            PTV_N = (a0 * TV.at(i-1).at(j) * dt) / dh;
+
+            TV.at(i).at(j) =
+                    (dt * RvT * TF.at(i-1).at((spaceParametrBP-1)-j))
+                    - (PTV_N * TV.at(i-1).at(j+1))
+                    - TV.at(i-1).at(j) * (dt*RvT + PTV_L - PTV_N)
+                    + (PTV_L * TV.at(i-1).at(j-1))
+                    + TV.at(i-1).at(j);
+
+            TF.at(i).at(j) =
+                    (dt * RfT * TV.at(i-1).at((spaceParametrBP-1)-j))
+                    + (BP_PTF * TF.at(i-1).at(j-1))
+                    - TF.at(i-1).at(j) * (dt*RfT + BP_PTF)
+                    + TF.at(i-1).at(j);
+
+            // -----Calculate layer mass exchenger model------
+
+            /* New schema: CV(i,i-1); CV(i,i-1). Error was increase..., but dynamic of process good*/
+            /* 1 A-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM + PTV_L + PTV_N + 1)
+                        - CV[i-1][j-1] * (PTV_L + PTV_N);*/
+
+            /* 1 B+
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM - PTV_L - PTV_N + 1)
+                        + CV[i-1][j-1] * (PTV_L + PTV_N);*/
+
+            /* 2 A-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM + PTV_L - PTV_N + 1)
+                        - CV[i-1][j-1] * PTV_L
+                        + CV[i-1][j+1] * PTV_N;*/
+            /* 2 B-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM - PTV_L + PTV_N + 1)
+                        + CV[i-1][j-1] * PTV_L
+                        - CV[i-1][j+1] * PTV_N;*/
+
+            /* 3 A-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM - PTV_L + PTV_N + 1)
+                        - CV[i-1][j-1] * PTV_N
+                        + CV[i-1][j+1] * PTV_L;*/
+
+            /* 3 B-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM + PTV_L - PTV_N + 1)
+                        + CV[i-1][j-1] * PTV_N
+                        - CV[i-1][j+1] * PTV_L;*/
+
+            /* 4 A+*/
+            CV.at(i).at(j) =
+                    - (dt * RvM * E * CF.at(i-1).at((spaceParametrBP-1)-j))
+                    + CV.at(i-1).at(j) * (dt*RvM - PTV_L - PTV_N + 1)
+                    + CV.at(i-1).at(j+1) * (PTV_L + PTV_N);
+
+            /* 4 B-
+            CV[i][j] =  - (dt * RvM * E * CF[i-1][(selectZ-1)-j])
+                        + CV[i-1][j] * (dt*RvM + PTV_L + PTV_N + 1)
+                        - CV[i-1][j+1] * (PTV_L + PTV_N);*/
+
+            /* 1 A-
+            CF[i][j] =  - (dt * RfM * CV[i-1][(selectZ-1)-j])
+                        + CF[i-1][j] * (dt*RfM*E + PTF + 1)
+                        - (PTF * CF[i-1][j-1]);*/
+
+            /* 1 B+*/
+            CF.at(i).at(j) =
+                    - (dt * RfM * CV.at(i-1).at(j))
+                    + CF.at(i-1).at(j) * (dt*RfM*E - BP_PTF + 1)
+                    + (BP_PTF * CF.at(i-1).at(j-1));
+
+            /* 2 A-
+            CF[i][j] =  - (dt * RfM * CV[i-1][(selectZ-1)-j])
+                        + CF[i-1][j] * (dt*RfM*E - PTF + 1)
+                        + (PTF * CF[i-1][j+1]);*/
+
+            /* 2 B-
+            CF[i][j] =  - (dt * RfM * CV[i-1][(selectZ-1)-j])
+                        + CF[i-1][j] * (dt*RfM*E + PTF + 1)
+                        - (PTF * CF[i-1][j+1]);*/
+        }
+
+        for(size_t j = spaceParametrBP-1; j < (sizeModel - 1); ++j)
+        {
+            TF.at(i).at(j) =
+                    (dt * RF * TB.at(i-1).at(j-spaceParametrBP+1)) // ?
+                    + (dt * EVAP_PTF * TF.at(i-1).at(j+1))
+                    - TF.at(i-1).at(j) * (dt*RF + dt*EVAP_PTF)
+                    + TF.at(i-1).at(j);
+        }
+
+        for(size_t j = 1; j < (spaceParametrEVAP-1); ++j)
+        {
+            TB.at(i).at(j) =
+                    (dt * RFB * TF.at(i-1).at(j)) // ?
+                    + (dt * RFGB * TFG.at(i-1).at((spaceParametrEVAP-1)-j))// ?
+                    - TB.at(i-1).at(j) * (dt*RFGB + dt*RFB)
+                    + TB.at(i-1).at(j);
+
+            TFG.at(i).at(j) =
+                    (dt * RFG * TB.at(i-1).at(j+1)) // ?
+                    + (dt * PTFG * TFG.at(i-1).at(j-1))
+                    - TFG.at(i-1).at(j) * (dt*RFG + dt*PTFG)
+                    + TFG.at(i-1).at(j);
+        }
+
+    }
+
+    cout << endl << "Steady-state values:" << endl;
+    for(uint32_t j = 1; j < (spaceParametrBP-1); ++j)
+    {
+        cout << TV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+    for(uint32_t j = 1; j < (sizeModel-1); ++j) // ?????
+    {
+        cout << TF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+    for(uint32_t j = 1; j < (spaceParametrBP-1); ++j)
+    {
+        cout << CV.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+    for(uint32_t j = 1; j < (spaceParametrBP-1); ++j)
+    {
+        cout << CF.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+
+    for(uint32_t j = 1; j < (spaceParametrEVAP-1); ++j)
+    {
+        cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+    for(uint32_t j = 1; j < (spaceParametrEVAP-1); ++j)
+    {
+        cout << TFG.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+    }cout << endl;
+
+
+    return true;
+}
+
+//--------------------------------FULL RC---------------------------------
+bool FULL_RC(vector <vector <double> > &TV, vector <vector <double> > &TF,
                  vector <vector <double> > &CV, vector <vector <double> > &CF,
                  vector <vector <double> > &TB, vector <vector <double> > &TFG)
 {

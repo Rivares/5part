@@ -442,6 +442,77 @@ void MainWindow::getData()
         dh = static_cast <double> (dRC / (spaceParametrBP + spaceParametrEVAP- 4));  // dRC = dRC_TP + dRC_TP; spaceParametr = spaceParametrTP + spaceParametrBP
     }
 
+    //--------------------------------FULL RC---------------------------------
+    if( (uiMain->FULL_RC->isChecked()) )
+    {
+        spaceParametrACU = static_cast <uint>(uiMain->tableBordersAndInitialConditions_ACU_1->columnCount());
+        spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
+        spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
+        spaceParametrEVAP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount());
+
+        initLayerTV_0 = 0.0; initLayerTV_1 = 0.0;
+        initLayerTF_0 = 0.0; initLayerTF_1 = 0.0;
+        initLayerCV_0 = 0.0; initLayerCV_1 = 0.0;
+        initLayerCF_0 = 0.0; initLayerCF_1 = 0.0;
+
+        initLayerTB_0 = 0.0; initLayerTB_1 = 0.0;
+        initLayerTFG_0 = 0.0; initLayerTFG_1 = 0.0;
+
+        // ???????
+        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
+
+        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1)->text()).toDouble();
+
+        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1)->text()).toDouble();
+
+
+
+        initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
+        initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
+
+        initLayerTFG_0 = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, 0)->text()).toDouble();
+        initLayerTFG_1 = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1)->text()).toDouble();
+
+
+        // ????
+        initLayerTV.assign((spaceParametrACU + spaceParametrTP + spaceParametrBP - 6), 0.0);
+        initLayerTF.assign((spaceParametrTP + spaceParametrBP + spaceParametrEVAP - 6), 0.0);
+        initLayerCV.assign((spaceParametrTP + spaceParametrBP - 4), 0.0);
+        initLayerCF.assign((spaceParametrTP + spaceParametrBP - 4), 0.0);
+
+        // ????
+        initLayerTB.assign((spaceParametrEVAP-2), 0.0);
+        initLayerTFG.assign((spaceParametrEVAP-2), 0.0);
+
+        for(uint j = 1; j <= (spaceParametrBP-2); ++j)
+        {
+            initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, static_cast <int>(j))->text()).toDouble();
+        }
+
+        for(uint j = (spaceParametrBP-2); j < (spaceParametrBP + spaceParametrEVAP - 4); ++j)
+        {
+            initLayerTF.at(j) = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, static_cast <int>(j-(spaceParametrBP-2)+1))->text()).toDouble();
+        }
+
+        for(uint j = 1; j <= (spaceParametrEVAP-2); ++j)
+        {
+            initLayerTB.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTFG.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, static_cast <int>(j))->text()).toDouble();
+        }
+
+        dh = static_cast <double> (dRC / (spaceParametrACU + spaceParametrTP + spaceParametrBP + spaceParametrEVAP - 16));  // dRC = dRC_ACU + dRC_TP + ...;
+    }
+    //------------------------------------------------------------------------
+
     dt = (uiMain->selectStepT->text().toDouble() <= 0.0)? 0.01 : abs(uiMain->selectStepT->text().toDouble());
 }
 
@@ -726,11 +797,11 @@ void MainWindow::drawModel(int choiceModel)
     // Define selectZ
     switch(choiceModel)
     {
-        case 0:                                                                    // H_L_BP
-        case 1:                                                                    // H_N_BP
-        case 2:                                                                    // H_BP
+        case 0:                                                                          // H_L_BP
+        case 1:                                                                          // H_N_BP
+        case 2:                                                                          // H_BP
         case 3:  sizeListWithTrends = spaceParametrBP-2;                         break;  // M_BP
-        case 4:                                                                    // H_TP
+        case 4:                                                                          // H_TP
         case 5:  sizeListWithTrends = spaceParametrTP-2;                         break;  // M_TP
         case 6:  sizeListWithTrends = spaceParametrACU-2;                        break;  // ACU
         case 7:  sizeListWithTrends = spaceParametrEVAP-2;                       break;  // EVAP
@@ -742,16 +813,16 @@ void MainWindow::drawModel(int choiceModel)
         case 13: sizeListWithTrends = spaceParametrBP-2;                         break;  // M_BP_EVAP_CV_CF
         case 14: sizeListWithTrends = spaceParametrEVAP-2;                       break;  // H_BP_EVAP_TB_TFG
         case 15:
-        case 16:                                                                   // H_TP_BP
+        case 16:                                                                         // H_TP_BP
         case 17:
         case 18: sizeListWithTrends =  spaceParametrTP + spaceParametrBP-4;      break;  // M_TP_BP
-        case 19:                                                                   // H_FULL_RC
+        case 19:                                                                         // H_FULL_RC
         case 20:
         case 21: sizeListWithTrends =  spaceParametrTP
                               + spaceParametrACU
                               + spaceParametrBP
                               + spaceParametrEVAP
-                              - 16;                                     break;     // M_FULL_RC
+                              - 16;                                     break;           // M_FULL_RC
         default:
         {
             QMessageBox msgBox;
@@ -1105,6 +1176,26 @@ void MainWindow::on_save_clicked()
 
         std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_BP_EVAP");
         std::thread threadToFileTFGMM(toFileMM, std::ref(TFG), "TFG_BP_EVAP");
+
+        threadToFileTVMM.join();
+        threadToFileCVMM.join();
+        threadToFileCFMM.join();
+
+        threadToFileTFMM.join();
+
+        threadToFileTBMM.join();
+        threadToFileTFGMM.join();
+    }
+
+    if(uiMain->FULL_RC->isChecked())
+    {
+        std::thread threadToFileTVMM(toFileMM, std::ref(TV), "TV_FULL_RC");
+        std::thread threadToFileTFMM(toFileMM, std::ref(TF), "TF_FULL_RC");
+        std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_FULL_RC");
+        std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_FULL_RC");
+
+        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_FULL_RC");
+        std::thread threadToFileTFGMM(toFileMM, std::ref(TFG), "TFG_FULL_RC");
 
         threadToFileTVMM.join();
         threadToFileCVMM.join();
@@ -4087,6 +4178,17 @@ void MainWindow::on_selectDRC_textChanged(QString dRCNew)
         spaceParametrBP = static_cast <uint> (uiMain->spaceParametrBP->value());
         spaceParametrEVAP = static_cast <uint> (uiMain->spaceParametrEVAP->value());
         dh = dRC / ( static_cast <double> (spaceParametrBP + spaceParametrEVAP) );
+    }
+
+    if(uiMain->FULL_RC->isChecked())
+    {
+        spaceParametrACU = static_cast <uint> (uiMain->spaceParametrACU->value());
+        spaceParametrTP = static_cast <uint> (uiMain->spaceParametrTP->value());
+        spaceParametrBP = static_cast <uint> (uiMain->spaceParametrBP->value());
+        spaceParametrEVAP = static_cast <uint> (uiMain->spaceParametrEVAP->value());
+        dh = dRC / ( static_cast <double> (spaceParametrACU + spaceParametrTP
+                                                            + spaceParametrBP
+                                                            + spaceParametrEVAP) );
     }
 
 
