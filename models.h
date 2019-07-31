@@ -19,8 +19,12 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                 vector <vector <double> > &CV, vector <vector <double> > &CF,
                 vector<vector<double> > &TB);
 
-bool ETMTP_ETMBP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+bool TOP_BOT_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                     vector <vector <double> > &CV, vector <vector <double> > &CF);
+
+bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+                 vector <vector <double> > &CV, vector <vector <double> > &CF,
+                 vector <vector <double> > &TB, vector <vector <double> > &TFG);
 
 
 #endif // MODELS_H

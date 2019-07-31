@@ -24,10 +24,10 @@ extern vector <double> initLayerTB;
 extern vector <double> initLayerTFG;
 
 //---------------Borders--------------//
-extern vector <double> initLayerTV_0, initLayerTV_1;
-extern vector <double>  initLayerTF_0, initLayerTF_1;
-extern vector <double>  initLayerCV_0, initLayerCV_1;
-extern vector <double>  initLayerCF_0, initLayerCF_1;
+extern double initLayerTV_0, initLayerTV_1;
+extern double initLayerTF_0, initLayerTF_1;
+extern double initLayerCV_0, initLayerCV_1;
+extern double initLayerCF_0, initLayerCF_1;
 extern double initLayerTB_0, initLayerTB_1;
 extern double initLayerTFG_0, initLayerTFG_1;
 
@@ -47,8 +47,8 @@ void initialLayerTV(vector <vector <double> > &TV, unsigned int it)
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TV.at(i).at(beginPoint) = initLayerTV_0.at(0);
-        TV.at(i).at(it-1) = initLayerTV_1.at(0);
+        TV.at(i).at(beginPoint) = initLayerTV_0;
+        TV.at(i).at(it-1) = initLayerTV_1;
     }
 
     // Initial values
@@ -65,8 +65,8 @@ void initialLayerTF(vector <vector <double> > &TF, unsigned int it)
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TF.at(i).at(beginPoint) = initLayerTF_0.at(0);
-        TF.at(i).at(it-1) = initLayerTF_1.at(0);
+        TF.at(i).at(beginPoint) = initLayerTF_0;
+        TF.at(i).at(it-1) = initLayerTF_1;
     }
 
     // Initial values
@@ -83,8 +83,8 @@ void initialLayerCV(vector <vector <double> > &CV, unsigned int it)
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        CV.at(i).at(beginPoint) = initLayerCV_0.at(0);
-        CV.at(i).at(it-1) = initLayerCV_1.at(0);
+        CV.at(i).at(beginPoint) = initLayerCV_0;
+        CV.at(i).at(it-1) = initLayerCV_1;
     }
 
     // Initial values
@@ -101,8 +101,8 @@ void initialLayerCF(vector <vector <double> > &CF, unsigned int it)
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        CF.at(i).at(beginPoint) = initLayerCF_0.at(0);
-        CF.at(i).at(it-1) = initLayerCF_1.at(0);
+        CF.at(i).at(beginPoint) = initLayerCF_0;
+        CF.at(i).at(it-1) = initLayerCF_1;
     }
 
     // Initial values

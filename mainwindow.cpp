@@ -43,10 +43,10 @@ vector <double> initLayerTB;
 vector <double> initLayerTFG;
 
 //---------------Borders--------------//
-vector <double>  initLayerTV_0, initLayerTV_1;
-vector <double>  initLayerTF_0, initLayerTF_1;
-vector <double>  initLayerCV_0, initLayerCV_1;
-vector <double>  initLayerCF_0, initLayerCF_1;
+double  initLayerTV_0, initLayerTV_1;
+double  initLayerTF_0, initLayerTF_1;
+double  initLayerCV_0, initLayerCV_1;
+double  initLayerCF_0, initLayerCF_1;
 double initLayerTB_0, initLayerTB_1;
 double initLayerTFG_0, initLayerTFG_1;
 
@@ -101,14 +101,14 @@ void MainWindow::getData()
     {
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
 
-        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
-        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
+        initLayerTV_0 = 0.0; initLayerTV_1 = 0.0;
+        initLayerTF_0 = 0.0; initLayerTF_1 = 0.0;
 
-        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrBP-2), 0.0);
         initLayerTF.assign((spaceParametrBP-2), 0.0);
@@ -130,22 +130,22 @@ void MainWindow::getData()
     {
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
 
-        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
-        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
-        initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
-        initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
+        initLayerTV_0 = 0.0; initLayerTV_1 = 0.0;
+        initLayerTF_0 = 0.0; initLayerTF_1 = 0.0;
+        initLayerCV_0 = 0.0; initLayerCV_1 = 0.0;
+        initLayerCF_0 = 0.0; initLayerCF_1 = 0.0;
 
-        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1)->text()).toDouble();
+        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1.at(0) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1)->text()).toDouble();
+        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrBP-2), 0.0);
         initLayerTF.assign((spaceParametrBP-2), 0.0);
@@ -170,22 +170,22 @@ void MainWindow::getData()
     {
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
 
-        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
-        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
-        initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
-        initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
+        initLayerTV_0 = 0.0; initLayerTV_1 = 0.0;
+        initLayerTF_0 = 0.0; initLayerTF_1 = 0.0;
+        initLayerCV_0 = 0.0; initLayerCV_1 = 0.0;
+        initLayerCF_0 = 0.0; initLayerCF_1 = 0.0;
 
-        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrTP-2), 0.0);
         initLayerTF.assign((spaceParametrTP-2), 0.0);
@@ -210,11 +210,11 @@ void MainWindow::getData()
     {
         spaceParametrACU = static_cast <uint>(uiMain->tableBordersAndInitialConditions_ACU_1->columnCount());
 
-        initLayerTV_0.assign(1, 0.0);
-        initLayerTV_1.assign(1, 0.0);
+        initLayerTV_0 = 0.0;
+        initLayerTV_1 = 0.0;
 
-        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
@@ -238,11 +238,11 @@ void MainWindow::getData()
     {
         spaceParametrEVAP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount());
 
-        initLayerTF_0.assign(1, 0.0);
-        initLayerTF_1.assign(1, 0.0);
+        initLayerTF_0 = 0.0;
+        initLayerTF_1 = 0.0;
 
-        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, 0)->text()).toDouble();
-        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
+        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
@@ -272,23 +272,23 @@ void MainWindow::getData()
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
         spaceParametrACU = static_cast <uint>(uiMain->tableBordersAndInitialConditions_ACU_1->columnCount());
 
-        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
-        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
-        initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
-        initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
+        initLayerTV_0 = 0.0; initLayerTV_1 = 0.0;
+        initLayerTF_0 = 0.0; initLayerTF_1 = 0.0;
+        initLayerCV_0 = 0.0; initLayerCV_1 = 0.0;
+        initLayerCF_0 = 0.0; initLayerCF_1 = 0.0;
 
-        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, 0)->text()).toDouble();
 
-        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
 
-        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
 
         initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
         initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
@@ -330,22 +330,22 @@ void MainWindow::getData()
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
 
-        initLayerTV_0.assign(1, 0.0); initLayerTV_1.assign(1, 0.0);
-        initLayerTF_0.assign(1, 0.0); initLayerTF_1.assign(1, 0.0);
-        initLayerCV_0.assign(1, 0.0); initLayerCV_1.assign(1, 0.0);
-        initLayerCF_0.assign(1, 0.0); initLayerCF_1.assign(1, 0.0);
+        initLayerTV_0 = 0.0; initLayerTV_1 = 0.0;
+        initLayerTF_0 = 0.0; initLayerTF_1 = 0.0;
+        initLayerCV_0 = 0.0; initLayerCV_1 = 0.0;
+        initLayerCF_0 = 0.0; initLayerCF_1 = 0.0;
 
-        initLayerTV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
-        initLayerTV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
+        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_TP_1->item(0, uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
-        initLayerTF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
+        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_TP_2->item(0, uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1)->text()).toDouble();
 
-        initLayerCV_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
-        initLayerCV_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
+        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_TP_3->item(0, uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1)->text()).toDouble();
 
-        initLayerCF_0.at(0) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
-        initLayerCF_1.at(0) = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
+        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_TP_4->item(0, uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1)->text()).toDouble();
 
 
         initLayerTV.assign((spaceParametrTP + spaceParametrBP - 4), 0.0);
@@ -372,6 +372,74 @@ void MainWindow::getData()
         }
 
         dh = static_cast <double> (dRC / (spaceParametrTP + spaceParametrBP - 4));  // dRC = dRC_TP + dRC_TP; spaceParametr = spaceParametrTP + spaceParametrBP
+    }
+
+    //------------------------------------------------------------------------
+
+    //-------INTERCONNECTED MODEL(BOTTOM PART) + EVAPORATOR MODEL(EVAP)-------
+    if( (uiMain->BP_EVAP->isChecked()) )
+    {
+        spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
+        spaceParametrEVAP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount());
+
+        initLayerTV_0 = 0.0; initLayerTV_1 = 0.0;
+        initLayerTF_0 = 0.0; initLayerTF_1 = 0.0;
+        initLayerCV_0 = 0.0; initLayerCV_1 = 0.0;
+        initLayerCF_0 = 0.0; initLayerCF_1 = 0.0;
+
+        initLayerTB_0 = 0.0; initLayerTB_1 = 0.0;
+        initLayerTFG_0 = 0.0; initLayerTFG_1 = 0.0;
+
+        initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
+
+        initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1)->text()).toDouble();
+
+        initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, 0)->text()).toDouble();
+        initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
+
+        initLayerCV_0 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, 0)->text()).toDouble();
+        initLayerCV_1 = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1)->text()).toDouble();
+
+        initLayerCF_0 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, 0)->text()).toDouble();
+        initLayerCF_1 = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1)->text()).toDouble();
+
+
+
+        initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
+        initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
+
+        initLayerTFG_0 = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, 0)->text()).toDouble();
+        initLayerTFG_1 = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1)->text()).toDouble();
+
+
+        initLayerTV.assign((spaceParametrBP - 2), 0.0);
+        initLayerTF.assign((spaceParametrBP + spaceParametrEVAP - 4), 0.0);
+        initLayerCV.assign((spaceParametrBP - 2), 0.0);
+        initLayerCF.assign((spaceParametrBP - 2), 0.0);
+
+        initLayerTB.assign((spaceParametrEVAP-2), 0.0);
+        initLayerTFG.assign((spaceParametrEVAP-2), 0.0);
+
+        for(uint j = 1; j <= (spaceParametrBP-2); ++j)
+        {
+            initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCV.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_3->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerCF.at(j-1) = (uiMain->tableBordersAndInitialConditions_BP_4->item(0, static_cast <int>(j))->text()).toDouble();
+        }
+
+        for(uint j = (spaceParametrBP-2); j < (spaceParametrBP + spaceParametrEVAP - 4); ++j)
+        {
+            initLayerTF.at(j) = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, static_cast <int>(j-(spaceParametrBP-2)+1))->text()).toDouble();
+        }
+
+        for(uint j = 1; j <= (spaceParametrEVAP-2); ++j)
+        {
+            initLayerTB.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTFG.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, static_cast <int>(j))->text()).toDouble();
+        }
+
+        dh = static_cast <double> (dRC / (spaceParametrBP + spaceParametrEVAP- 4));  // dRC = dRC_TP + dRC_TP; spaceParametr = spaceParametrTP + spaceParametrBP
     }
 
     dt = (uiMain->selectStepT->text().toDouble() <= 0.0)? 0.01 : abs(uiMain->selectStepT->text().toDouble());
@@ -743,7 +811,7 @@ void MainWindow::drawGraph()
     {
         QString choicedTrend;
 
-        if(!ETMTP_ETMBP_MM(TV, TF, CV, CF))
+        if(!TOP_BOT_MM(TV, TF, CV, CF))
         {
             QMessageBox msgBox;
             msgBox.setText("Sampling error! Change dt!");
@@ -796,7 +864,7 @@ void MainWindow::drawGraph()
                 connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
                 //............................................]
 
-                drawModel(14);
+                drawModel(15);
 
                 // Out to display steady-state value temperature
                 for(uint j = 0; j < spaceParametrTP; ++j)
@@ -821,7 +889,7 @@ void MainWindow::drawGraph()
                     connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
                     //............................................]
 
-                    drawModel(15);
+                    drawModel(16);
 
                     // Out to display steady-state value temperature
                     for(uint j = 0; j < spaceParametrTP; ++j)
@@ -846,7 +914,7 @@ void MainWindow::drawGraph()
                         connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
                         //............................................]
 
-                        drawModel(16);
+                        drawModel(17);
 
                         // Out to display steady-state value concentration
                         for(uint j = 0; j < spaceParametrTP; ++j)
@@ -871,7 +939,7 @@ void MainWindow::drawGraph()
                             connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
                             //............................................]
 
-                            drawModel(17);
+                            drawModel(18);
 
                             // Out to display steady-state value concentration
                             for(uint j = 0; j < spaceParametrTP; ++j)
@@ -891,8 +959,9 @@ void MainWindow::drawGraph()
     //-------INTERCONNECTED MODEL(BOTTOM PART) + EVAPORATOR MODEL(EVAP)-------
     if((uiMain->BP_EVAP->isChecked()))
     {
-        /*
-        if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+        QString choicedTrend;
+
+        if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
         {
             QMessageBox msgBox;
             msgBox.setText("Sampling error! Change dt!");
@@ -901,23 +970,24 @@ void MainWindow::drawGraph()
         else
         {
             // If you have something to check
-            if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) || ( !(TFG.empty()) ) )
+            if ( ( !(TV.empty()) ) || ( !(TB.empty()) )   )
             {
                 QList<QString> listTrends;
-                listTrends.append("TV; TF");
-                listTrends.append("TB;");
+                listTrends.append("TF;");
+
+                listTrends.append("TV;");
                 listTrends.append("CV; CF");
+
+                listTrends.append("TB; TFG");
 
                 choiceTrend choiceTrendWindow(listTrends, this);
 
                 if (choiceTrendWindow.exec() == QDialog::Accepted)
                 {
-                    QList<QString> choicedTrend = choiceTrendWindow.getTrend();
+                    choicedTrend = choiceTrendWindow.getTrend();
 
-                    cout << "Your choice! ( " << choicedTrend.at(0).toStdString()
-                                         << " - "
-                                         << choicedTrend.at(1).toStdString()
-                                         << " )" << endl;
+                    cout << "Your choice! (" << choicedTrend.toStdString()
+                         << ")" << endl;
                 }
             }
             else
@@ -927,27 +997,121 @@ void MainWindow::drawGraph()
 
             uiMain->statusBar->showMessage(QString("(!) Drawing physical processes on the graph... (!)"));
 
-            //drawModel(8);
-            //drawModel(9); // Not work
-            //drawModel(10); // Not work
+            uiMain->inputLeftY->clear();
+            uiMain->inputRightY->clear();
+            uiMain->inputRightX->clear();
 
-            // Out to display steady-state value temperature
-            for(uint j = 1; j < (spaceParametrTP + spaceParametrACU - 2); ++j)
+            if(choicedTrend == "TF;")
             {
-                listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                // [-----somewhere here bug..................
+                uiMain->inputLeftY->insert("110");
+                uiMain->inputRightY->insert("170");
+                uiMain->inputRightX->insert("6000");
+
+                uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                // make left and bottom axes always transfer their ranges to right and top axes:
+                connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                //............................................]
+
+                drawModel(11);
+
+                // Out to display steady-state value temperature
+                for(uint j = 0; j < (spaceParametrBP + spaceParametrEVAP - 4); ++j)
+                {
+                    listStatesFirst.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                }
             }
-
-            for(uint j = 1; j < spaceParametrTP-1; ++j)
+            else
             {
-                listStatesSecond.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-            }
+                if(choicedTrend == "TV;")
+                {
+                    // [-----somewhere here bug..................
+                    uiMain->inputLeftY->insert("135");
+                    uiMain->inputRightY->insert("160");
+                    uiMain->inputRightX->insert("6000");
 
-            for(uint j = 1; j < spaceParametrACU-1; ++j)
-            {
-                listStatesThird.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                    uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                    uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                    // make left and bottom axes always transfer their ranges to right and top axes:
+                    connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                    connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                    //............................................]
+
+                    drawModel(12);
+
+                    // Out to display steady-state value temperature
+                    for(uint j = 0; j < spaceParametrBP; ++j)
+                    {
+                        listStatesSecond.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                    }
+                }
+                else
+                {
+                    if(choicedTrend == "CV; CF")
+                    {
+                        // [-----somewhere here bug..................
+                        uiMain->inputLeftY->insert("0");
+                        uiMain->inputRightY->insert("90");
+                        uiMain->inputRightX->insert("6000");
+
+                        uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                        uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                        // make left and bottom axes always transfer their ranges to right and top axes:
+                        connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                        connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                        //............................................]
+
+                        drawModel(13);
+
+                        // Out to display steady-state value concentration
+                        for(uint j = 0; j < spaceParametrBP; ++j)
+                        {
+                            listStatesFirst.append(QString::number(CV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                        }
+                        for(uint j = 0; j < spaceParametrBP; ++j)
+                        {
+                            listStatesSecond.append(QString::number(CF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                        }
+                    }
+                    else
+                    {
+                        if(choicedTrend == "TB; TFG")
+                        {
+                            cout << "Crash down here!" << endl;
+                            // [-----somewhere here bug..................
+                            uiMain->inputLeftY->insert("100");
+                            uiMain->inputRightY->insert("300");
+                            uiMain->inputRightX->insert("2000");
+
+                            uiMain->customPlot->xAxis->setRange(0, (selectN / dt));
+                            uiMain->customPlot->yAxis->setRange(uiMain->inputLeftY->text().toDouble(), uiMain->inputRightY->text().toDouble());
+
+                            // make left and bottom axes always transfer their ranges to right and top axes:
+                            connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+                            connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+                            //............................................]
+
+                            drawModel(14);
+
+                            // Out to display steady-state value concentration
+                            for(uint j = 0; j < spaceParametrEVAP; ++j)
+                            {
+                                listStatesFirst.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                            }
+                            for(uint j = 0; j < spaceParametrEVAP; ++j)
+                            {
+                                listStatesSecond.append(QString::number(TFG.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                            }
+                        }
+                    }
+                }
             }
         }
-        */
     }
     //------------------------------------------------------------------------
 
@@ -1050,7 +1214,7 @@ void MainWindow::on_clear_clicked()
 
 void MainWindow::on_draw_clicked()
 {
-    getData();        
+    getData();
     drawGraph();
 }
 
@@ -1058,7 +1222,7 @@ void MainWindow::drawModel(int choiceModel)
 {
     /*-------------Prepare data to output to screen------------------*/
 
-    double selectZ = 0.0;
+    double sizeListWithTrends = 0.0;
     QVector <double> t(static_cast <int>(selectN / dt));
 
     QVector <QVector <double>> M_mat0, M_mat1, M_mat2, M_mat3;
@@ -1066,31 +1230,32 @@ void MainWindow::drawModel(int choiceModel)
     // Define selectZ
     switch(choiceModel)
     {
-        case 0:                                                               // H_L_BP
-        case 1:                                                               // H_N_BP
-        case 2:                                                               // H_BP
-        case 3:  selectZ = spaceParametrBP-2;                         break;  // M_BP
-        case 4:                                                               // H_TP
-        case 5:  selectZ = spaceParametrTP-2;                         break;  // M_TP
-        case 6:  selectZ = spaceParametrACU-2;                        break;  // ACU
-        case 7:  selectZ = spaceParametrEVAP-2;                       break;  // EVAP
-        case 8:  selectZ = spaceParametrTP-2;                         break;  // H_TP_ACU_TV_TF
-        case 9:  selectZ = spaceParametrACU-2;                        break;  // H_TP_ACU_TB
-        case 10: selectZ = spaceParametrTP-2;                         break;  // M_TP_ACU_CV_CF
-        case 11: selectZ = spaceParametrBP + spaceParametrEVAP-4;     break;
-        case 12: selectZ = spaceParametrEVAP-2;                       break;  // H_BP_EVAP
-        case 13: selectZ = spaceParametrEVAP-4;                       break;  // M_BP_EVAP
-        case 14:
-        case 15:                                                              // H_TP_BP
-        case 16:
-        case 17: selectZ =  spaceParametrTP + spaceParametrBP-4;      break;  // M_TP_BP
-        case 18:                                                              // H_FULL_RC
-        case 19:
-        case 20: selectZ =  spaceParametrTP
-                            + spaceParametrACU
-                            + spaceParametrBP
-                            + spaceParametrEVAP
-                            - 16;                                     break;  // M_FULL_RC
+        case 0:                                                                    // H_L_BP
+        case 1:                                                                    // H_N_BP
+        case 2:                                                                    // H_BP
+        case 3:  sizeListWithTrends = spaceParametrBP-2;                         break;  // M_BP
+        case 4:                                                                    // H_TP
+        case 5:  sizeListWithTrends = spaceParametrTP-2;                         break;  // M_TP
+        case 6:  sizeListWithTrends = spaceParametrACU-2;                        break;  // ACU
+        case 7:  sizeListWithTrends = spaceParametrEVAP-2;                       break;  // EVAP
+        case 8:  sizeListWithTrends = spaceParametrTP-2;                         break;  // H_TP_ACU_TV_TF
+        case 9:  sizeListWithTrends = spaceParametrACU-2;                        break;  // H_TP_ACU_TB
+        case 10: sizeListWithTrends = spaceParametrTP-2;                         break;  // M_TP_ACU_CV_CF
+        case 11: sizeListWithTrends = spaceParametrBP-2;                         break;  // H_BP_EVAP_TF
+        case 12: sizeListWithTrends = spaceParametrBP-2;                         break;  // H_BP_EVAP_TV
+        case 13: sizeListWithTrends = spaceParametrBP-2;                         break;  // M_BP_EVAP_CV_CF
+        case 14: sizeListWithTrends = spaceParametrEVAP-2;                       break;  // H_BP_EVAP_TB_TFG
+        case 15:
+        case 16:                                                                   // H_TP_BP
+        case 17:
+        case 18: sizeListWithTrends =  spaceParametrTP + spaceParametrBP-4;      break;  // M_TP_BP
+        case 19:                                                                   // H_FULL_RC
+        case 20:
+        case 21: sizeListWithTrends =  spaceParametrTP
+                              + spaceParametrACU
+                              + spaceParametrBP
+                              + spaceParametrEVAP
+                              - 16;                                     break;     // M_FULL_RC
         default:
         {
             QMessageBox msgBox;
@@ -1100,7 +1265,7 @@ void MainWindow::drawModel(int choiceModel)
     }
 
     // Convert from std::vector <std::vector <double>> to QVector <QVector <double>>
-    for(uint i = 1; i <= selectZ; ++i)
+    for(uint i = 1; i <= sizeListWithTrends; ++i)
     {
         QVector <double> tmpVectorM0, tmpVectorM1, tmpVectorM2;
 
@@ -1117,18 +1282,19 @@ void MainWindow::drawModel(int choiceModel)
                 case 6:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TB.at(j).at(i)); break;   // ACU
                 case 7:  tmpVectorM0.push_back(TF.at(j).at(i)); tmpVectorM1.push_back(TB.at(j).at(i)); tmpVectorM2.push_back(TFG.at(j).at(i)); break; // EVAP
                 case 8:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_TP_ACU: TV; TF
-                case 9:  tmpVectorM0.push_back(TB.at(j).at(i)); break;                                          // H_TP_ACU: TB
+                case 9:  tmpVectorM0.push_back(TB.at(j).at(i)); break;                                          // H_TP_ACU: TB;
                 case 10: tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_TP_ACU
-                case 11: tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_BP_EVAP: TV; TF
-                case 12: tmpVectorM0.push_back(TB.at(j).at(i)); tmpVectorM1.push_back(TFG.at(j).at(i));break;   // H_BP_EVAP: TB; TFG
-                case 13: tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_BP_EVAP
-                case 14: tmpVectorM0.push_back(TV.at(j).at(i)); break;  // H_TP_BP: TV
-                case 15: tmpVectorM0.push_back(TF.at(j).at(i)); break;  // H_TP_BP: TF
-                case 16: tmpVectorM0.push_back(CV.at(j).at(i)); break;  // M_TP_BP: CV
-                case 17: tmpVectorM0.push_back(CF.at(j).at(i)); break;  // M_TP_BP: CF
-                case 18: /*Problem! Need two TB[][]! */ break;            // H_FULL_RC
-                case 19: tmpVectorM0.push_back(CV.at(j).at(i)); break;  // M_FULL_RC: CV
-                case 20: tmpVectorM0.push_back(CF.at(j).at(i)); break;  // M_FULL_RC: CF
+                case 11: tmpVectorM0.push_back(TF.at(j).at(i)); break;                                          // H_BP_EVAP: TF;
+                case 12: tmpVectorM0.push_back(TV.at(j).at(i)); break;                                          // H_BP_EVAP: TV;
+                case 13: tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_BP_EVAP: CV; CF
+                case 14: tmpVectorM0.push_back(TB.at(j).at(i)); tmpVectorM1.push_back(TFG.at(j).at(i));break;   // H_BP_EVAP: TB; TFG
+                case 15: tmpVectorM0.push_back(TV.at(j).at(i)); break;  // H_TP_BP: TV
+                case 16: tmpVectorM0.push_back(TF.at(j).at(i)); break;  // H_TP_BP: TF
+                case 17: tmpVectorM0.push_back(CV.at(j).at(i)); break;  // M_TP_BP: CV
+                case 18: tmpVectorM0.push_back(CF.at(j).at(i)); break;  // M_TP_BP: CF
+                case 19: /*Problem! Need two TB[][]! */ break;            // H_FULL_RC
+                case 20: tmpVectorM0.push_back(CV.at(j).at(i)); break;  // M_FULL_RC: CV
+                case 21: tmpVectorM0.push_back(CF.at(j).at(i)); break;  // M_FULL_RC: CF
             }
 
             t[static_cast <int>(j)] = j;
@@ -1147,25 +1313,27 @@ void MainWindow::drawModel(int choiceModel)
             case 8:  M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // H_TP_ACU: TV; TF
             case 9:  M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_ACU: TB
             case 10: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // M_TP_ACU
-            case 11: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // H_BP_EVAP: TV; TF
-            case 12: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // H_BP_EVAP: TB; TFG
-            case 13: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // M_BP_EVAP
-            case 14: M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_BP: TV
-            case 15: M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_BP: FV
-            case 16: M_mat0.push_back(tmpVectorM0); break;                                  // M_TP_BP: CV
-            case 17: M_mat0.push_back(tmpVectorM0); break;                                  // M_TP_BP: CF
-            case 18: /*Problem! Need two TB[][]! */ break;                                  // H_FULL_RC
-            case 19: M_mat0.push_back(tmpVectorM0); break;                                  // M_FULL_RC: CV
-            case 20: M_mat0.push_back(tmpVectorM0); break;                                  // M_FULL_RC: CF
+            case 11: M_mat0.push_back(tmpVectorM0); break;                                  // H_BP_EVAP: TF;
+            case 12: M_mat0.push_back(tmpVectorM0); break;                                  // H_BP_EVAP: TV;
+            case 13: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // M_BP_EVAP: CV; CF
+            case 14: M_mat0.push_back(tmpVectorM0); M_mat1.push_back(tmpVectorM1); break;   // H_BP_EVAP: TB; TFG
+            case 15: M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_BP: TV
+            case 16: M_mat0.push_back(tmpVectorM0); break;                                  // H_TP_BP: FV
+            case 17: M_mat0.push_back(tmpVectorM0); break;                                  // M_TP_BP: CV
+            case 18: M_mat0.push_back(tmpVectorM0); break;                                  // M_TP_BP: CF
+            case 19: /*Problem! Need two TB[][]! */ break;                                  // H_FULL_RC
+            case 20: M_mat0.push_back(tmpVectorM0); break;                                  // M_FULL_RC: CV
+            case 21: M_mat0.push_back(tmpVectorM0); break;                                  // M_FULL_RC: CF
         }
 
     }
 
+    // crutch...
     switch(choiceModel)
     {
         case 8:
 
-        for(uint i = static_cast <uint> (selectZ+1.0); i <= static_cast <uint> (selectZ + spaceParametrTP-2); ++i)
+        for(uint i = static_cast <uint> (sizeListWithTrends+1.0); i <= static_cast <uint> (sizeListWithTrends + spaceParametrACU-2); ++i)
         {
             QVector <double> tmpVectorM0;
 
@@ -1176,11 +1344,27 @@ void MainWindow::drawModel(int choiceModel)
 
             M_mat0.push_back(tmpVectorM0);   // H_TP_ACU: TV
         }
-        selectZ = spaceParametrTP - 2 + spaceParametrACU - 2 + spaceParametrACU - 2;
+        sizeListWithTrends = spaceParametrTP - 2 + spaceParametrACU - 2 + spaceParametrACU - 2;
         break;
 
-        case 11: break;
+        case 11:
+
+        for(uint i = static_cast <uint> (sizeListWithTrends+1.0); i <= static_cast <uint> (sizeListWithTrends+ spaceParametrEVAP-2); ++i)
+        {
+            QVector <double> tmpVectorM0;
+
+            for(uint j = 0; j < (static_cast <size_t>((selectN / dt))); ++j)
+            {
+                tmpVectorM0.push_back(TF.at(j).at(i));   // H_BP_EVAP: TF
+            }
+
+            M_mat0.push_back(tmpVectorM0);   // H_BP_EVAP: TF
+        }
+        sizeListWithTrends = spaceParametrBP - 2 + spaceParametrEVAP - 2 + spaceParametrEVAP - 2;
+
+        break;
     }
+
 
 
     /*-------------Choice drawing processes------------------*/
@@ -1201,16 +1385,17 @@ void MainWindow::drawModel(int choiceModel)
         case 8:  drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_TP_ACU: TV; TF;
         case 9:  drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_ACU: TB
         case 10: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_TP_ACU: CV; CF
-        case 11: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_BP_EVAP: TV; TF;
-        case 12: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_BP_EVAP: TB; TFG
+        case 11: drawingProcces_0 = M_mat0; countModels = 1; break;                                                              // H_BP_EVAP: TF;
+        case 12: drawingProcces_0 = M_mat0; countModels = 1; break;                                                              // H_BP_EVAP: TV;
         case 13: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // M_BP_EVAP: CV; CF
-        case 14: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: TV
-        case 15: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: TF
-        case 16: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: CV
-        case 17: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: CF
-        case 18: /*Problem! Need two TB[][]! */ break;                                                          // H_FULL_RC
-        case 19: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // M_FULL_RC: CV
-        case 20: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // M_FULL_RC: CF
+        case 14: drawingProcces_0 = M_mat0; drawingProcces_1 = M_mat1; countModels = 2; break;                  // H_BP_EVAP: TB; TFG
+        case 15: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: TV
+        case 16: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: TF
+        case 17: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: CV
+        case 18: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // H_TP_BP: CF
+        case 19: /*Problem! Need two TB[][]! */ break;                                                          // H_FULL_RC
+        case 20: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // M_FULL_RC: CV
+        case 21: drawingProcces_0 = M_mat0; countModels = 1; break;                                             // M_FULL_RC: CF
     }
 
 
@@ -1219,11 +1404,12 @@ void MainWindow::drawModel(int choiceModel)
 
     uint countTrends = 0;
 
+    // crutch...
     switch(choiceModel)
     {
-        case 8:  countTrends = static_cast <uint> (spaceParametrTP + spaceParametrACU + spaceParametrACU - 6); selectZ = spaceParametrTP + spaceParametrACU - 4; break;
-        case 11: countTrends = static_cast <uint> (spaceParametrBP + spaceParametrEVAP + spaceParametrEVAP - 6); selectZ = spaceParametrBP + spaceParametrEVAP - 4; break;
-        default: { countTrends = static_cast <uint> (selectZ * countModels); }
+        case 8:  countTrends = static_cast <uint> (spaceParametrTP + spaceParametrACU + spaceParametrACU - 6); sizeListWithTrends = spaceParametrTP + spaceParametrACU - 4; break;
+        case 11: countTrends = static_cast <uint> (spaceParametrBP + spaceParametrEVAP - 4); sizeListWithTrends = spaceParametrBP + spaceParametrEVAP - 4; break;
+        default: { countTrends = static_cast <uint> (sizeListWithTrends * countModels); }
     }
 
     /*-------------Rendering graphics------------------*/
@@ -1247,7 +1433,7 @@ void MainWindow::drawModel(int choiceModel)
 
         pen.setColor(QColor(randColorR, randColorG, randColorB));
 
-        if(counter <= selectZ)
+        if(counter <= sizeListWithTrends)
         {
             /*-------------Customize of pen to drawing first model------------------*/
 
@@ -1255,7 +1441,7 @@ void MainWindow::drawModel(int choiceModel)
             uiMain->customPlot->graph(static_cast <int>(i))->setName(QString(tr("First phase_%1")).arg(i));
         }
         else
-            if(counter <= selectZ * (countModels-1))
+            if(counter <= sizeListWithTrends * (countModels-1))
             {
                 /*-------------Customize of pen to drawing second model------------------*/
 
@@ -1282,21 +1468,22 @@ void MainWindow::drawModel(int choiceModel)
     clock_t timeMW_Cust = clock();
     int msec = 0;
 
+    // crutch...
     switch(choiceModel)
     {
-        case 8:  countTrends = static_cast <uint> (spaceParametrTP + spaceParametrACU + spaceParametrACU - 6); selectZ = spaceParametrTP + spaceParametrACU - 4; break;
-        case 11: countTrends = static_cast <uint> (spaceParametrBP + spaceParametrEVAP + spaceParametrEVAP - 6); selectZ = spaceParametrBP + spaceParametrEVAP - 4; break;
-        default: { countTrends = static_cast <uint> (selectZ * countModels); }
+        case 8:  countTrends = static_cast <uint> (spaceParametrTP + spaceParametrACU + spaceParametrACU - 6); sizeListWithTrends = spaceParametrTP + spaceParametrACU - 4; break;
+        case 11: countTrends = static_cast <uint> (spaceParametrBP + spaceParametrEVAP - 4); sizeListWithTrends = spaceParametrBP + spaceParametrEVAP - 4; break;
+        default: { countTrends = static_cast <uint> (sizeListWithTrends * countModels); }
     }
 
     for(uint i = 0, j = 0, k = 0, counter = 1; i < countTrends; ++i, ++counter)
     {
-        if(counter <= selectZ)
+        if(counter <= sizeListWithTrends)
         {
             uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_0.at(static_cast <int>(i)));
         }
         else
-            if(counter <= selectZ * (countModels-1))
+            if(counter <= sizeListWithTrends * (countModels-1))
             {
                 uiMain->customPlot->graph(static_cast <int>(i))->setData(t, drawingProcces_2.at(static_cast <int>(k)));
                 ++k;
@@ -1307,7 +1494,6 @@ void MainWindow::drawModel(int choiceModel)
                 ++j;
             }
     }
-
 
     uiMain->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     uiMain->customPlot->replot();
@@ -1393,11 +1579,11 @@ void MainWindow::on_save_clicked()
         std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_TP_ACU");
 
         threadToFileTVMM.join();
+
         threadToFileTFMM.join();
         threadToFileCVMM.join();
         threadToFileCFMM.join();
 
-        threadToFileTVMM.join();
         threadToFileTBMM.join();
     }
 
@@ -1408,10 +1594,30 @@ void MainWindow::on_save_clicked()
         std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_TP_BP");
         std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_TP_BP");
 
-        threadToFileTVMM.join();
+        threadToFileTVMM.join();        
         threadToFileTFMM.join();
         threadToFileCVMM.join();
         threadToFileCFMM.join();
+    }
+
+    if(uiMain->BP_EVAP->isChecked())
+    {
+        std::thread threadToFileTVMM(toFileMM, std::ref(TV), "TV_BP_EVAP");
+        std::thread threadToFileTFMM(toFileMM, std::ref(TF), "TF_BP_EVAP");
+        std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_BP_EVAP");
+        std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_BP_EVAP");
+
+        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_BP_EVAP");
+        std::thread threadToFileTFGMM(toFileMM, std::ref(TFG), "TFG_BP_EVAP");
+
+        threadToFileTVMM.join();
+        threadToFileCVMM.join();
+        threadToFileCFMM.join();
+
+        threadToFileTFMM.join();
+
+        threadToFileTBMM.join();
+        threadToFileTFGMM.join();
     }
 
     QTime time = QTime::currentTime();
@@ -3184,6 +3390,204 @@ void MainWindow::on_TP_BP_clicked()
     uiMain->tableBordersAndInitialConditions_EVAP_4->setDisabled(true);
 }
 
+void MainWindow::on_BP_EVAP_clicked()
+{
+    uiMain->inputLeftY->clear();
+    uiMain->inputRightY->clear();
+    uiMain->inputRightX->clear();
+
+    uiMain->inputLeftY->insert("0");
+    uiMain->inputRightY->insert("1");
+    uiMain->inputRightX->insert("200");
+
+    leftY = uiMain->inputLeftY->text().toDouble();
+    rightY = uiMain->inputRightY->text().toDouble();
+
+    uiMain->selectDRC->setText(QString::number(6.90)); // (RC_BOT)1.4 + (EVAP)5.5
+    uiMain->spaceParametrBP->setValue(3);
+    uiMain->spaceParametrEVAP->setValue(3);
+
+
+    // RC_BOT:
+    //---------------Temperature part------------//
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 0, new QTableWidgetItem(tr("160.000")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(1, 0, new QTableWidgetItem(tr("160.000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_1->columnCount()-1), new QTableWidgetItem(tr("147.999")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 1, new QTableWidgetItem(tr("156.999750")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 2, new QTableWidgetItem(tr("153.999500")));
+    uiMain->tableBordersAndInitialConditions_BP_1->setItem(0, 3, new QTableWidgetItem(tr("150.999250")));
+
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 0, new QTableWidgetItem(tr("120.377000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(1, 0, new QTableWidgetItem(tr("120.377000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_2->columnCount()-1), new QTableWidgetItem(tr("132.399000")));
+
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 1, new QTableWidgetItem(tr("123.382500")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 2, new QTableWidgetItem(tr("126.388000")));
+    uiMain->tableBordersAndInitialConditions_BP_2->setItem(0, 3, new QTableWidgetItem(tr("129.393500")));
+
+    //---------------Concentration part------------//
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 0, new QTableWidgetItem(tr("67.9440")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(1, 0, new QTableWidgetItem(tr("67.9440")));
+
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_3->columnCount()-1), new QTableWidgetItem(tr("72.0440")));
+
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 1, new QTableWidgetItem(tr("68.9690")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 2, new QTableWidgetItem(tr("69.9940")));
+    uiMain->tableBordersAndInitialConditions_BP_3->setItem(0, 3, new QTableWidgetItem(tr("71.0190")));
+
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 0, new QTableWidgetItem(tr("6.550")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(1, 0, new QTableWidgetItem(tr("6.550")));
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_BP_4->columnCount()-1), new QTableWidgetItem(tr("2.7880")));
+
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 1, new QTableWidgetItem(tr("5.60950")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 2, new QTableWidgetItem(tr("4.66900")));
+    uiMain->tableBordersAndInitialConditions_BP_4->setItem(0, 3, new QTableWidgetItem(tr("3.72850")));
+
+    uiMain->tableBordersAndInitialConditions_BP_1->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_2->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_3->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_BP_4->setDisabled(false);
+
+    // EVAP:
+    if((uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1) == 4)
+    {
+        uiMain->tableBordersAndInitialConditions_EVAP_1->insertColumn(4);
+        uiMain->tableBordersAndInitialConditions_EVAP_2->insertColumn(4);
+        uiMain->tableBordersAndInitialConditions_EVAP_3->insertColumn(4);
+        uiMain->tableBordersAndInitialConditions_EVAP_4->insertColumn(4);
+    }
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 0, new QTableWidgetItem(tr("160.00")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(1, 0, new QTableWidgetItem(tr("160.00")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1), new QTableWidgetItem(tr("139.00")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1), new QTableWidgetItem(tr("139.00")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 1, new QTableWidgetItem(tr("160.161650")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 2, new QTableWidgetItem(tr("154.220450")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 3, new QTableWidgetItem(tr("148.736080")));
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setItem(0, 4, new QTableWidgetItem(tr("143.673400")));
+
+
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 0, new QTableWidgetItem(tr("160.200")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(1, 0, new QTableWidgetItem(tr("160.200")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1), new QTableWidgetItem(tr("147.07220")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1), new QTableWidgetItem(tr("147.07220")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 1, new QTableWidgetItem(tr("164.48250")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 2, new QTableWidgetItem(tr("158.20900")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 3, new QTableWidgetItem(tr("152.41800")));
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setItem(0, 4, new QTableWidgetItem(tr("147.07220")));
+
+
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 0, new QTableWidgetItem(tr("300.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(1, 0, new QTableWidgetItem(tr("300.0")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1), new QTableWidgetItem(tr("240.54030")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1), new QTableWidgetItem(tr("240.54030")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 1, new QTableWidgetItem(tr("283.30650")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 2, new QTableWidgetItem(tr("267.89660")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 3, new QTableWidgetItem(tr("253.67150")));
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setItem(0, 4, new QTableWidgetItem(tr("240.54030")));
+
+
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_EVAP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_EVAP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setItem(0, 4, new QTableWidgetItem(tr("0.0")));
+
+    uiMain->tableBordersAndInitialConditions_EVAP_1->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_EVAP_2->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_EVAP_3->setDisabled(false);
+    uiMain->tableBordersAndInitialConditions_EVAP_4->setDisabled(true);
+
+
+    // Clearing other tabs (ACU, TP)
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_2->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, (uiMain->tableBordersAndInitialConditions_ACU_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(1, (uiMain->tableBordersAndInitialConditions_ACU_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_ACU_1->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_2->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_3->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_ACU_4->setDisabled(true);
+
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_1->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_2->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_2->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_3->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_3->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(1, 0, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, (uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(1, (uiMain->tableBordersAndInitialConditions_TP_4->columnCount()-1), new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 1, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 2, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_4->setItem(0, 3, new QTableWidgetItem(tr("0.0")));
+    uiMain->tableBordersAndInitialConditions_TP_1->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_TP_2->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_TP_3->setDisabled(true);
+    uiMain->tableBordersAndInitialConditions_TP_4->setDisabled(true);
+}
+
 void MainWindow::on_selectDRC_textChanged(QString dRCNew)
 {
     dRC = dRCNew.toDouble(&okey);
@@ -3225,6 +3629,14 @@ void MainWindow::on_selectDRC_textChanged(QString dRCNew)
         spaceParametrBP = static_cast <uint> (uiMain->spaceParametrBP->value());
         dh = dRC / ( static_cast <double> (spaceParametrTP + spaceParametrBP) );
     }
+
+    if(uiMain->BP_EVAP->isChecked())
+    {
+        spaceParametrBP = static_cast <uint> (uiMain->spaceParametrBP->value());
+        spaceParametrEVAP = static_cast <uint> (uiMain->spaceParametrEVAP->value());
+        dh = dRC / ( static_cast <double> (spaceParametrBP + spaceParametrEVAP) );
+    }
+
 
     uiMain->selectStepH->setText(QString::number(dh));
 }

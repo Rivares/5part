@@ -57,6 +57,8 @@ private slots:
 
     void on_TP_BP_clicked();
 
+    void on_BP_EVAP_clicked();
+
 private:
     Ui::MainWindow *uiMain;
 
