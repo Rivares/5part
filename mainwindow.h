@@ -40,6 +40,9 @@ private slots:
     void on_ACU_clicked();
     void on_EVAP_clicked();
     void on_TP_ACU_clicked();
+    void on_TP_BP_clicked();
+    void on_BP_EVAP_clicked();
+    void on_FULL_RC_clicked();
 
     void on_selectDRC_textChanged(QString dRCNew);
 
@@ -54,13 +57,6 @@ private slots:
     void on_spaceParametrACU_valueChanged(int countSpacePoints);
     void on_spaceParametrEVAP_valueChanged(int countSpacePoints);
 
-
-    void on_TP_BP_clicked();
-
-    void on_BP_EVAP_clicked();
-
-    void on_FULL_RC_clicked();
-
 private:
     Ui::MainWindow *uiMain;
 
@@ -70,6 +66,22 @@ private:
     vector <vector <double> > CF;
     vector <vector <double> > TB;
     vector <vector <double> > TFG;
+
+    //-----FULL RC-----
+    vector <vector <double> > ACU_TB;
+
+    vector <vector <double> > BOT_TOP_ACU_TV;
+
+    vector <vector <double> > TOP_TF;
+    vector <vector <double> > BOT_EVAP_TF;
+
+    vector <vector <double> > BOT_CV;
+    vector <vector <double> > BOT_CF;
+    vector <vector <double> > TOP_CV;
+    vector <vector <double> > TOP_CF;
+
+    vector <vector <double> > EVAP_TB;
+    vector <vector <double> > EVAP_TFG;
 
     double leftX,rightX;
     double leftY,rightY;

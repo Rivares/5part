@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>236</width>
-    <height>296</height>
+    <width>253</width>
+    <height>312</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>240</y>
+     <x>50</x>
+     <y>270</y>
      <width>158</width>
      <height>25</height>
     </rect>
@@ -42,17 +42,17 @@
   <widget class="QListWidget" name="widgetListTrends">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>20</x>
      <y>50</y>
-     <width>71</width>
-     <height>171</height>
+     <width>121</width>
+     <height>201</height>
     </rect>
    </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>70</x>
      <y>10</y>
      <width>111</width>
      <height>31</height>
@@ -65,8 +65,8 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>50</y>
+     <x>150</x>
+     <y>70</y>
      <width>101</width>
      <height>22</height>
     </rect>
@@ -81,8 +81,8 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>110</y>
+     <x>150</x>
+     <y>130</y>
      <width>50</width>
      <height>20</height>
     </rect>
@@ -103,8 +103,8 @@
   <widget class="QLineEdit" name="inputRightYOfTrend">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>80</y>
+     <x>150</x>
+     <y>100</y>
      <width>50</width>
      <height>20</height>
     </rect>
@@ -122,8 +122,8 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>140</y>
+     <x>150</x>
+     <y>160</y>
      <width>91</width>
      <height>41</height>
     </rect>
@@ -135,8 +135,8 @@
   <widget class="QLineEdit" name="inputLeftXOfTrend">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>190</y>
+     <x>150</x>
+     <y>210</y>
      <width>15</width>
      <height>20</height>
     </rect>
@@ -157,8 +157,8 @@
   <widget class="QLineEdit" name="inputRightXOfTrend">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>190</y>
+     <x>180</x>
+     <y>210</y>
      <width>50</width>
      <height>20</height>
     </rect>
