@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui 3dextras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -27,11 +27,23 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    qcustomplot.cpp
+        qcustomplot.cpp \
+        checkwindow.cpp \
+        logger.cpp \
+        choicetrend.cpp \
+        initlayer.cpp \
+        models.cpp
 
 HEADERS += \
         mainwindow.h \
-    qcustomplot.h
+        qcustomplot.h \
+        checkwindow.h \
+        logger.h \
+        choicetrend.h \
+        initlayer.h \
+        models.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    checkwindow.ui \
+    choicetrend.ui
