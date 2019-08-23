@@ -18,8 +18,10 @@ extern vector <double> initLayerTV;
 extern vector <double> initLayerTF;
 extern vector <double> initLayerCV;
 extern vector <double> initLayerCF;
-extern vector <double> initLayerTB;
+extern vector <double> initLayerTB_ACU;
+extern vector <double> initLayerTB_EVAP;
 extern vector <double> initLayerTFG;
+
 
 extern uint32_t spaceParametrBP;
 extern uint32_t spaceParametrTP;
@@ -539,7 +541,7 @@ bool ETMTP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 }
 
 //------------------AIR-COOLING UNIT MODEL(ACU)---------------------------
-bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
+bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB_ACU)
 {
     // -----Model's heat parameters------
     double  RvT = 8.400, a0 = 0.06,     // a0 = 0.06 ?
@@ -562,22 +564,23 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
     for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.erase(TV.begin(), TV.end());
-        TB.erase(TB.begin(), TB.end());
+        TB_ACU.erase(TB_ACU.begin(), TB_ACU.end());
     }
 
     for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TV.push_back(bmp);
-        TB.push_back(bmp);
+        TB_ACU.push_back(bmp);
     }
 
     beginPoint = 0;
 
+
     thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrACU);
-    thread threadInitialLayerTB(initialLayerTB, std::ref(TB), spaceParametrACU);
+    thread threadInitialLayerTB_ACU(initialLayerTB_ACU, std::ref(TB_ACU));
 
     threadInitialLayerTV.join();
-    threadInitialLayerTB.join();
+    threadInitialLayerTB_ACU.join();
 
     cout << endl << "Initial values:" << endl;
     std::cout.precision(8);
@@ -589,7 +592,7 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 
     for(size_t j = 0; j < spaceParametrACU; ++j)
     {
-        cout << TB.at(0).at(j) << std::fixed << " | ";
+        cout << TB_ACU.at(0).at(j) << std::fixed << " | ";
     }   cout << endl;
 
     // Calculate model
@@ -599,16 +602,16 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
         {
             // -----Calculate layer heat exchenger model------
             TV.at(i).at(j) =
-                    (dt * RvT * TB.at(i-1).at((spaceParametrACU-1)-j))
+                    (dt * RvT * TB_ACU.at(i-1).at((spaceParametrACU-1)-j))
                     - TV.at(i-1).at(j) * ((dt*RvT) + (dt*PTV_L))
                     + (dt * PTV_L * TV.at(i-1).at(j-1))
                     + TV.at(i-1).at(j);
 
-            TB.at(i).at(j) =
+            TB_ACU.at(i).at(j) =
                     (dt * RB2 * TV.at(i-1).at(j))              // TV[i-1][j] ??? j - ????
                     + (CP*dt*RB1*TE)                        // ? TE - const or function?
-                    - TB.at(i-1).at(j) * (CP*dt*RB1 + dt*RB2)
-                    + TB.at(i-1).at(j);
+                    - TB_ACU.at(i-1).at(j) * (CP*dt*RB1 + dt*RB2)
+                    + TB_ACU.at(i-1).at(j);
         }
     }
 
@@ -620,14 +623,14 @@ bool ACU_MM(vector<vector<double> > &TV, vector<vector<double> > &TB)
 
     for(uint32_t j = 1; j < (spaceParametrACU-1); ++j)
     {
-        cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+        cout << TB_ACU.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     return true;
 }
 
 //---------------------EVAPORATOR MODEL(EVAP)-----------------------------
-bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB,
+bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB_EVAP,
              vector <vector <double> > &TFG)
 {
     // -----Model's gas parameters------
@@ -653,14 +656,14 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB,
     for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TF.erase(TF.begin(), TF.end());
-        TB.erase(TB.begin(), TB.end());
+        TB_EVAP.erase(TB_EVAP.begin(), TB_EVAP.end());
         TFG.erase(TFG.begin(), TFG.end());
     }
 
     for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
         TF.push_back(bmp);
-        TB.push_back(bmp);
+        TB_EVAP.push_back(bmp);
         TFG.push_back(bmp);
     }
 
@@ -669,11 +672,11 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB,
     beginPoint = 0;
 
     thread threadInitialLayerTF(initialLayerTF, std::ref(TF), spaceParametrEVAP);
-    thread threadInitialLayerTB(initialLayerTB, std::ref(TB), spaceParametrEVAP);
+    thread threadInitialLayerTB_EVAP(initLayerTB_EVAP, std::ref(TB_EVAP));
     thread threadInitialLayerTFG(initialLayerTFG, std::ref(TFG));
 
     threadInitialLayerTF.join();
-    threadInitialLayerTB.join();
+    threadInitialLayerTB_EVAP.join();
     threadInitialLayerTFG.join();
 
     cout << endl << "Initial values:" << endl;
@@ -686,7 +689,7 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB,
 
     for(size_t j = 0; j < spaceParametrEVAP; ++j)
     {
-        cout << TB.at(0).at(j) << " | ";
+        cout << TB_EVAP.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrEVAP; ++j)
@@ -702,19 +705,19 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB,
         for(size_t j = 1; j < (spaceParametrEVAP-1); ++j)
         {
             TF.at(i).at(j) =
-                    (dt * RF * TB.at(i-1).at(j+1)) // ?
+                    (dt * RF * TB_EVAP.at(i-1).at(j+1)) // ?
                     + (dt * PTF * TF.at(i-1).at(j+1))
                     - TF.at(i-1).at(j) * (dt*RF + dt*PTF)
                     + TF.at(i-1).at(j);
 
-            TB.at(i).at(j) =
+            TB_EVAP.at(i).at(j) =
                     (dt * RFB * TF.at(i-1).at(j)) // ?
                     + (dt * RFGB * TFG.at(i-1).at((spaceParametrEVAP-1)-j))// ?
-                    - TB.at(i-1).at(j) * (dt*RFGB + dt*RFB)
-                    + TB.at(i-1).at(j);
+                    - TB_EVAP.at(i-1).at(j) * (dt*RFGB + dt*RFB)
+                    + TB_EVAP.at(i-1).at(j);
 
             TFG.at(i).at(j) =
-                    (dt * RFG * TB.at(i-1).at(j+1)) // ?
+                    (dt * RFG * TB_EVAP.at(i-1).at(j+1)) // ?
                     + (dt * PTFG * TFG.at(i-1).at(j-1))
                     - TFG.at(i-1).at(j) * (dt*RFG + dt*PTFG)
                     + TFG.at(i-1).at(j);
@@ -729,7 +732,7 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB,
 
     for(uint32_t j = 1; j < (spaceParametrEVAP-1); ++j)
     {
-        cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+        cout << TB_EVAP.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint32_t j = 1; j < (spaceParametrEVAP-1); ++j)
@@ -744,7 +747,7 @@ bool EVAP_MM(vector <vector <double> > &TF, vector <vector <double> > &TB,
 //-----INTERCONNECTED MODEL(TOP PART) + AIR-COOLING UNIT MODEL(ACU)-------
 bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                 vector <vector <double> > &CV, vector <vector <double> > &CF,
-                vector<vector<double> > &TB)
+                vector<vector<double> > &TB_ACU)
 {
     // RC_TOP:
     // -----Model's heat exchenger parameters------
@@ -804,7 +807,7 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CV.erase(CV.begin(), CV.end());
         CF.erase(CF.begin(), CF.end());
 
-        TB.erase(TB.begin(), TB.end());
+        TB_ACU.erase(TB_ACU.begin(), TB_ACU.end());
     }
 
     for (unsigned long long i = 0; i < static_cast <size_t>(selectN / dt); ++i)
@@ -814,7 +817,7 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CV.push_back(countSpacePoints_1);
         CF.push_back(countSpacePoints_1);
 
-        TB.push_back(countSpacePoints_2);
+        TB_ACU.push_back(countSpacePoints_2);
     }
 
     //--------------------------------------------------------
@@ -826,7 +829,7 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     thread threadInitialLayerCV(initialLayerCV, std::ref(CV), spaceParametrTP);
     thread threadInitialLayerCF(initialLayerCF, std::ref(CF), spaceParametrTP);
 
-    thread threadInitialLayerTB(initialLayerTB, std::ref(TB), spaceParametrACU);
+    thread threadInitialLayerTB_ACU(initialLayerTB_ACU, std::ref(TB_ACU));
 
 
     threadInitialLayerTV.join();
@@ -834,7 +837,7 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     threadInitialLayerCV.join();
     threadInitialLayerCF.join();
 
-    threadInitialLayerTB.join();
+    threadInitialLayerTB_ACU.join();
 
 
     cout << endl << "Initial values RC_TOP:" << endl;
@@ -902,16 +905,16 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         {
             // -----Calculate layer heat exchenger model------
             TV.at(i).at(j) =
-                    (dt*ACU_RvT * TB.at(i-1).at((endPoint - 1) - j))
+                    (dt*ACU_RvT * TB_ACU.at(i-1).at((endPoint - 1) - j))
                     - TV.at(i-1).at(j) * ((dt*ACU_RvT) + (dt*ACU_PTV_L))
                     + (dt * ACU_PTV_L * TV.at(i-1).at(j-1))
                     + TV.at(i-1).at(j);
 
-            TB.at(i).at(j-beginPoint + 1) =
+            TB_ACU.at(i).at(j-beginPoint + 1) =
                     (dt * ACU_RB2 * TV.at(i-1).at(endPoint + 2 - j))
                     + (ACU_CP*dt*ACU_RB1*ACU_TE)
-                    - TB.at(i-1).at(j-beginPoint) * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
-                    + TB.at(i-1).at(j-beginPoint);
+                    - TB_ACU.at(i-1).at(j-beginPoint) * (ACU_CP*dt*ACU_RB1 + dt*ACU_RB2)
+                    + TB_ACU.at(i-1).at(j-beginPoint);
         }
 
         TF.at(i).at(0) = TV.at(i).at(endPoint-2);   // Connection between ACU(TV) -> RC_TOP(TF)
@@ -942,7 +945,7 @@ bool TOP_ACU_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     cout << endl << "Steady-state values TB:" << endl;
     for(uint32_t j = 1; j < (spaceParametrACU-1); ++j)
     {
-        cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+        cout << TB_ACU.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     return true;
@@ -1154,7 +1157,7 @@ bool TOP_BOT_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 //------INTERCONNECTED MODEL(BOTTOM PART) + EVAPORATOR MODEL(EVAP)--------
 bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
                  vector <vector <double> > &CV, vector <vector <double> > &CF,
-                 vector <vector <double> > &TB, vector <vector <double> > &TFG)
+                 vector <vector <double> > &TB_EVAP, vector <vector <double> > &TFG)
 {
     // RC_BOT:
     // -----Model's heat exchenger parameters------
@@ -1206,7 +1209,7 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CV.erase(CV.begin(), CV.end());
         CF.erase(CF.begin(), CF.end());
 
-        TB.erase(TB.begin(), TB.end());
+        TB_EVAP.erase(TB_EVAP.begin(), TB_EVAP.end());
         TFG.erase(TFG.begin(), TFG.end());
     }
 
@@ -1217,7 +1220,7 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         CV.push_back(countSpacePoints_1);
         CF.push_back(countSpacePoints_1);
 
-        TB.push_back(countSpacePoints_2);
+        TB_EVAP.push_back(countSpacePoints_2);
         TFG.push_back(countSpacePoints_2);
     }
 
@@ -1226,7 +1229,7 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     thread threadInitialLayerCV(initialLayerCV, std::ref(CV), spaceParametrBP);
     thread threadInitialLayerCF(initialLayerCF, std::ref(CF), spaceParametrBP);
 
-    thread threadInitialLayerTB(initialLayerTB, std::ref(TB), spaceParametrEVAP);
+    thread threadInitialLayerTB_EVAP(initialLayerTB_EVAP, std::ref(TB_EVAP));
     thread threadInitialLayerTFG(initialLayerTFG, std::ref(TFG));
 
     threadInitialLayerTV.join();
@@ -1234,7 +1237,7 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
     threadInitialLayerCV.join();
     threadInitialLayerCF.join();
 
-    threadInitialLayerTB.join();
+    threadInitialLayerTB_EVAP.join();
     threadInitialLayerTFG.join();
 
 
@@ -1266,7 +1269,7 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     for(size_t j = 0; j < spaceParametrEVAP; ++j)
     {
-        cout << TB.at(0).at(j) << " | ";
+        cout << TB_EVAP.at(0).at(j) << " | ";
     }   cout << endl;
 
     for(size_t j = 0; j < spaceParametrEVAP; ++j)
@@ -1367,7 +1370,7 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
         for(size_t j = spaceParametrBP-1; j < (sizeModel - 1); ++j)
         {
             TF.at(i).at(j) =
-                    (dt * RF * TB.at(i-1).at(j-spaceParametrBP+1)) // ?
+                    (dt * RF * TB_EVAP.at(i-1).at(j-spaceParametrBP+1)) // ?
                     + (dt * EVAP_PTF * TF.at(i-1).at(j+1))
                     - TF.at(i-1).at(j) * (dt*RF + dt*EVAP_PTF)
                     + TF.at(i-1).at(j);
@@ -1375,14 +1378,14 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
         for(size_t j = 1; j < (spaceParametrEVAP-1); ++j)
         {
-            TB.at(i).at(j) =
+            TB_EVAP.at(i).at(j) =
                     (dt * RFB * TF.at(i-1).at(j)) // ?
                     + (dt * RFGB * TFG.at(i-1).at((spaceParametrEVAP-1)-j))// ?
-                    - TB.at(i-1).at(j) * (dt*RFGB + dt*RFB)
-                    + TB.at(i-1).at(j);
+                    - TB_EVAP.at(i-1).at(j) * (dt*RFGB + dt*RFB)
+                    + TB_EVAP.at(i-1).at(j);
 
             TFG.at(i).at(j) =
-                    (dt * RFG * TB.at(i-1).at(j+1)) // ?
+                    (dt * RFG * TB_EVAP.at(i-1).at(j+1)) // ?
                     + (dt * PTFG * TFG.at(i-1).at(j-1))
                     - TFG.at(i-1).at(j) * (dt*RFG + dt*PTFG)
                     + TFG.at(i-1).at(j);
@@ -1414,7 +1417,7 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 
     for(uint32_t j = 1; j < (spaceParametrEVAP-1); ++j)
     {
-        cout << TB.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
+        cout << TB_EVAP.at(static_cast <size_t>((selectN-2) / dt)).at(j) << " | ";
     }cout << endl;
 
     for(uint32_t j = 1; j < (spaceParametrEVAP-1); ++j)
@@ -1427,17 +1430,12 @@ bool BOT_EVAP_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
 }
 
 //--------------------------------FULL RC---------------------------------
-bool FULL_RC_MM(vector <vector <double> > &ACU_TB,
-                vector <vector <double> > &BOT_TOP_ACU_TV,
-                vector <vector <double> > &TOP_TF,
-                vector <vector <double> > &BOT_EVAP_TF,
-                vector <vector <double> > &BOT_CV,
-                vector <vector <double> > &BOT_CF,
-                vector <vector <double> > &TOP_CV,
-                vector <vector <double> > &TOP_CF,
-                vector <vector <double> > &EVAP_TB,
-                vector <vector <double> > &EVAP_TFG)
+bool FULL_RC_MM(vector <vector <double> > &TV, vector <vector <double> > &TF,
+                vector <vector <double> > &CV, vector <vector <double> > &CF,
+                vector <vector <double> > &TB_ACU, vector <vector <double> > &TB_EVAP,
+                vector <vector <double> > &TFG)
 {
+    /*
     // ACU:
     // -----Model's heat parameters------
     double  ACU_RvT = 8.400, ACU_a0 = 0.06     // a0 = 0.06 ?
@@ -1555,7 +1553,7 @@ bool FULL_RC_MM(vector <vector <double> > &ACU_TB,
         EVAP_TB.push_back(countSpacePoints_6);
         EVAP_TFG.push_back(countSpacePoints_6);
     }
-
+*/
     //--------------------------------------------------------
 
 //    thread threadInitialLayerTV(initialLayerTV, std::ref(TV), spaceParametrBP);

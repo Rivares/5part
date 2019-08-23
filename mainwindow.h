@@ -64,24 +64,9 @@ private:
     vector <vector <double> > TF;
     vector <vector <double> > CV;
     vector <vector <double> > CF;
-    vector <vector <double> > TB;
+    vector <vector <double> > TB_ACU;
+    vector <vector <double> > TB_EVAP;
     vector <vector <double> > TFG;
-
-    //-----FULL RC-----
-    vector <vector <double> > ACU_TB;
-
-    vector <vector <double> > BOT_TOP_ACU_TV;
-
-    vector <vector <double> > TOP_TF;
-    vector <vector <double> > BOT_EVAP_TF;
-
-    vector <vector <double> > BOT_CV;
-    vector <vector <double> > BOT_CF;
-    vector <vector <double> > TOP_CV;
-    vector <vector <double> > TOP_CF;
-
-    vector <vector <double> > EVAP_TB;
-    vector <vector <double> > EVAP_TFG;
 
     double leftX,rightX;
     double leftY,rightY;

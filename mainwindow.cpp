@@ -35,52 +35,26 @@ double dh;
 uint32_t beginPoint;
 uint32_t endPoint;
 
+
 //-----------Initial layers-----------//
 vector <double> initLayerTV;
 vector <double> initLayerTF;
 vector <double> initLayerCV;
 vector <double> initLayerCF;
-vector <double> initLayerTB;
+vector <double> initLayerTB_ACU;
+vector <double> initLayerTB_EVAP;
 vector <double> initLayerTFG;
+
 
 //---------------Borders--------------//
 double  initLayerTV_0, initLayerTV_1;
 double  initLayerTF_0, initLayerTF_1;
 double  initLayerCV_0, initLayerCV_1;
 double  initLayerCF_0, initLayerCF_1;
-double initLayerTB_0, initLayerTB_1;
-double initLayerTFG_0, initLayerTFG_1;
+double  initLayerTB_ACU_0, initLayerTB_ACU_1;
+double  initLayerTB_EVAP_0, initLayerTB_EVAP_1;
+double  initLayerTFG_0,initLayerTFG_1;
 
-
-//-------Initial layers for RC--------//
-vector <double> initLayerRC_ACU_TB;
-vector <double> initLayerRC_BOT_TOP_ACU_TV;
-
-vector <double> initLayerRC_TOP_TF;
-vector <double> initLayerRC_BOT_EVAP_TF;
-
-vector <double> initLayerRC_BOT_CV;
-vector <double> initLayerRC_BOT_CF;
-vector <double> initLayerRC_TOP_CV;
-vector <double> initLayerRC_TOP_CF;
-
-vector <double> initLayerRC_EVAP_TB;
-vector <double> initLayerRC_EVAP_TFG;
-
-//-----------Borders for RC-----------//
-double initLayerRC_ACU_TB_0, initLayerRC_ACU_TB_1;
-double initLayerRC_BOT_TV_0, initLayerRC_ACU_TV_1;
-
-double initLayerRC_TOP_TF_0, initLayerRC_TOP_TF_1;
-double initLayerRC_BOT_TF_0, initLayerRC_EVAP_TF_1;
-
-double initLayerRC_BOT_CV_0, initLayerRC_BOT_CV_1;
-double initLayerRC_BOT_CF_0, initLayerRC_BOT_CF_1;
-double initLayerRC_TOP_CV_0, initLayerRC_TOP_CV_1;
-double initLayerRC_TOP_CF_0, initLayerRC_TOP_CF_1;
-
-double initLayerRC_EVAP_TB_0, initLayerRC_EVAP_TB_1;
-double initLayerRC_EVAP_TFG_0, initLayerRC_EVAP_TFG_1;
 
 uint32_t spaceParametrBP;
 uint32_t spaceParametrTP;
@@ -248,16 +222,16 @@ void MainWindow::getData()
         initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, 0)->text()).toDouble();
         initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
-        initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
+        initLayerTB_ACU_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
+        initLayerTB_ACU_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
 
         initLayerTV.assign((spaceParametrACU-2), 0.0);
-        initLayerTB.assign((spaceParametrACU-2), 0.0);
+        initLayerTB_ACU.assign((spaceParametrACU-2), 0.0);
 
         for(uint j = 1; j <= (spaceParametrACU-2); ++j)
         {
             initLayerTV.at(j-1) = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTB.at(j-1) = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTB_ACU.at(j-1) = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         dh = static_cast <double> (dRC / (spaceParametrACU-2));
@@ -276,20 +250,20 @@ void MainWindow::getData()
         initLayerTF_0 = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, 0)->text()).toDouble();
         initLayerTF_1 = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, uiMain->tableBordersAndInitialConditions_EVAP_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
-        initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
+        initLayerTB_EVAP_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
+        initLayerTB_EVAP_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
 
         initLayerTFG_0 = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, 0)->text()).toDouble();
         initLayerTFG_1 = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1)->text()).toDouble();
 
         initLayerTF.assign((spaceParametrEVAP-2), 0.0);
-        initLayerTB.assign((spaceParametrEVAP-2), 0.0);
+        initLayerTB_EVAP.assign((spaceParametrEVAP-2), 0.0);
         initLayerTFG.assign((spaceParametrEVAP-2), 0.0);
 
         for(uint j = 1; j <= (spaceParametrEVAP-2); ++j)
         {
             initLayerTF.at(j-1)  = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, static_cast <int>(j))->text()).toDouble();
-            initLayerTB.at(j-1)  = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTB_EVAP.at(j-1)  = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerTFG.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
@@ -322,8 +296,8 @@ void MainWindow::getData()
 
         initLayerTV_1 = (uiMain->tableBordersAndInitialConditions_ACU_1->item(0, uiMain->tableBordersAndInitialConditions_ACU_1->columnCount()-1)->text()).toDouble();
 
-        initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
-        initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
+        initLayerTB_ACU_0 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, 0)->text()).toDouble();
+        initLayerTB_ACU_1 = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, uiMain->tableBordersAndInitialConditions_ACU_2->columnCount()-1)->text()).toDouble();
 
 
         initLayerTV.assign((spaceParametrTP + spaceParametrACU - 4), 0.0);
@@ -331,7 +305,7 @@ void MainWindow::getData()
         initLayerCV.assign((spaceParametrTP-2), 0.0);
         initLayerCF.assign((spaceParametrTP-2), 0.0);
 
-        initLayerTB.assign((spaceParametrACU-2), 0.0);
+        initLayerTB_ACU.assign((spaceParametrACU-2), 0.0);
 
         for(uint j = 1; j <= (spaceParametrTP-2); ++j)
         {
@@ -348,7 +322,7 @@ void MainWindow::getData()
 
         for(uint j = 1; j <= (spaceParametrACU-2); ++j)
         {
-            initLayerTB.at(j-1) = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTB_ACU.at(j-1) = (uiMain->tableBordersAndInitialConditions_ACU_2->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
         dh = static_cast <double> (dRC / (spaceParametrTP + spaceParametrACU - 4));  // dRC = dRC_TP + dRC_ACU; spaceParametr = spaceParametrTP + spaceParametrACU
@@ -420,7 +394,7 @@ void MainWindow::getData()
         initLayerCV_0 = 0.0; initLayerCV_1 = 0.0;
         initLayerCF_0 = 0.0; initLayerCF_1 = 0.0;
 
-        initLayerTB_0 = 0.0; initLayerTB_1 = 0.0;
+        initLayerTB_EVAP_0 = 0.0; initLayerTB_EVAP_1 = 0.0;
         initLayerTFG_0 = 0.0; initLayerTFG_1 = 0.0;
 
         initLayerTV_0 = (uiMain->tableBordersAndInitialConditions_BP_1->item(0, 0)->text()).toDouble();
@@ -438,8 +412,8 @@ void MainWindow::getData()
 
 
 
-        initLayerTB_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
-        initLayerTB_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
+        initLayerTB_EVAP_0 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, 0)->text()).toDouble();
+        initLayerTB_EVAP_1 = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, uiMain->tableBordersAndInitialConditions_EVAP_2->columnCount()-1)->text()).toDouble();
 
         initLayerTFG_0 = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, 0)->text()).toDouble();
         initLayerTFG_1 = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, uiMain->tableBordersAndInitialConditions_EVAP_3->columnCount()-1)->text()).toDouble();
@@ -450,7 +424,7 @@ void MainWindow::getData()
         initLayerCV.assign((spaceParametrBP - 2), 0.0);
         initLayerCF.assign((spaceParametrBP - 2), 0.0);
 
-        initLayerTB.assign((spaceParametrEVAP-2), 0.0);
+        initLayerTB_EVAP.assign((spaceParametrEVAP-2), 0.0);
         initLayerTFG.assign((spaceParametrEVAP-2), 0.0);
 
         for(uint j = 1; j <= (spaceParametrBP-2); ++j)
@@ -468,7 +442,7 @@ void MainWindow::getData()
 
         for(uint j = 1; j <= (spaceParametrEVAP-2); ++j)
         {
-            initLayerTB.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
+            initLayerTB_EVAP.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_2->item(0, static_cast <int>(j))->text()).toDouble();
             initLayerTFG.at(j-1) = (uiMain->tableBordersAndInitialConditions_EVAP_3->item(0, static_cast <int>(j))->text()).toDouble();
         }
 
@@ -480,6 +454,7 @@ void MainWindow::getData()
     //--------------------------------FULL RC---------------------------------
     if( (uiMain->FULL_RC->isChecked()) )
     {
+        /*
         spaceParametrACU = static_cast <uint>(uiMain->tableBordersAndInitialConditions_ACU_1->columnCount());
         spaceParametrTP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_TP_1->columnCount());
         spaceParametrBP = static_cast <uint>(uiMain->tableBordersAndInitialConditions_BP_1->columnCount());
@@ -589,6 +564,7 @@ void MainWindow::getData()
             initLayerRC_BOT_EVAP_TF.at(j) = (uiMain->tableBordersAndInitialConditions_EVAP_1->item(0, static_cast <int>(j-(spaceParametrBP-2)+1))->text()).toDouble();
         }
 
+        */
         dh = static_cast <double> (dRC / (spaceParametrACU + spaceParametrTP + spaceParametrBP + spaceParametrEVAP - 8));  // dRC = dRC_ACU + dRC_TP + ...;
     }
     //------------------------------------------------------------------------
@@ -778,7 +754,7 @@ void MainWindow::drawGraph()
     //------------------AIR-COOLING UNIT MODEL(ACU)---------------------------
     if((uiMain->ACU->isChecked()))
     {
-        if(!ACU_MM(TV, TB))
+        if(!ACU_MM(TV, TB_ACU))
         {
             QMessageBox msgBox;
             msgBox.setText("Sampling error! Change dt!");
@@ -794,7 +770,7 @@ void MainWindow::drawGraph()
             for(uint j = 1; j < spaceParametrACU-1; ++j)
             {
                 listStatesFirst.append(QString::number(TV.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                listStatesSecond.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                listStatesSecond.append(QString::number(TB_ACU.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
         }
     }
@@ -804,7 +780,7 @@ void MainWindow::drawGraph()
     //---------------------EVAPORATOR MODEL(EVAP)-----------------------------
     if((uiMain->EVAP->isChecked()))
     {
-        if(!EVAP_MM(TF, TB, TFG))
+        if(!EVAP_MM(TF, TB_EVAP, TFG))
         {
             QMessageBox msgBox;
             msgBox.setText("Sampling error! Change dt!");
@@ -820,7 +796,7 @@ void MainWindow::drawGraph()
             for(uint j = 1; j < spaceParametrEVAP-1; ++j)
             {
                 listStatesFirst.append(QString::number(TF.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
-                listStatesSecond.append(QString::number(TB.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
+                listStatesSecond.append(QString::number(TB_EVAP.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
                 listStatesThird.append(QString::number(TFG.at(static_cast <size_t> ((selectN / dt) - 1)).at(j)));
             }
         }
@@ -926,15 +902,15 @@ void MainWindow::drawModel(int choiceModel)
                 case 3:  tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_BP
                 case 4:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_TP
                 case 5:  tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_TP
-                case 6:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TB.at(j).at(i)); break;   // ACU
-                case 7:  tmpVectorM0.push_back(TF.at(j).at(i)); tmpVectorM1.push_back(TB.at(j).at(i)); tmpVectorM2.push_back(TFG.at(j).at(i)); break; // EVAP
+                case 6:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TB_ACU.at(j).at(i)); break;   // ACU
+                case 7:  tmpVectorM0.push_back(TF.at(j).at(i)); tmpVectorM1.push_back(TB_EVAP.at(j).at(i)); tmpVectorM2.push_back(TFG.at(j).at(i)); break; // EVAP
                 case 8:  tmpVectorM0.push_back(TV.at(j).at(i)); tmpVectorM1.push_back(TF.at(j).at(i)); break;   // H_TP_ACU: TV; TF
-                case 9:  tmpVectorM0.push_back(TB.at(j).at(i)); break;                                          // H_TP_ACU: TB;
+                case 9:  tmpVectorM0.push_back(TB_ACU.at(j).at(i)); break;                                          // H_TP_ACU: TB;
                 case 10: tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_TP_ACU
                 case 11: tmpVectorM0.push_back(TF.at(j).at(i)); break;                                          // H_BP_EVAP: TF;
                 case 12: tmpVectorM0.push_back(TV.at(j).at(i)); break;                                          // H_BP_EVAP: TV;
                 case 13: tmpVectorM0.push_back(CV.at(j).at(i)); tmpVectorM1.push_back(CF.at(j).at(i)); break;   // M_BP_EVAP: CV; CF
-                case 14: tmpVectorM0.push_back(TB.at(j).at(i)); tmpVectorM1.push_back(TFG.at(j).at(i));break;   // H_BP_EVAP: TB; TFG
+                case 14: tmpVectorM0.push_back(TB_EVAP.at(j).at(i)); tmpVectorM1.push_back(TFG.at(j).at(i));break;   // H_BP_EVAP: TB; TFG
                 case 15: tmpVectorM0.push_back(TV.at(j).at(i)); break;  // H_TP_BP: TV
                 case 16: tmpVectorM0.push_back(TF.at(j).at(i)); break;  // H_TP_BP: TF
                 case 17: tmpVectorM0.push_back(CV.at(j).at(i)); break;  // M_TP_BP: CV
@@ -1199,20 +1175,20 @@ void MainWindow::on_save_clicked()
     if(uiMain->ACU->isChecked())
     {
         std::thread threadToFileTVMM(toFileMM, std::ref(TV), "TV_ACU");
-        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_ACU");
+        std::thread threadToFileTB_ACUMM(toFileMM, std::ref(TB_ACU), "TB_ACU");
 
         threadToFileTVMM.join();
-        threadToFileTBMM.join();
+        threadToFileTB_ACUMM.join();
     }
 
     if(uiMain->EVAP->isChecked())
     {
         std::thread threadToFileTFMM(toFileMM, std::ref(TF), "TF_EVAP");
-        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_EVAP");
+        std::thread threadToFileTB_EVAPMM(toFileMM, std::ref(TB_EVAP), "TB_EVAP");
         std::thread threadToFileTFGMM(toFileMM, std::ref(TFG), "TFG_EVAP");
 
         threadToFileTFMM.join();
-        threadToFileTBMM.join();
+        threadToFileTB_EVAPMM.join();
         threadToFileTFGMM.join();
     }
 
@@ -1223,7 +1199,7 @@ void MainWindow::on_save_clicked()
         std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_TP_ACU");
         std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_TP_ACU");
 
-        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_TP_ACU");
+        std::thread threadToFileTB_ACUMM(toFileMM, std::ref(TB_ACU), "TB_TP_ACU");
 
         threadToFileTVMM.join();
 
@@ -1231,7 +1207,7 @@ void MainWindow::on_save_clicked()
         threadToFileCVMM.join();
         threadToFileCFMM.join();
 
-        threadToFileTBMM.join();
+        threadToFileTB_ACUMM.join();
     }
 
     if(uiMain->TP_BP->isChecked())
@@ -1254,7 +1230,7 @@ void MainWindow::on_save_clicked()
         std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_BP_EVAP");
         std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_BP_EVAP");
 
-        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_BP_EVAP");
+        std::thread threadToFileTB_EVAPMM(toFileMM, std::ref(TB_EVAP), "TB_BP_EVAP");
         std::thread threadToFileTFGMM(toFileMM, std::ref(TFG), "TFG_BP_EVAP");
 
         threadToFileTVMM.join();
@@ -1263,7 +1239,7 @@ void MainWindow::on_save_clicked()
 
         threadToFileTFMM.join();
 
-        threadToFileTBMM.join();
+        threadToFileTB_EVAPMM.join();
         threadToFileTFGMM.join();
     }
 
@@ -1274,7 +1250,9 @@ void MainWindow::on_save_clicked()
         std::thread threadToFileCVMM(toFileMM, std::ref(CV), "CV_FULL_RC");
         std::thread threadToFileCFMM(toFileMM, std::ref(CF), "CF_FULL_RC");
 
-        std::thread threadToFileTBMM(toFileMM, std::ref(TB), "TB_FULL_RC");
+        std::thread threadToFileTB_ACUMM(toFileMM, std::ref(TB_ACU), "TB_FULL_RC");
+        std::thread threadToFileTB_EVAPMM(toFileMM, std::ref(TB_EVAP), "TB_FULL_RC");
+
         std::thread threadToFileTFGMM(toFileMM, std::ref(TFG), "TFG_FULL_RC");
 
         threadToFileTVMM.join();
@@ -1283,7 +1261,9 @@ void MainWindow::on_save_clicked()
 
         threadToFileTFMM.join();
 
-        threadToFileTBMM.join();
+        threadToFileTB_ACUMM.join();
+        threadToFileTB_EVAPMM.join();
+
         threadToFileTFGMM.join();
     }
 
@@ -2918,7 +2898,7 @@ void MainWindow::on_TP_ACU_clicked()
         connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
 
-        if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+        if(!TOP_ACU_MM(TV, TF, CV, CF, TB_ACU))
         {
             QMessageBox msgBox;
             msgBox.setText("Sampling error! Change dt!");
@@ -2960,7 +2940,7 @@ void MainWindow::on_TP_ACU_clicked()
             connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
             connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-            if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+            if(!TOP_ACU_MM(TV, TF, CV, CF, TB_ACU))
             {
                 QMessageBox msgBox;
                 msgBox.setText("Sampling error! Change dt!");
@@ -2974,7 +2954,7 @@ void MainWindow::on_TP_ACU_clicked()
                 // Out to display steady-state value temperature
                 for(uint j = 0; j < spaceParametrACU; ++j)
                 {
-                    listStatesFirst.append(QString::number(TB.at(TB.size()-1).at(j)));
+                    listStatesFirst.append(QString::number(TB_ACU.at(TB_ACU.size()-1).at(j)));
                 }
             }
         }
@@ -2997,7 +2977,7 @@ void MainWindow::on_TP_ACU_clicked()
                 connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
                 connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-                if(!TOP_ACU_MM(TV, TF, CV, CF, TB))
+                if(!TOP_ACU_MM(TV, TF, CV, CF, TB_ACU))
                 {
                     QMessageBox msgBox;
                     msgBox.setText("Sampling error! Change dt!");
@@ -3659,7 +3639,7 @@ void MainWindow::on_BP_EVAP_clicked()
         connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
         connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-        if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+        if(!BOT_EVAP_MM(TV, TF, CV, CF, TB_EVAP, TFG))
         {
             QMessageBox msgBox;
             msgBox.setText("Sampling error! Change dt!");
@@ -3696,7 +3676,7 @@ void MainWindow::on_BP_EVAP_clicked()
             connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
             connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-            if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+            if(!BOT_EVAP_MM(TV, TF, CV, CF, TB_EVAP, TFG))
             {
                 QMessageBox msgBox;
                 msgBox.setText("Sampling error! Change dt!");
@@ -3733,7 +3713,7 @@ void MainWindow::on_BP_EVAP_clicked()
                 connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
                 connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-                if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+                if(!BOT_EVAP_MM(TV, TF, CV, CF, TB_EVAP, TFG))
                 {
                     QMessageBox msgBox;
                     msgBox.setText("Sampling error! Change dt!");
@@ -3774,7 +3754,7 @@ void MainWindow::on_BP_EVAP_clicked()
                     connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
                     connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-                    if(!BOT_EVAP_MM(TV, TF, CV, CF, TB, TFG))
+                    if(!BOT_EVAP_MM(TV, TF, CV, CF, TB_EVAP, TFG))
                     {
                         QMessageBox msgBox;
                         msgBox.setText("Sampling error! Change dt!");
@@ -3788,7 +3768,7 @@ void MainWindow::on_BP_EVAP_clicked()
                         // Out to display steady-state value concentration
                         for(uint j = 0; j < spaceParametrEVAP; ++j)
                         {
-                            listStatesFirst.append(QString::number(TB.at(TB.size()-1).at(j)));
+                            listStatesFirst.append(QString::number(TB_EVAP.at(TB_EVAP.size()-1).at(j)));
                         }
                         for(uint j = 0; j < spaceParametrEVAP; ++j)
                         {
@@ -4103,11 +4083,10 @@ void MainWindow::on_FULL_RC_clicked()
         connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
         connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-        if(!FULL_RC_MM(ACU_TB, BOT_TOP_ACU_TV,
-                       TOP_TF, BOT_EVAP_TF,
-                       BOT_CV, BOT_CF,
-                       TOP_CV, TOP_CF,
-                       EVAP_TB,EVAP_TFG))
+        if(!FULL_RC_MM(TV, TF,
+                       CV, CF,
+                       TB_ACU, TB_EVAP,
+                       TFG))
         {
             QMessageBox msgBox;
             msgBox.setText("Sampling error! Change dt!");
@@ -4144,11 +4123,10 @@ void MainWindow::on_FULL_RC_clicked()
             connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
             connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-            if(!FULL_RC_MM(ACU_TB, BOT_TOP_ACU_TV,
-                           TOP_TF, BOT_EVAP_TF,
-                           BOT_CV, BOT_CF,
-                           TOP_CV, TOP_CF,
-                           EVAP_TB,EVAP_TFG))
+            if(!FULL_RC_MM(TV, TF,
+                           CV, CF,
+                           TB_ACU, TB_EVAP,
+                           TFG))
             {
                 QMessageBox msgBox;
                 msgBox.setText("Sampling error! Change dt!");
@@ -4185,11 +4163,10 @@ void MainWindow::on_FULL_RC_clicked()
                 connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
                 connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-                if(!FULL_RC_MM(ACU_TB, BOT_TOP_ACU_TV,
-                               TOP_TF, BOT_EVAP_TF,
-                               BOT_CV, BOT_CF,
-                               TOP_CV, TOP_CF,
-                               EVAP_TB,EVAP_TFG))
+                if(!FULL_RC_MM(TV, TF,
+                               CV, CF,
+                               TB_ACU, TB_EVAP,
+                               TFG))
                 {
                     QMessageBox msgBox;
                     msgBox.setText("Sampling error! Change dt!");
@@ -4230,11 +4207,10 @@ void MainWindow::on_FULL_RC_clicked()
                     connect(uiMain->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->xAxis2, SLOT(setRange(QCPRange)));
                     connect(uiMain->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), uiMain->customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
-                    if(!FULL_RC_MM(ACU_TB, BOT_TOP_ACU_TV,
-                                   TOP_TF, BOT_EVAP_TF,
-                                   BOT_CV, BOT_CF,
-                                   TOP_CV, TOP_CF,
-                                   EVAP_TB,EVAP_TFG))
+                    if(!FULL_RC_MM(TV, TF,
+                                   CV, CF,
+                                   TB_ACU, TB_EVAP,
+                                   TFG))
                     {
                         QMessageBox msgBox;
                         msgBox.setText("Sampling error! Change dt!");
@@ -4247,8 +4223,8 @@ void MainWindow::on_FULL_RC_clicked()
 
                         // Out to display steady-state value concentration
                         for(uint j = 0; j < spaceParametrEVAP; ++j)
-                        {
-                            listStatesFirst.append(QString::number(TB.at(TB.size()-1).at(j)));
+                        {//??????????????????????????????????????????????????????????????????????????????????
+                            listStatesFirst.append(QString::number(TB_ACU.at(TB_ACU.size()-1).at(j)));
                         }
                         for(uint j = 0; j < spaceParametrEVAP; ++j)
                         {
@@ -4395,7 +4371,7 @@ void MainWindow::on_action3D_model_triggered()
 void MainWindow::on_actionCheck_stat_of_values_triggered()
 {
     // If you have something to check
-    if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB.empty() )) || ( !(TFG.empty()) ) )
+    if ( ( !(TV.empty()) ) || ( !(CV.empty()) ) || ( !(TB_ACU.empty() )) || ( !(TB_EVAP.empty() )) || ( !(TFG.empty()) ) )
     {
         CheckWindow *checkingWindow = new CheckWindow;
 

@@ -20,7 +20,8 @@ extern vector <double> initLayerTV;
 extern vector <double> initLayerTF;
 extern vector <double> initLayerCV;
 extern vector <double> initLayerCF;
-extern vector <double> initLayerTB;
+extern vector <double> initLayerTB_ACU;
+extern vector <double> initLayerTB_EVAP;
 extern vector <double> initLayerTFG;
 
 //---------------Borders--------------//
@@ -28,7 +29,8 @@ extern double initLayerTV_0, initLayerTV_1;
 extern double initLayerTF_0, initLayerTF_1;
 extern double initLayerCV_0, initLayerCV_1;
 extern double initLayerCF_0, initLayerCF_1;
-extern double initLayerTB_0, initLayerTB_1;
+extern double initLayerTB_ACU_0, initLayerTB_ACU_1;
+extern double initLayerTB_EVAP_0, initLayerTB_EVAP_1;
 extern double initLayerTFG_0, initLayerTFG_1;
 
 extern uint32_t spaceParametrBP;
@@ -112,22 +114,40 @@ void initialLayerCF(vector <vector <double> > &CF, unsigned int it)
     }
 }
 
-void initialLayerTB(vector <vector <double> > &TB, unsigned int it)
+void initialLayerTB_ACU(vector <vector <double> > &TB_ACU)
 {
     size_t i = 0, j = 0;
 
     // Borders
     for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
     {
-        TB.at(i).at(0) = initLayerTB_0;
-        TB.at(i).at(it-1) = initLayerTB_1;
+        TB_ACU.at(i).at(0) = initLayerTB_ACU_0;
+        TB_ACU.at(i).at(spaceParametrACU-1) = initLayerTB_ACU_1;
     }
 
     // Initial values
-    for(j = 1; j <= (it-2); ++j)
+    for(j = 1; j <= (spaceParametrACU-2); ++j)
     {
-        TB.at(0).at(j) = initLayerTB.at(j-1);
+        TB_ACU.at(0).at(j) = initLayerTB_ACU.at(j-1);
     }
+}
+
+void initialLayerTB_EVAP(vector <vector <double> > &TB_EVAP)
+{
+    size_t i = 0, j = 0;
+
+    // Borders
+    for(i = 0; i < static_cast <size_t>(selectN / dt); ++i)
+    {
+        TB_EVAP.at(i).at(0) = initLayerTB_EVAP_0;
+//        TB_EVAP.at(i).at(spaceParametrEVAP-1) = initLayerTB_EVAP_1;
+    }
+
+//    // Initial values
+//    for(j = 1; j <= (spaceParametrEVAP-2); ++j)
+//    {
+//        TB_EVAP.at(0).at(j) = initLayerTB_EVAP.at(j-1);
+//    }
 }
 
 void initialLayerTFG(vector <vector <double> > &TFG)
